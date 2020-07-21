@@ -1,0 +1,3 @@
+medications.c:31:6:update_prompt	32	static
+medications.c:43:6:meds_screen_event_handler	40	static
+medications.c:141:6:med_level_draw	40	static

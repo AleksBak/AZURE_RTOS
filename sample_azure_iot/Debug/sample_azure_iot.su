@@ -1,0 +1,3 @@
+sample_azure_iot.c:154:13:my_notify_func	40	static
+sample_azure_iot.c:186:13:threadx_mqtt_tls_setup	48	static
+sample_azure_iot.c:210:6:sample_entry	392	static

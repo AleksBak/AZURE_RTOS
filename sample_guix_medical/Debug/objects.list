@@ -1,0 +1,8 @@
+"common_hardware_code.o"
+"guix_medical_resources.o"
+"guix_medical_specifications.o"
+"medications.o"
+"patients.o"
+"sample_guix_medical.o"
+"startup_stm32f746nghx.o"
+"vitals.o"

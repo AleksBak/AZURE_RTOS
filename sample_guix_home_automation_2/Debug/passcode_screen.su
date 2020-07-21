@@ -1,0 +1,3 @@
+passcode_screen.c:19:13:on_passcode_input	16	static
+passcode_screen.c:54:13:on_clear	64	static
+passcode_screen.c:122:6:passcode_screen_event_process	16	static

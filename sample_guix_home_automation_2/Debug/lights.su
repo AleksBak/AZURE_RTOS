@@ -1,0 +1,12 @@
+lights.c:31:20:light_info_get	24	static
+lights.c:51:16:light_selected_map_id_get	24	static
+lights.c:71:13:power_value_update	32	static
+lights.c:116:13:on_close_button_clicked	24	static
+lights.c:142:13:on_open_button_clicked	24	static
+lights.c:166:13:light_status_reset	24	static
+lights.c:191:6:lights_screen_reset	16	static
+lights.c:210:6:lights_screen_animation_start	16	static
+lights.c:264:6:radial_slider_value_update	24	static
+lights.c:280:6:power_value_format	24	static
+lights.c:296:6:lights_base_event_process	16	static
+lights.c:322:6:lights_screen_init	16	static

@@ -1,0 +1,13 @@
+screen_base.c:115:16:is_animation_active	4	static
+screen_base.c:130:21:screen_info_get	24	static
+screen_base.c:149:13:footer_icons_animation_start	56	static
+screen_base.c:214:6:title_animation_start	56	static
+screen_base.c:247:13:slide_animation_start	56	static
+screen_base.c:274:12:get_page_index	24	static
+screen_base.c:303:6:pagination_button_enable_disable	32	static
+screen_base.c:341:13:pagination_button_update	32	static
+screen_base.c:404:13:screen_list_slide	88	static
+screen_base.c:510:13:on_animation_complete	24	static
+screen_base.c:559:6:on_footer_menu_clicked	40	static
+screen_base.c:638:6:slide_win_event_process	16	static
+screen_base.c:660:6:screen_base_event_process	16	static

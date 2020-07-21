@@ -1,0 +1,4 @@
+"common_hardware_code.o"
+"nx_driver_stm32f7xx_low_level.o"
+"sample_netx_duo_ping.o"
+"startup_stm32f746nghx.o"

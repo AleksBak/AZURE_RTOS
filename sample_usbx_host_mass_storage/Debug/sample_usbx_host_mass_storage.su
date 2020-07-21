@@ -1,0 +1,6 @@
+sample_usbx_host_mass_storage.c:64:5:main	16	static
+sample_usbx_host_mass_storage.c:78:6:tx_application_define	56	static
+sample_usbx_host_mass_storage.c:101:6:demo_thread_entry	16	static
+sample_usbx_host_mass_storage.c:145:6:demo_read_file	512	static
+sample_usbx_host_mass_storage.c:204:6:demo_class_storage_get	16	static
+sample_usbx_host_mass_storage.c:241:6:USB_OTG_BSP_HS_Init	56	static

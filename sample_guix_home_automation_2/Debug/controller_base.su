@@ -1,0 +1,4 @@
+controller_base.c:59:13:controller_title_init	16	static
+controller_base.c:72:6:lights_title_init	8	static
+controller_base.c:80:6:thermostat_title_init	8	static
+controller_base.c:88:6:locks_title_init	8	static

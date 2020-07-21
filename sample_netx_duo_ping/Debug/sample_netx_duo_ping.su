@@ -1,0 +1,3 @@
+sample_netx_duo_ping.c:42:5:main	16	static
+sample_netx_duo_ping.c:52:6:tx_application_define	56	static
+sample_netx_duo_ping.c:119:6:thread_0_entry	56	static

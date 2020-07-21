@@ -1,0 +1,12 @@
+core_cm7.h:2229:22:SCB_EnableICache	4	static,ignoring_inline_asm
+core_cm7.h:2281:22:SCB_EnableDCache	24	static,ignoring_inline_asm
+common_hardware_code.c:36:5:__io_putchar	16	static
+common_hardware_code.c:42:5:_write	32	static
+common_hardware_code.c:57:5:hardware_rand	4	static
+common_hardware_code.c:72:6:HAL_UART_MspInit	56	static
+common_hardware_code.c:127:6:hardware_rand_initialize	4	static
+common_hardware_code.c:141:13:MX_USART1_UART_Init	8	static
+common_hardware_code.c:179:13:SystemClock_Config	80	static
+common_hardware_code.c:230:13:MPU_Config	24	static
+common_hardware_code.c:272:13:CPU_CACHE_Enable	8	static
+common_hardware_code.c:282:6:hardware_setup	8	static

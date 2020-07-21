@@ -1,0 +1,7 @@
+sample_usbx_device_mass_storage.c:251:5:main	16	static
+sample_usbx_device_mass_storage.c:260:6:tx_application_define	56	static
+sample_usbx_device_mass_storage.c:345:6:demo_thread_entry	64	static
+sample_usbx_device_mass_storage.c:379:6:demo_thread_media_status	24	static
+sample_usbx_device_mass_storage.c:385:6:demo_thread_media_read	32	static
+sample_usbx_device_mass_storage.c:400:6:demo_thread_media_write	32	static
+sample_usbx_device_mass_storage.c:415:6:USB_OTG_BSP_HS_Init	56	static

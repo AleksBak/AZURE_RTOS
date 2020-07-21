@@ -1,0 +1,8 @@
+sample_usbx_device_cdc_acm.c:464:5:main	16	static
+sample_usbx_device_cdc_acm.c:488:6:tx_application_define	72	static
+sample_usbx_device_cdc_acm.c:534:6:demo_thread_entry	24	static
+sample_usbx_device_cdc_acm.c:650:6:demo_cdc_instance_activate	16	static
+sample_usbx_device_cdc_acm.c:658:6:demo_cdc_instance_deactivate	16	static
+sample_usbx_device_cdc_acm.c:666:6:demo_cdc_acm_parameter_change	16	static
+sample_usbx_device_cdc_acm.c:672:6:USB_OTG_BSP_HS_Init	56	static
+sample_usbx_device_cdc_acm.c:808:6:_hardware_setup	4	static

@@ -1,0 +1,8 @@
+vitals.c:42:6:draw_scrolling_chart_lines	40	static
+vitals.c:85:6:update_scrolling_chart	48	static
+vitals.c:199:6:update_retrace_chart	48	static
+vitals.c:256:6:ToggleChartType	8	static
+vitals.c:278:6:update_heart_rate	8	static
+vitals.c:313:6:AnimateHRWin	24	static
+vitals.c:333:6:vitals_screen_event_process	32	static
+vitals.c:419:6:waveform_draw	16	static

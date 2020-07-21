@@ -1,0 +1,7 @@
+speedometer_specifications.c:47:6:gx_studio_icon_create	80	static
+speedometer_specifications.c:60:6:gx_studio_window_create	64	static
+speedometer_specifications.c:76:6:gx_studio_circular_gauge_create	96	static
+speedometer_specifications.c:202:19:gx_studio_nested_widget_create	40	static
+speedometer_specifications.c:284:12:gx_studio_widget_create	32	static
+speedometer_specifications.c:296:6:gx_studio_named_widget_create	40	static
+speedometer_specifications.c:324:6:gx_studio_display_configure	80	static

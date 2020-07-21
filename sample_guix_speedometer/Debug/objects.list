@@ -1,0 +1,5 @@
+"common_hardware_code.o"
+"sample_guix_speedometer.o"
+"speedometer_resources.o"
+"speedometer_specifications.o"
+"startup_stm32f746nghx.o"

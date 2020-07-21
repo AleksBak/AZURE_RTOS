@@ -1,0 +1,6 @@
+patients.c:95:6:GetPatientName	16	static
+patients.c:101:6:GetPatientAdmitDate	16	static
+patients.c:107:6:patient_row_create	72	static
+patients.c:173:6:patient_prompt_draw	16	static
+patients.c:190:6:patient_list_children_create	24	static
+patients.c:201:6:patients_screen_event_handler	24	static

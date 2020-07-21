@@ -1,0 +1,4 @@
+"common_hardware_code.o"
+"sample_usbx_host_mass_storage.o"
+"startup_stm32f746nghx.o"
+"ux_stm32f7xx_hcd_low_level.o"

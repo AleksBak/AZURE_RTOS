@@ -1,0 +1,11 @@
+thermostat.c:35:25:thermostat_info_get	24	static
+thermostat.c:54:13:thermostat_screen_bottom_info_update	24	static
+thermostat.c:88:13:thermostat_controller_info_update	48	static
+thermostat.c:140:13:on_close_button_clicked	24	static
+thermostat.c:167:13:on_open_button_clicked	24	static
+thermostat.c:193:13:thermostat_controller_reset	24	static
+thermostat.c:215:6:thermostat_screen_reset	16	static
+thermostat.c:234:6:thermostat_screen_animation_start	24	static
+thermostat.c:285:6:thermostat_radial_slider_value_update	24	static
+thermostat.c:305:6:thermostat_base_event_process	16	static
+thermostat.c:331:6:thermostat_screen_init	16	static

@@ -1,0 +1,8 @@
+sample_threadx.c:57:5:main	16	static
+sample_threadx.c:70:9:tx_application_define	56	static
+sample_threadx.c:180:9:thread_0_entry	24	static
+sample_threadx.c:206:9:thread_1_entry	24	static
+sample_threadx.c:232:9:thread_2_entry	24	static
+sample_threadx.c:259:9:thread_3_and_4_entry	24	static
+sample_threadx.c:296:9:thread_5_entry	32	static
+sample_threadx.c:321:9:thread_6_and_7_entry	24	static

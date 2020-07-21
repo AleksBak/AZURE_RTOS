@@ -1,0 +1,6 @@
+weather.c:100:13:init_weather_info	40	static
+weather.c:164:13:hide_weather_children	32	static
+weather.c:189:13:start_weather_children_animation	64	static
+weather.c:236:6:weather_screen_reset	16	static
+weather.c:254:6:weather_screen_animation_start	16	static
+weather.c:285:6:weather_screen_init	16	static

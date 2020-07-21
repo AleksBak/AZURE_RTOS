@@ -1,0 +1,15 @@
+sample_guix_home_automation.c:75:5:main	16	static
+sample_guix_home_automation.c:87:7:memory_allocate	24	static
+sample_guix_home_automation.c:101:6:memory_free	16	static
+sample_guix_home_automation.c:109:6:tx_application_define	48	static
+sample_guix_home_automation.c:127:6:demo_thread_entry	24	static
+sample_guix_home_automation.c:196:6:main_screen_event_process	16	static
+sample_guix_home_automation.c:247:13:decode_main_screen_jpeg	96	static
+sample_guix_home_automation.c:266:6:main_screen_draw	16	static
+sample_guix_home_automation.c:293:6:fade_out_home_window	32	static
+sample_guix_home_automation.c:309:6:fade_in_home_window	40	static
+sample_guix_home_automation.c:325:6:toggle_screen	16	static
+sample_guix_home_automation.c:393:6:clock_update	4	static
+sample_guix_home_automation.c:438:6:custom_radial_slider_draw	104	static
+sample_guix_home_automation.c:629:6:time_format	24	static
+sample_guix_home_automation.c:646:6:string_length_get	24	static

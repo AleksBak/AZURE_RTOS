@@ -1,0 +1,5 @@
+"common_hardware_code.o"
+"main.o"
+"nx_driver_stm32f7xx_low_level.o"
+"sample_azure_iot.o"
+"startup_stm32f746nghx.o"
