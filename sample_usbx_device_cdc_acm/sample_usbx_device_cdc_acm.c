@@ -528,6 +528,8 @@ void tx_application_define(void* first_unused_memory)
 	if (status != TX_SUCCESS)
 		return;
 
+	printf("\r\nDemo Thread created...\r\n");
+
 	return;
 }
 
