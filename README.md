@@ -3,7 +3,7 @@ collection of examples of working with <b>Microsoft® Azure RTOS</b> on <b>STM32
 
 All projects work in the <b>STM2CubeIDE</b> environment.
 
-The following projects are components of Azure RTOS:
+The following projects are components of <b>Microsoft® Azure RTOS</b>:
 fx        FileX
 gx        GUIX
 nx_secure
@@ -13,22 +13,22 @@ tx
 
 <table>
   <colgroup>
-    <col span="2" style="background:Khaki"><!-- С помощью этой конструкции задаем цвет фона для первых двух столбцов таблицы-->
-    <col style="background-color:LightCyan"><!-- Задаем цвет фона для следующего (одного) столбца таблицы-->
+    <col span="2" style="background:Khaki"><!-- Using this construction, we set the background color for the first two columns of the table.-->
+    <col style="background-color:LightCyan"><!-- Set the background color for the next (one) table column-->
   </colgroup>
   <tr>
-    <th>№ п/п</th>
-    <th>Наименование</th>
-    <th>Цена, руб.</th>
+    <th>project</th>
+    <th>component</th>
+    <th>after build gives</th>
   </tr>
   <tr>
-    <td>1</td>
-    <td>Карандаш цветной</td>
-    <td>20,00</td>
+    <td>fx</td>
+    <td>FileX</td>
+    <td>'libfx.a'</td>
   </tr>
   <tr>
-    <td>2</td>
-    <td>Линейка 20 см</td>
-    <td>30,00</td>
+    <td>gx</td>
+    <td>GUIX</td>
+    <td>'libgx.a'</td>
   </tr>
 </table>
