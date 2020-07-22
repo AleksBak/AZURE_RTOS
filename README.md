@@ -1,7 +1,7 @@
 # AZURE_RTOS
 collection of examples of working with <b>Microsoft® Azure RTOS</b> on <b>STM32F746-Discovery</b>
 
-All projects work in the <b>STM2CubeIDE</b> environment.
+All projects work in the <b>STM2CubeIDE</b> environment. You can download and place all these projects in one directory (call it for example as AZURE_RTOS) inside the workspace.
 
 The following projects are components of <b>Microsoft® Azure RTOS</b>:
 <table>
