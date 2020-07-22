@@ -235,9 +235,9 @@ UCHAR device_framework_high_speed[] =
 	0x00,										/* 2 bcdUSB */
 	0x02,										/* 3 bcdUSB */
 #endif
-	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass */
-	0x02,										/* 5 bDeviceSubClass     : Common Class (0x02) */
-	0x01,										/* 6 bDeviceProtocol     : IAD (0x01) */
+	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
+	0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
+	0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
 	0x40,										/* 7 bMaxPacketSize0 */
 	LOBYTE(USBD_VID),							/* 8 idVendor */
 	HIBYTE(USBD_VID),							/* 9 idVendor */
