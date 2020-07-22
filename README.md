@@ -31,4 +31,9 @@ tx
     <td>GUIX</td>
     <td>'libgx.a'</td>
   </tr>
+  <tr>
+    <td>nx_secure</td>
+    <td>NetX</td>
+    <td>'libnx_secure.a'</td>
+  </tr>
 </table>
