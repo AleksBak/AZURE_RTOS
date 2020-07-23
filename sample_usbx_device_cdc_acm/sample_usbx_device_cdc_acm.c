@@ -102,7 +102,7 @@ UCHAR device_framework_full_speed[] =
 	0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
 	0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
 	0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
-	0x01,										/* 17 bNumConfigurations : 1 Configuration */
+	0x01,										/* 17 bNumConfigurations : 1 Configuration used */
 
 	/*--------------------------------------------------------------------------------------------*/
 
@@ -172,9 +172,9 @@ UCHAR device_framework_full_speed[] =
 	/* Command Interface Descriptor */
 	0x09,										/* 0 bLength */
 	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Number of Interface */
-	0x00,										/* 3 bAlternateSetting   : Alternate for SetInterface Request */
-	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for Interface */
+	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
 	USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
 	USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
 	USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
@@ -183,8 +183,8 @@ UCHAR device_framework_full_speed[] =
 	/* Command Endpoint Descriptor */
 	0x07,										/* 0 bLength */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : EP2 for CDC commands (3 or 2) */
-	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : Interrupt */
+	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
+	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
 	LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
 	HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
 	CDC_FS_BINTERVAL,							/* 6 bInterval           : */
@@ -192,9 +192,9 @@ UCHAR device_framework_full_speed[] =
 	/* Data Interface Descriptor */
 	0x09,										/* 0 bLength */
 	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Number of Interface */
-	0x00,										/* 3 bAlternateSetting   : Alternate for SetInterface Request */
-	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for Interface */
+	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
 	USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
 	0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
 	0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
@@ -203,8 +203,8 @@ UCHAR device_framework_full_speed[] =
 	/* Data Endpoint Descriptor (IN) */
 	0x07,										/* 0 bLength */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP1 for Data IN (1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : Bulk */
+	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
+	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
 	LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
 	HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
 	0x00,										/* 6 bInterval           : never NAKs */
@@ -212,8 +212,8 @@ UCHAR device_framework_full_speed[] =
 	/* Data Endpoint Descriptor (OUT) */
 	0x07,										/* 0 bLength: Endpoint Descriptor size */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP1 for Data OUT (2 or 1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : Bulk */
+	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
+	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
 	LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
 	HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
 	0x00,										/* 6 bInterval           : never NAKs */
@@ -248,7 +248,7 @@ UCHAR device_framework_high_speed[] =
 	0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
 	0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
 	0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
-	0x01,										/* 17 bNumConfigurations : 1 Configuration */
+	0x01,										/* 17 bNumConfigurations : 1 Configuration used */
 
 	/*--------------------------------------------------------------------------------------------*/
 
@@ -289,11 +289,11 @@ UCHAR device_framework_high_speed[] =
 	UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
 	0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
 	0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
-	0x02,										/* 4 bNumInterfaces      : 2 Interfaces */
+	0x02,										/* 4 bNumInterfaces      : 2 Interfaces used */
 	0x01,										/* 5 bConfigurationValue : Configuration 1 */
 	0x00,										/* 6 iConfiguration      : No String Descriptor */
 	0x80 | (1 << 6) | (0 << 5),					/* 7 bmAttributes        : D7-Reserved, set 1; D6-Self Powered; D5-Remote Wakeup; D4..0-Reserved, set 0 */
-	0x32,										/* 8 bMaxPower           : 0x32 = 100 mA */
+	0x32,										/* 8 bMaxPower           : 0x32 = 100 mA, 0xFA = 500 mA */
 
 	/* Interface Association Descriptor (IAD) (should be declared before the Interfaces and contain
 	 * the first interface of the CDC-ACM class and how many interfaces are attached) */
@@ -350,9 +350,9 @@ UCHAR device_framework_high_speed[] =
 	/* Command Interface Descriptor */
 	0x09,										/* 0 bLength */
 	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Number of Interface */
-	0x00,										/* 3 bAlternateSetting   : Alternate for SetInterface Request */
-	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for Interface */
+	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
 	USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
 	USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
 	USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
@@ -361,8 +361,8 @@ UCHAR device_framework_high_speed[] =
 	/* Command Endpoint Descriptor */
 	0x07,										/* 0 bLength */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : EP2 for CDC commands (3 or 2) */
-	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : Interrupt */
+	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
+	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
 	LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
 	HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
 	CDC_HS_BINTERVAL,							/* 6 bInterval           : */
@@ -370,9 +370,9 @@ UCHAR device_framework_high_speed[] =
 	/* Data Interface Descriptor */
 	0x09,										/* 0 bLength */
 	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Number of Interface */
-	0x00,										/* 3 bAlternateSetting   : Alternate for SetInterface Request */
-	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for Interface */
+	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
 	USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
 	0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
 	0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
@@ -381,8 +381,8 @@ UCHAR device_framework_high_speed[] =
 	/* Data Endpoint Descriptor (IN) */
 	0x07,										/* 0 bLength */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP1 for Data IN (1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : Bulk */
+	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
+	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
 	LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
 	HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
 	0x00,										/* 6 bInterval           : never NAKs */
@@ -390,8 +390,8 @@ UCHAR device_framework_high_speed[] =
 	/* Data Endpoint Descriptor (OUT) */
 	0x07,										/* 0 bLength: Endpoint Descriptor size */
 	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP1 for Data OUT (2 or 1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : Bulk */
+	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
+	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
 	LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
 	HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
 	0x00,										/* 6 bInterval           : never NAKs */
