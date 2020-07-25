@@ -89,10 +89,10 @@ UCHAR device_framework_full_speed[] =
 	UX_DEVICE_DESCRIPTOR_ITEM,					/* 1 bDescriptorType     : Device Descriptor */
 	0x00,										/* 2 bcdUSB */
 	0x02,										/* 3 bcdUSB */
-	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass */
-	0x02,										/* 5 bDeviceSubClass     : Common Class (0x02) */
-	0x01,										/* 6 bDeviceProtocol     : IAD (0x01) */
-	0x40,										/* 7 bMaxPacketSize0 */
+	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
+	0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
+	0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
+	0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
 	LOBYTE(USBD_VID),							/* 8 idVendor */
 	HIBYTE(USBD_VID),							/* 9 idVendor */
 	LOBYTE(USBD_PID),							/* 10 idProduct */
@@ -172,13 +172,13 @@ UCHAR device_framework_full_speed[] =
 	/* Command Interface Descriptor */
 	0x09,										/* 0 bLength */
 	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Identification number of this Interface */
 	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
 	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
 	USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
 	USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
 	USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
-	0x00,										/* 8 iInterface Index    : No string descriptor */
+	0x00,										/* 8 iInterface Index    : No String Descriptor */
 
 	/* Command Endpoint Descriptor */
 	0x07,										/* 0 bLength */
@@ -238,7 +238,7 @@ UCHAR device_framework_high_speed[] =
 	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
 	0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
 	0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
-	0x40,										/* 7 bMaxPacketSize0 */
+	0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
 	LOBYTE(USBD_VID),							/* 8 idVendor */
 	HIBYTE(USBD_VID),							/* 9 idVendor */
 	LOBYTE(USBD_PID),							/* 10 idProduct */
@@ -270,17 +270,18 @@ UCHAR device_framework_high_speed[] =
 	0x00,										/* 6 dev_capability_data : size varies */
 #endif
 
-	/* Device Qualifier Descriptor */
+	/* Device Qualifier Descriptor (describes information about a high-speed capable device that
+	 * would change if the device were operating at the other speed) */
 	0x0A,										/* 0 bLength */
 	UX_DEVICE_QUALIFIER_DESCRIPTOR_ITEM,		/* 1 bDescriptorType */
-	0x00,										/* 2 bcdUSB              : BCD(2.0) */
+	0x00,										/* 2 bcdUSB              : 0x0200 (must be at least 2.0) */
 	0x02,										/* 3 bcdUSB */
 	USB_CLASS_COMMUNICATIONS,					/* 4 bDeviceClass        : Device Class */
 	0x00,										/* 5 bDeviceSubClass     : none */
 	0x00,										/* 6 bDeviceProtocol     : none */
-	0x40,										/* 7 bMaxPacketSize0 */
-	0x01,										/* 8 bNumConfigs         : 1 */
-	0x00,										/* 9 Reserve (0) */
+	0x40,										/* 7 bMaxPacketSize      : size for other speed*/
+	0x01,										/* 8 bNumConfigs         : 1 (number of Other-speed Configurations) */
+	0x00,										/* 9 bReserved           : 0 (must be zero) */
 
 	/*--------------------------------------------------------------------------------------------*/
 

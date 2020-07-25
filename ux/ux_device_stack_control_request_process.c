@@ -25,13 +25,6 @@
 #include "ux_api.h"
 #include "ux_device_stack.h"
 
-#define REQ_MAX_SIZE		30
-
-uint32_t g_index_1 = 0, g_index_2 = 0;
-
-ULONG g_reqArr_1[REQ_MAX_SIZE] = {0};
-ULONG g_reqArr_2[REQ_MAX_SIZE] = {0};
-
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                                RELEASE       */
@@ -111,11 +104,6 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 		ULONG request_length = _ux_utility_short_get(
 				transfer_request->ux_slave_transfer_request_setup + UX_SETUP_LENGTH);
 
-		if (g_index_1 < REQ_MAX_SIZE)
-		{
-			g_reqArr_1[g_index_1++] = request;
-		}
-
 		/* Filter for GET_DESCRIPTOR/SET_DESCRIPTOR commands. If the descriptor to be returned
 		 * is not a standard descriptor, treat the command as a CLASS command. */
 		if ((request == UX_GET_DESCRIPTOR || request == UX_SET_DESCRIPTOR)
@@ -133,7 +121,7 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 			/* Check the request demanded and compare it to the application registered one. */
 			if (request == _ux_system_slave->ux_system_slave_device_vendor_request)
 			{
-				/* This is a Microsoft extended function. It happens before the device is configured. 
+				/* This is a Microsoft extended function. It happens before the device is configured.
 				 The request is passed to the application directly. */
 				status = _ux_system_slave->ux_system_slave_device_vendor_request_function(
 						request, request_value, request_index, request_length,
@@ -225,31 +213,27 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 			return (status);
 		}
 
-		if (g_index_2 < REQ_MAX_SIZE)
-		{
-			g_reqArr_2[g_index_2++] = request;
-		}
-
 		/* At this point, the request must be a standard request that the device stack should handle.
 		 * Requests are here: 6, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 9, ..., 6, 6, 6, 6, 6, 6, 6, 1 */
 		switch (request)
 		{
-			// 0
+			/* (0) For Device Reads the settings of the power supply (self or bus) and remote wakeup.
+			 * For Endpoint Reads the halt status. */
 			case UX_GET_STATUS:
 				status = _ux_device_stack_get_status(request_type, request_index, request_length);
 				break;
 
-			// 1
+			/* (1) For Device Clears remote wakeup. For Endpoint Cancels the halt status (DATA PID = 0). */
 			case UX_CLEAR_FEATURE:
 				status = _ux_device_stack_clear_feature(request_type, request_value, request_index);
 				break;
 
-			// 3
+			/* (3) For Device Specifies remote wakeup or test mode. For Endpoint Specifies the halt status. */
 			case UX_SET_FEATURE:
 				status = _ux_device_stack_set_feature(request_type, request_value, request_index);
 				break;
 
-			// 5
+			/* (5) Specifies the USB address */
 			case UX_SET_ADDRESS:
 				/* Memorize the address. Some controllers memorize the address here. Some don't. */
 				dcd->ux_slave_dcd_device_address = request_value;
@@ -259,42 +243,39 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 						(VOID*)(ALIGN_TYPE)request_value);
 				break;
 
-			// 6
+			/* (6) Reads the target descriptor (Device, Configuration, String) */
 			case UX_GET_DESCRIPTOR:
 				status = _ux_device_stack_descriptor_send(request_value, request_index,
 						request_length);
 				break;
 
-			// 7
+			/* (7) Changes the target descriptor (optional) */
 			case UX_SET_DESCRIPTOR:
 				status = UX_FUNCTION_NOT_SUPPORTED;
 				break;
 
-			// 8
+			/* (8) Reads the currently specified configuration values */
 			case UX_GET_CONFIGURATION:
 				status = _ux_device_stack_configuration_get();
 				break;
 
-			// 9
+			/* (9) Specifies the configuration values */
 			case UX_SET_CONFIGURATION:
-				if (g_index_2 < REQ_MAX_SIZE)
-				{
-					g_reqArr_2[g_index_2++] = request_value;
-				}
 				status = _ux_device_stack_configuration_set(request_value);
 				break;
 
-			// 10
+			/* (10) Reads the alternatively specified value among the currently specified values of
+			 * the target interface */
 			case UX_GET_INTERFACE:
 				status = _ux_device_stack_alternate_setting_get(request_index);
 				break;
 
-			// 11
+			/* (11) Specifies the alternatively specified value of the target interface */
 			case UX_SET_INTERFACE:
 				status = _ux_device_stack_alternate_setting_set(request_index, request_value);
 				break;
 
-			// 12
+			/* (12) Reads frame-synchronous data */
 			case UX_SYNCH_FRAME:
 				status = UX_SUCCESS;
 				break;

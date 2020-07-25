@@ -9,11 +9,10 @@
 /*                                                                        */
 /**************************************************************************/
 
-
 /**************************************************************************/
 /**************************************************************************/
-/**                                                                       */ 
-/** USBX Component                                                        */ 
+/**                                                                       */
+/** USBX Component                                                        */
 /**                                                                       */
 /**   Device Stack                                                        */
 /**                                                                       */
@@ -22,12 +21,9 @@
 
 #define UX_SOURCE_CODE
 
-
-/* Include necessary system files.  */
-
+/* Include necessary system files. */
 #include "ux_api.h"
 #include "ux_device_stack.h"
-
 
 /**************************************************************************/
 /*                                                                        */
@@ -52,144 +48,122 @@
 /*                                                                        */
 /*  OUTPUT                                                                */
 /*                                                                        */
-/*    Completion Status                                                   */ 
+/*    Completion Status                                                   */
 /*                                                                        */
-/*  CALLS                                                                 */ 
-/*                                                                        */ 
-/*    (ux_slave_dcd_function)               DCD controller function       */ 
-/*                                                                        */ 
-/*  CALLED BY                                                             */ 
-/*                                                                        */ 
+/*  CALLS                                                                 */
+/*                                                                        */
+/*    (ux_slave_dcd_function)               DCD controller function       */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
 /*    Device Stack                                                        */
-/*                                                                        */ 
-/*  RELEASE HISTORY                                                       */ 
-/*                                                                        */ 
-/*    DATE              NAME                      DESCRIPTION             */ 
-/*                                                                        */ 
+/*                                                                        */
+/*  RELEASE HISTORY                                                       */
+/*                                                                        */
+/*    DATE              NAME                      DESCRIPTION             */
+/*                                                                        */
 /*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-UINT  _ux_device_stack_set_feature(ULONG request_type, ULONG request_value, ULONG request_index)
+UINT _ux_device_stack_set_feature(ULONG request_type, ULONG request_value, ULONG request_index)
 {
+	UX_PARAMETER_NOT_USED(request_value);
 
-UX_SLAVE_DCD            *dcd;
-UX_SLAVE_DEVICE         *device;
-UX_SLAVE_INTERFACE      *interface;
-UX_SLAVE_ENDPOINT       *endpoint;
-UX_SLAVE_ENDPOINT       *endpoint_target;
+	/* If trace is enabled, insert this event into the trace buffer. */
+	UX_TRACE_IN_LINE_INSERT(UX_TRACE_DEVICE_STACK_SET_FEATURE, request_value, request_index, 0, 0,
+			UX_TRACE_DEVICE_STACK_EVENTS, 0, 0)
 
-    UX_PARAMETER_NOT_USED(request_value);
+	/* Get the pointer to the DCD. */
+	UX_SLAVE_DCD* dcd = &_ux_system_slave->ux_system_slave_dcd;
 
-    /* If trace is enabled, insert this event into the trace buffer.  */
-    UX_TRACE_IN_LINE_INSERT(UX_TRACE_DEVICE_STACK_SET_FEATURE, request_value, request_index, 0, 0, UX_TRACE_DEVICE_STACK_EVENTS, 0, 0)
+	/* Get the pointer to the device. */
+	UX_SLAVE_DEVICE* device = &_ux_system_slave->ux_system_slave_device;
 
-    /* Get the pointer to the DCD.  */
-    dcd =  &_ux_system_slave -> ux_system_slave_dcd;
+	/* Get the control endpoint for the device. */
+	UX_SLAVE_ENDPOINT* endpoint = &device->ux_slave_device_control_endpoint;
 
-    /* Get the pointer to the device.  */
-    device =  &_ux_system_slave -> ux_system_slave_device;
+	/* The feature can be for either the device or the endpoint. */
+	switch (request_type & UX_REQUEST_TARGET)
+	{
+		case UX_REQUEST_TARGET_DEVICE:
+			/* Check if we have a DEVICE_REMOTE_WAKEUP Feature. */
+			if (request_value == UX_REQUEST_FEATURE_DEVICE_REMOTE_WAKEUP)
+			{
+				/* Check if we have the capability. */
+				if (_ux_system_slave->ux_system_slave_remote_wakeup_capability)
+				{
+					/* Enable the feature. */
+					_ux_system_slave->ux_system_slave_remote_wakeup_enabled = UX_TRUE;
 
-    /* Get the control endpoint for the device.  */
-    endpoint =  &device -> ux_slave_device_control_endpoint;
-
-    /* The feature can be for either the device or the endpoint.  */
-    switch (request_type & UX_REQUEST_TARGET)
-    {
-    
-    case UX_REQUEST_TARGET_DEVICE:
-
-        /* Check if we have a DEVICE_REMOTE_WAKEUP Feature.  */
-        if (request_value == UX_REQUEST_FEATURE_DEVICE_REMOTE_WAKEUP)
-        {
-
-            /* Check if we have the capability. */
-            if (_ux_system_slave -> ux_system_slave_remote_wakeup_capability)
-            {
-
-                /* Enable the feature. */
-                _ux_system_slave -> ux_system_slave_remote_wakeup_enabled = UX_TRUE;
-
-                /* OK. */
-                return (UX_SUCCESS);
-            }
-            else
-
-                /* Protocol error. */
-                return (UX_FUNCTION_NOT_SUPPORTED);
-        }
+					/* OK. */
+					return (UX_SUCCESS);
+				}
+				else
+					/* Protocol error. */
+					return (UX_FUNCTION_NOT_SUPPORTED);
+			}
 
 #ifdef UX_OTG_SUPPORT
-        /* Check if we have a A_HNP_SUPPORT Feature. This is set when the Host is HNP capable. */
-        if (request_value == UX_OTG_FEATURE_A_HNP_SUPPORT)
-
-            /* Store the A_HNP_SUPPORT flag.  */
-            _ux_system_otg -> ux_system_otg_slave_set_feature_flag |= UX_OTG_FEATURE_A_HNP_SUPPORT;
-        else
-        {
-
-            /* Check if the host asks us to perform HNP.  If also we become the host.  */
-            if (request_value == UX_OTG_FEATURE_B_HNP_ENABLE)
-            {
-
-                /* The ISR will pick up the suspend event and check if we need to become IDLE or HOST.  */
-                _ux_system_otg -> ux_system_otg_slave_set_feature_flag |= UX_OTG_FEATURE_B_HNP_ENABLE;
-
-            }
-
-        }
+		/* Check if we have a A_HNP_SUPPORT Feature. This is set when the Host is HNP capable. */
+		if (request_value == UX_OTG_FEATURE_A_HNP_SUPPORT)
+			/* Store the A_HNP_SUPPORT flag. */
+			_ux_system_otg -> ux_system_otg_slave_set_feature_flag |= UX_OTG_FEATURE_A_HNP_SUPPORT;
+		else
+		{
+			/* Check if the host asks us to perform HNP.  If also we become the host. */
+			if (request_value == UX_OTG_FEATURE_B_HNP_ENABLE)
+			{
+				/* The ISR will pick up the suspend event and check if we need to become IDLE or HOST. */
+				_ux_system_otg -> ux_system_otg_slave_set_feature_flag |= UX_OTG_FEATURE_B_HNP_ENABLE;
+			}
+		}
 #endif
-            
-        break;
 
-    case UX_REQUEST_TARGET_ENDPOINT:
+			break;
 
-        /* The only set feature for endpoint is ENDPOINT_STALL. This forces
-           the endpoint to the stall situation.
-           We need to find the endpoint through the interface(s). */
-        interface =  device -> ux_slave_device_first_interface;
+		case UX_REQUEST_TARGET_ENDPOINT:
+			/* The only set feature for endpoint is ENDPOINT_STALL. This forces the endpoint to
+			 * the stall situation. We need to find the endpoint through the interface(s). */
+			UX_SLAVE_INTERFACE* interface = device->ux_slave_device_first_interface;
 
-        while (interface != UX_NULL)
-        {
+			while (interface != UX_NULL)
+			{
+				/* Get the first endpoint for this interface. */
+				UX_SLAVE_ENDPOINT* endpoint_target = interface->ux_slave_interface_first_endpoint;
 
-            /* Get the first endpoint for this interface.  */
-            endpoint_target =  interface -> ux_slave_interface_first_endpoint;
-                
-            /* Parse all the endpoints.  */
-            while (endpoint_target != UX_NULL)
-            {
+				/* Parse all the endpoints. */
+				while (endpoint_target != UX_NULL)
+				{
+					/* Check the endpoint index. */
+					if (endpoint_target->ux_slave_endpoint_descriptor.bEndpointAddress
+							== request_index)
+					{
+						/* Stall the endpoint. */
+						dcd->ux_slave_dcd_function(dcd, UX_DCD_STALL_ENDPOINT, endpoint_target);
 
-                /* Check the endpoint index.  */
-                if (endpoint_target -> ux_slave_endpoint_descriptor.bEndpointAddress == request_index)
-                {
+						/* Return the function status. */
+						return (UX_SUCCESS);
+					}
 
-                    /* Stall the endpoint.  */
-                    dcd -> ux_slave_dcd_function(dcd, UX_DCD_STALL_ENDPOINT, endpoint_target);
+					/* Next endpoint. */
+					endpoint_target = endpoint_target->ux_slave_endpoint_next_endpoint;
+				}
 
-                    /* Return the function status.  */
-                    return(UX_SUCCESS);
-                }
+				/* Next interface. */
+				interface = interface->ux_slave_interface_next_interface;
+			}
 
-                /* Next endpoint.  */
-                endpoint_target =  endpoint_target -> ux_slave_endpoint_next_endpoint;
-            }
+			/* We get here when the endpoint is wrong. Should not happen though. */
+			/* Intentionally fall through into the default case. */
+			/* fall through */
+		default:
+			/* We stall the command. */
+			dcd->ux_slave_dcd_function(dcd, UX_DCD_STALL_ENDPOINT, endpoint);
 
-            /* Next interface.  */
-            interface =  interface -> ux_slave_interface_next_interface;
-        }
+			/* No more work to do here. The command failed but the upper layer does not depend on it. */
+			return (UX_SUCCESS);
+	}
 
-        /* We get here when the endpoint is wrong. Should not happen though.  */
-        /* Intentionally fall through into the default case. */
-        /* fall through */
-    default:
-        
-        /* We stall the command.  */
-        dcd -> ux_slave_dcd_function(dcd, UX_DCD_STALL_ENDPOINT, endpoint);
-    
-        /* No more work to do here.  The command failed but the upper layer does not depend on it.  */
-        return(UX_SUCCESS);            
-    }
-
-    /* Return the function status.  */
-    return(UX_SUCCESS);
+	/* Return the function status. */
+	return (UX_SUCCESS);
 }
-
