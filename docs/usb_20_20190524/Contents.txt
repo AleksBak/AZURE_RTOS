@@ -1,0 +1,35 @@
+5V Short Circuit... ECN.pdf	- 5V Short Circuit Withstand Requirement Change Engineering Change Notice to the USB 2.0 Specification as of December 22, 2008
+2002_05_28_errata.pdf		- Errata to the USB 2.0 specification as of May 28, 2002
+Connect Timing ECN.pdf		- USB 2.0 Connect Timing ECN Update as of April 4, 2013
+Device Capacitance ECN.pdf	- Device Capacitance Engineering Change Notice to the USB 2.0 Specification as of December 22, 2008
+Disconnect_Supplement...pdf	- HSIC Disconnect Supplement ECN as of September 18, 2013
+ECN for Core Spec TES...pdf	- USB TEST_MODE Selector Values ECN as of July 26, 2010
+ecn1-usb20-miniB-revd.pdf	- Mini-B connector Engineering Change Notice to the USB 2.0 specification
+errata-092800-1207001.pdf	- Errata to the USB 2.0 specification as of December 7, 2000
+High Speed Inter...pdf		- High-Speed Inter-Chip USB Electrical Specification Revision 1.0 as of September 23, 2007
+HSIC_ECN_21May2012.pdf		- HSIC ECN as of May 21, 2012
+Inter-Chip USB Supple...pdf	- Inter-Chip USB Supplement Revision 1.0 as of March 13, 2006
+InterfaceAssociationD...pdf	- Interface Association Descriptor Engineering Change Notice to the USB 2.0 specification
+resistor_ecn.pdf			- Pull-up/pull-down Resistors Engineering Change Notice to the USB 2.0 specification
+rnd_chmfr_ECNFINAL.pdf		- Rounded Chamfer Engineering Change Notice to the USB 2.0 specification as of October 8, 2003
+Suspend Current ECN.pdf		- Suspend Current Limit Changes Engineering Change Notice to the USB 2.0 Specification as of April 9, 2008
+UnicodeECN.pdf				- Unicode Engineering Change Notice to the USB 2.0 specification as of February 21, 2005
+USB 2 0 Material ...ECN.pdf	- Material Change Engineering Change Notice to the USB 2.0 Specification as of December 22, 2008
+USB 2.0 ECN VBUS Max...pdf	- USB 2.0 VBUS Max Limit ECN as of August 11, 2014
+USB 2.0 Phase..SOFs ECN.pdf	- USB 2.0 Phase-locked SOFs Engineering Change Notice to the USB 2.0 Specification as of December 22, 2008
+USB 2_0 Adopters...pdf		- USB 2.0 Adopters Agreement
+usb_20.pdf					- The Original USB 2.0 specification released on April 27, 2000
+USB2_LinkPowerMangeme...pdf	- USB 2.0 Link Power Management Addendum Engineering Change Notice to the USB 2.0 specification as of July 16, 2007
+USB2-LPM-Errata-final.pdf	- Errata for USB 2.0 ECN:  Link Power Management (LPM) - 7/2007 as of October 11, 2011
+
+/*--------------------------- Micro-USB_final -------------------------------*/
+Micro-USB Cables and Connectors Specification Revision 1.01 as of April 4, 2007 and corresponding Adopters Agreement
+Micro-USB Micro-B ID Pin Resistance and Tolerance stack-up between D+ and D- Engineering Change Notice to the MicroUSB Specification to the USB 2.0 Specification, Revision 1.01 as of December 22, 2008
+Quad Type Cable Additional for Micro USB ECN as of December 29, 2009
+Clarification on the Chamfer on USB 2.0 Micro Connectors ECN as of March 23, 2010
+Maximum Unmating Force Value Definition to USB 2.0 Micro Connectors ECN as of March 23, 2010
+
+/*---------------------- USB OTG and Embedded Host --------------------------*/
+"On-The-Go Supplement to the USB 2.0 Specification" Adopters Agreement
+On-The-Go and Embedded Host Supplement to the USB Revision 2.0 Specification, Revision 2.0 version 1.1a as of July 27, 2012
+USB OTG EH ECN Maximum Vbus Voltage dated November 26, 2014
