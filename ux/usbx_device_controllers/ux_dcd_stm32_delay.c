@@ -67,22 +67,23 @@
 VOID _ux_dcd_stm32_delay(ULONG usec)
 {
 	volatile ULONG ucount = 0;
-	ULONG ucount_local;
-	ULONG utime_local;
 
 	/* Calculate the time to wait in cycles. */
 	volatile ULONG utime = UX_DCD_STM32_CONTROLLER_DELAY * usec;
 
+	ULONG ucount_local;
+	ULONG utime_local;
+
 	/* Now loop to wait. */
 	do
 	{
-		/* Check the count.  Place volatile variables in non-volatile to avoid compiler confusion
-		 * regarding the order of volatile comparisons. */
+		/* Check the count. Place volatile variables in non-volatile to avoid
+		 * compiler confusion regarding the order of volatile comparisons. */
 		ucount_local = ++ucount;
 		utime_local = utime;
+
 		if (ucount_local > utime_local)
 			/* Done. */
 			return;
-
 	} while (1);
 }

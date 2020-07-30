@@ -74,17 +74,6 @@
 /**************************************************************************/
 UINT _ux_dcd_stm32_transfer_callback(UX_DCD_STM32* dcd_stm32, UX_SLAVE_TRANSFER* transfer_request)
 {
-//	ULONG stm32_register;
-//	UX_SLAVE_ENDPOINT* endpoint;
-//	UX_DCD_STM32_ED* ed;
-//	UCHAR* data_pointer;
-//	ULONG fifo_length;
-//	ULONG stm32_endpoint_index;
-//	ULONG endpoint_control_address;
-//	ULONG endpoint_size_address;
-//	ULONG endpoint_control;
-//	ULONG endpoint_size;
-
 	/* Get the pointer to the logical endpoint from the transfer request. */
 	UX_SLAVE_ENDPOINT* endpoint = transfer_request->ux_slave_transfer_request_endpoint;
 
@@ -155,7 +144,7 @@ UINT _ux_dcd_stm32_transfer_callback(UX_DCD_STM32* dcd_stm32, UX_SLAVE_TRANSFER*
 					*(transfer_request->ux_slave_transfer_request_setup + 6) == 0 &&
 					*(transfer_request->ux_slave_transfer_request_setup + 7) == 0)
 			{
-				/* In the case of a SETUP followed by NO data payload, we let the controller reply to the next 
+				/* In the case of a SETUP followed by NO data payload, we let the controller reply to the next
 				 zero length IN packet. Reset the length to transfer. */
 				transfer_request->ux_slave_transfer_request_in_transfer_length = 0;
 				transfer_request->ux_slave_transfer_request_requested_length = 0;

@@ -45,14 +45,14 @@
 #ifndef UX_DCD_STM32_H
 #define UX_DCD_STM32_H
 
-/* Define STM32 generic equivalences.  */
+/* Define STM32 generic equivalences. */
 #define UX_DCD_STM32_SLAVE_CONTROLLER                           0x80
 #define UX_DCD_STM32_MAX_ED                                     4
 #define UX_DCD_STM32_IN_FIFO                                    3
 #define UX_DCD_STM32_DATA_FIFO_OFFSET                           0x00001000
 #define UX_DCD_STM32_DATA_FIFO_SIZE                             0x00001000
 
-/* Define FIFO sizes in 4-byte resolution.  */
+/* Define FIFO sizes in 4-byte resolution. */
 #define UX_DCD_STM32_RX_FIFO_SIZE                               (512 / 4)
 #define UX_DCD_STM32_TX_FIFO_SIZE                               (512 / 4)
 #define UX_DCD_STM32_NP_TX_FIFO_SIZE                            (384 / 4)
@@ -67,7 +67,7 @@
 
 #define UX_DCD_STM32_CONTROLLER_DELAY                           72
 
-/* Define STM32 USB device controller CSR registers equivalences.  */
+/* Define STM32 USB device controller CSR registers equivalences. */
 #ifdef STM32F429I_DISCO_USBX
 #define UX_DCD_STM32_OTG_FS_FULL_SPEED                          0x40040000
 #else
@@ -101,8 +101,8 @@
 #define UX_DCD_STM32_OTG_FS_DVBUSDIS                            0x00000828
 #define UX_DCD_STM32_OTG_FS_DVBUSPULSE                          0x0000082C
 #define UX_DCD_STM32_OTG_FS_DIEPEMPMSK                          0x00000834
-#define UX_DCD_STM32_OTG_FS_DIEPCTL                             0x00000900
-#define UX_DCD_STM32_OTG_FS_DIEPINT                             0x00000908
+#define UX_DCD_STM32_OTG_FS_DIEPCTL                             0x00000900	/* OTG_HS Device Control IN EP0 control register */
+#define UX_DCD_STM32_OTG_FS_DIEPINT                             0x00000908	/* OTG_HS Device EPx interrupt register (x=1..5) */
 #define UX_DCD_STM32_OTG_FS_DIEPTSIZ                            0x00000910
 #define UX_DCD_STM32_OTG_FS_DTXFSTS                             0x00000918
 #define UX_DCD_STM32_OTG_FS_DOEPCTL                             0x00000B00
@@ -110,7 +110,7 @@
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ                            0x00000B10
 #define UX_DCD_STM32_OTG_FS_PCGCCTL                             0x00000E00
 
-/* Define STM32 USB device controller OTGCTL registers equivalences.  */
+/* Define STM32 USB device controller OTGCTL registers equivalences. */
 #define UX_DCD_STM32_OTG_FS_OTGCTL_SRQSCS                       0x00000001
 #define UX_DCD_STM32_OTG_FS_OTGCTL_SRQ                          0x00000002
 #define UX_DCD_STM32_OTG_FS_OTGCTL_HNGSCS                       0x00000100
@@ -122,7 +122,7 @@
 #define UX_DCD_STM32_OTG_FS_OTGCTL_ASVLD                        0x00040000
 #define UX_DCD_STM32_OTG_FS_OTGCTL_BSVLD                        0x00080000
 
-/* Define STM32 USB device controller GOTGINT register.  */
+/* Define STM32 USB device controller GOTGINT register. */
 #define UX_DCD_STM32_OTG_FS_GOTGINT_SEDET                       0x00000002
 #define UX_DCD_STM32_OTG_FS_GOTGINT_SRSSCHG                     0x00000100
 #define UX_DCD_STM32_OTG_FS_GOTGINT_HNSSCHG                     0x00000200
@@ -130,12 +130,12 @@
 #define UX_DCD_STM32_OTG_FS_GOTGINT_ADTOCHG                     0x00040000
 #define UX_DCD_STM32_OTG_FS_GOTGINT_DBCDNE                      0x00080000
 
-/* Define STM32 USB device controller GAHBCFG register.  */
+/* Define STM32 USB device controller GAHBCFG register. */
 #define UX_DCD_STM32_OTG_FS_GAHBCFG_GINT                        0x00000001
 #define UX_DCD_STM32_OTG_FS_GAHBCFG_TXFEVL                      0x00000100
 #define UX_DCD_STM32_OTG_FS_GAHBCFG_PTXFEVL                     0x00000200
 
-/* Define STM32 USB device controller GUSBCFG register.  */
+/* Define STM32 USB device controller GUSBCFG register. */
 #define UX_DCD_STM32_OTG_FS_GUSBCFG_TOCAL_MASK                  0x00000007
 #define UX_DCD_STM32_OTG_FS_GUSBCFG_PHYIF                       0x00000008
 #define UX_DCD_STM32_OTG_FS_GUSBCFG_ULPI_UTMI_SEL               0x00000010
@@ -152,7 +152,7 @@
 #define UX_DCD_STM32_OTG_FS_GUSBCFG_FDMOD                       0x40000000
 #define UX_DCD_STM32_OTG_FS_GUSBCFG_CTXPKT                      0x80000000
 
-/* Define STM32 USB device controller GRSTCTL register.  */
+/* Define STM32 USB device controller GRSTCTL register. */
 #define UX_DCD_STM32_OTG_FS_GRSTCTL_CSRST                       0x00000001
 #define UX_DCD_STM32_OTG_FS_GRSTCTL_HSRST                       0x00000002
 #define UX_DCD_STM32_OTG_FS_GRSTCTL_FCRST                       0x00000004
@@ -162,7 +162,7 @@
 #define UX_DCD_STM32_OTG_FS_GRSTCTL_TXFNUM_SHIFT                0x00000006
 #define UX_DCD_STM32_OTG_FS_GRSTCTL_AHBIDL                      0x80000000
 
-/* Define STM32 USB device controller GINTSTS register.  */
+/* Define STM32 USB device controller GINTSTS register. */
 #define UX_DCD_STM32_OTG_FS_GINTSTS_CMOD                        0x00000001
 #define UX_DCD_STM32_OTG_FS_GINTSTS_MMIS                        0x00000002
 #define UX_DCD_STM32_OTG_FS_GINTSTS_OTGINT                      0x00000004
@@ -207,7 +207,7 @@
 /** USB_OTG_GINTSTS_WKUINT				*/
 #define UX_DCD_STM32_OTG_FS_GINTSTS_WKUINT                      0x80000000
 
-/* Define STM32 USB device controller GINTMSK register.  */
+/* Define STM32 USB device controller GINTMSK register. */
 #define UX_DCD_STM32_OTG_FS_GINTMSK_MMISM                       0x00000002
 #define UX_DCD_STM32_OTG_FS_GINTMSK_OTGINT                      0x00000004
 #define UX_DCD_STM32_OTG_FS_GINTMSK_SOFM                        0x00000008
@@ -235,7 +235,7 @@
 #define UX_DCD_STM32_OTG_FS_GINTMSK_SRQINTM                     0x40000000
 #define UX_DCD_STM32_OTG_FS_GINTMSK_WKUINTM                     0x80000000
 
-/* Define STM32 USB device controller GRXSTSP register.  */
+/* Define STM32 USB device controller GRXSTSP register. */
 #define UX_DCD_STM32_OTG_FS_GRXSTSP_EPNUM_MASK                  0x0000000F
 #define UX_DCD_STM32_OTG_FS_GRXSTSP_EPNUM_SHIFT                 0x00000000
 #define UX_DCD_STM32_OTG_FS_GRXSTSP_BCNT_MASK                   0x00007FF0
@@ -247,20 +247,20 @@
 #define UX_DCD_STM32_OTG_FS_GRXSTSP_PKTSTS_OUT_RCVD             0x00000002
 #define UX_DCD_STM32_OTG_FS_GRXSTSP_PKTSTS_SETUP_RCVD           0x00000006
 
-/* Define STM32 USB device controller GRXFSIZ register.  */
+/* Define STM32 USB device controller GRXFSIZ register. */
 #define UX_DCD_STM32_OTG_FS_GRXFSIZ_RXFD_MASK                   0x0000FFFF
 
-/* Define STM32 USB device controller GNPTXFSIZ register.  */
+/* Define STM32 USB device controller GNPTXFSIZ register. */
 #define UX_DCD_STM32_OTG_FS_GNPTXFSIZ_NPTXFSA_MASK              0x0000FFFF
 #define UX_DCD_STM32_OTG_FS_GNPTXFSIZ_NPTXFSD_MASK              0xFFFF0000
 #define UX_DCD_STM32_OTG_FS_GNPTXFSIZ_NPTXFSD_SHIFT             0x00000010
 
-/* Define STM32 USB device controller DIEPTXF register.  */
+/* Define STM32 USB device controller DIEPTXF register. */
 #define UX_DCD_STM32_OTG_FS_DIEPTXF_INEPTXSA_MASK               0x0000FFFF
 #define UX_DCD_STM32_OTG_FS_DIEPTXF_INEPTXSD_MASK               0xFFFF0000
 #define UX_DCD_STM32_OTG_FS_DIEPTXF_INEPTXSD_SHIFT              0x00000010
 
-/* Define STM32 USB device controller DCFG register.  */
+/* Define STM32 USB device controller DCFG register. */
 #define UX_DCD_STM32_OTG_FS_DCFG_DSPD_MASK                      0x00000003
 #define UX_DCD_STM32_OTG_FS_DCFG_DSPD_FULL_SPEED                0x00000003
 #define UX_DCD_STM32_OTG_FS_DCFG_NZLSOHSK                       0x00000004
@@ -268,7 +268,7 @@
 #define UX_DCD_STM32_OTG_FS_DCFG_DAD_SHIFT                      0x00000004
 #define UX_DCD_STM32_OTG_FS_DCFG_PFVIL_MASK                     0x00001800
 
-/* Define STM32 USB device controller DCTL register.  */
+/* Define STM32 USB device controller DCTL register. */
 #define UX_DCD_STM32_OTG_FS_DCTL_RWUSIG                         0x00000001
 #define UX_DCD_STM32_OTG_FS_DCTL_SDIS                           0x00000002
 #define UX_DCD_STM32_OTG_FS_DCTL_GINSTS                         0x00000004
@@ -280,14 +280,14 @@
 #define UX_DCD_STM32_OTG_FS_DCTL_CGONAK                         0x00000400
 #define UX_DCD_STM32_OTG_FS_DCTL_POPRGDNE                       0x00000800
 
-/* Define STM32 USB device controller DSTS register.  */
+/* Define STM32 USB device controller DSTS register. */
 #define UX_DCD_STM32_OTG_FS_DSTS_SUSPSTS                        0x00000001
 #define UX_DCD_STM32_OTG_FS_DSTS_ENUMSPD_MASK                   0x00000006
 #define UX_DCD_STM32_OTG_FS_DSTS_ENUMSPD_FS                     0x00000006
 #define UX_DCD_STM32_OTG_FS_DSTS_ENUMSPD_HS                     0x00000000
 #define UX_DCD_STM32_OTG_FS_DSTS_ERR                            0x00000004
 
-/* Define STM32 USB device controller DIEPMSK register.  */
+/* Define STM32 USB device controller DIEPMSK register. */
 #define UX_DCD_STM32_OTG_FS_DIEPMSK_XFRCM                       0x00000001
 #define UX_DCD_STM32_OTG_FS_DIEPMSK_EPDM                        0x00000002
 #define UX_DCD_STM32_OTG_FS_DIEPMSK_TOM                         0x00000008
@@ -297,7 +297,7 @@
 #define UX_DCD_STM32_OTG_FS_DIEPMSK_TXFURM                      0x00000100
 #define UX_DCD_STM32_OTG_FS_DIEPMSK_BIM                         0x00000200
 
-/* Define STM32 USB device controller DOEPMSK register.  */
+/* Define STM32 USB device controller DOEPMSK register. */
 #define UX_DCD_STM32_OTG_FS_DOEPMSK_XFRCM                       0x00000001
 #define UX_DCD_STM32_OTG_FS_DOEPMSK_EPDM                        0x00000002
 #define UX_DCD_STM32_OTG_FS_DOEPMSK_STUPM                       0x00000008
@@ -306,19 +306,19 @@
 #define UX_DCD_STM32_OTG_FS_DOEPMSK_OPEM                        0x00000100
 #define UX_DCD_STM32_OTG_FS_DOEPMSK_BIM                         0x00000200
 
-/* Define STM32 USB device controller DAINT register.  */
+/* Define STM32 USB device controller DAINT register. */
 #define UX_DCD_STM32_OTG_FS_DAINT_IEPINT_MASK                   0x0000FFFF
 #define UX_DCD_STM32_OTG_FS_DAINT_IEPINT_SHIFT                  0x00000000
 #define UX_DCD_STM32_OTG_FS_DAINT_OEPINT_MASK                   0xFFFF0000
 #define UX_DCD_STM32_OTG_FS_DAINT_OEPINT_SHIFT                  0x00000010
 
-/* Define STM32 USB device controller DAINTMSK register.  */
+/* Define STM32 USB device controller DAINTMSK register. */
 #define UX_DCD_STM32_OTG_FS_DAINTMSK_IEPM_MASK                  0x0000FFFF
 #define UX_DCD_STM32_OTG_FS_DAINTMSK_IEPM_SHIFT                 0x00000000
 #define UX_DCD_STM32_OTG_FS_DAINTMSK_OEPM_MASK                  0xFFFF0000
 #define UX_DCD_STM32_OTG_FS_DAINTMSK_OEPM_SHIFT                 0x00000010
 
-/* Define STM32 USB device controller DIEPCTL0 register.  */
+/* Define STM32 USB device controller DIEPCTL0 register. */
 #define UX_DCD_STM32_OTG_FS_DIEPCTL0_MPSIZ_MASK                 0x00000003
 #define UX_DCD_STM32_OTG_FS_DIEPCTL0_MPSIZ_64                   0x00000000
 #define UX_DCD_STM32_OTG_FS_DIEPCTL0_MPSIZ_32                   0x00000001
@@ -334,7 +334,7 @@
 #define UX_DCD_STM32_OTG_FS_DIEPCTL0_EPDIS                      0x40000000
 #define UX_DCD_STM32_OTG_FS_DIEPCTL0_EPENA                      0x80000000
 
-/* Define STM32 USB device controller DIEPCTL register.  */
+/* OTG Device EPx control register (DIEPCTLx, where x = 1..5). */
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_MPSIZ_MASK                  0x000007FF
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_USBAEP                      0x00008000
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_EONUM                       0x00010000
@@ -345,15 +345,15 @@
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_EPTYP_BULK                  0x00080000
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_EPTYP_INTERRUPT             0x000C0000
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_STALL                       0x00200000
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_TXFNUM_MASK                 0x03C00000
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_TXFNUM_MASK                 0x03C00000	/* Bits 25:26 (mask) - TXFNUM - TxFIFO NUMber */
 #define UX_DCD_STM32_OTG_FS_DIEPCTL_TXFNUM_SHIFT                0x00000016
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_CNAK                        0x04000000
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_SNAK                        0x08000000
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_SD0PID                      0x10000000
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_EPDIS                       0x40000000
-#define UX_DCD_STM32_OTG_FS_DIEPCTL_EPENA                       0x80000000
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_CNAK                        0x04000000	/* Bit 26 - SNAK - Clear NAK */
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_SNAK                        0x08000000	/* Bit 27 - SNAK - Set NAK */
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_SD0PID                      0x10000000	/* Bit 28 - SD0PID - Set DATA0 PID */
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_EPDIS                       0x40000000	/* Bit 30 - EPDIS - EndPoint DISable */
+#define UX_DCD_STM32_OTG_FS_DIEPCTL_EPENA                       0x80000000	/* Bit 31 - EPENA - EndPoint ENAble */
 
-/* Define STM32 USB device controller DOEPCTL0 register.  */
+/* OTG_HS Device Control OUT EP0 control register (DOEPCTL0). */
 #define UX_DCD_STM32_OTG_FS_DOEPCTL0_MPSIZ_MASK                 0x00000003
 #define UX_DCD_STM32_OTG_FS_DOEPCTL0_MPSIZ_64                   0x00000000
 #define UX_DCD_STM32_OTG_FS_DOEPCTL0_MPSIZ_32                   0x00000001
@@ -368,7 +368,7 @@
 #define UX_DCD_STM32_OTG_FS_DOEPCTL0_EPDIS                      0x40000000
 #define UX_DCD_STM32_OTG_FS_DOEPCTL0_EPENA                      0x80000000
 
-/* Define STM32 USB device controller DOEPCTL register.  */
+/* Define STM32 USB device controller DOEPCTL register. */
 #define UX_DCD_STM32_OTG_FS_DOEPCTL_MPSIZ_MASK                  0x000007FF
 #define UX_DCD_STM32_OTG_FS_DOEPCTL_USBAEP                      0x00008000
 #define UX_DCD_STM32_OTG_FS_DOEPCTL_EONUM                       0x00010000
@@ -389,7 +389,7 @@
 #define UX_DCD_STM32_OTG_FS_DOEPCTL_EPDIS                       0x40000000
 #define UX_DCD_STM32_OTG_FS_DOEPCTL_EPENA                       0x80000000
 
-/* Define STM32 USB device controller DIEPINT register.  */
+/* Define STM32 USB device controller DIEPINT register. */
 /** USB_OTG_DIEPINT_XFRC	*/
 #define UX_DCD_STM32_OTG_FS_DIEPINT_XFRC                        0x00000001
 /** USB_OTG_DIEPINT_EPDISD	*/
@@ -405,11 +405,11 @@
 /** */
 #define UX_DCD_STM32_OTG_FS_DIEPINT_ALL                         0x000000DD
 
-/* Define STM32 USB device controller DIEPTSIZ register.  */
+/* Define STM32 USB device controller DIEPTSIZ register. */
 #define UX_DCD_STM32_OTG_FS_DIEPTSIZ_XFRSIZ_MASK                0x0000007F
 #define UX_DCD_STM32_OTG_FS_DIEPTSIZ_PKTCNT_SHIFT               19
 
-/* Define STM32 USB device controller DOEPINT register.  */
+/* Define STM32 USB device controller DOEPINT register. */
 /** USB_OTG_DOEPINT_XFRC	*/
 #define UX_DCD_STM32_OTG_FS_DOEPINT_XFRC                        0x00000001
 /** USB_OTG_DOEPINT_EPDISD	*/
@@ -423,14 +423,14 @@
 /** */
 #define UX_DCD_STM32_OTG_FS_DOEPINT_ALL                         0x0000005D
 
-/* Define STM32 USB device controller DOEPTSIZ register.  */
+/* Define STM32 USB device controller DOEPTSIZ register. */
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ_XFRSIZ_MASK                0x0000007F
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ_PKTCNT_SHIFT               19
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ_STUPCNT_MASK               0x60000000
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ_STUPCNT_SHIFT              29
 #define UX_DCD_STM32_OTG_FS_DOEPTSIZ_STUPCNT_DEFAULT            3
 
-/* Define STM32 USB device controller PCGCCTL register.  */
+/* Define STM32 USB device controller PCGCCTL register. */
 /** USB_OTG_PCGCCTL_STOPCLK	*/
 #define UX_DCD_STM32_OTG_FS_PCGCCTL_STPPCLK                     0x00000001
 /** USB_OTG_PCGCCTL_GATECLK	*/
@@ -438,33 +438,33 @@
 /** USB_OTG_PCGCCTL_PHYSUSP	*/
 #define UX_DCD_STM32_OTG_FS_PCGCCTL_PHYSUSP                     0x00000008
 
-/* Define STM32 USB device controller GCCFG register.  */
+/* Define STM32 USB device controller GCCFG register. */
 #define UX_DCD_STM32_OTG_FS_GCCFG_PWRDWN                        0x00010000
 #define UX_DCD_STM32_OTG_FS_GCCFG_I2CIFEN                       0x00020000
 #define UX_DCD_STM32_OTG_FS_GCCFG_VBUSSENSINGA                  0x00040000
 #define UX_DCD_STM32_OTG_FS_GCCFG_VBUSSENSINGB                  0x00080000
 #define UX_DCD_STM32_OTG_FS_GCCFG_VBDEN                         0x00200000
 
-/* Define USB STM32 physical endpoint status definition.  */
+/* Define USB STM32 physical endpoint status definition. */
 #define UX_DCD_STM32_ED_STATUS_UNUSED                            0
 #define UX_DCD_STM32_ED_STATUS_USED                              1
 #define UX_DCD_STM32_ED_STATUS_TRANSFER                          2
 #define UX_DCD_STM32_ED_STATUS_STALLED                           4
 
-/* Define USB STM32 physical endpoint state machine definition.  */
+/* Define USB STM32 physical endpoint state machine definition. */
 #define UX_DCD_STM32_ED_STATE_IDLE                               0
 #define UX_DCD_STM32_ED_STATE_DATA_TX                            1
 #define UX_DCD_STM32_ED_STATE_DATA_RX                            2
 #define UX_DCD_STM32_ED_STATE_STATUS_TX                          3
 #define UX_DCD_STM32_ED_STATE_STATUS_RX                          4
 
-/* Define USB STM32 endpoint transfer status definition.  */
+/* Define USB STM32 endpoint transfer status definition. */
 #define UX_DCD_STM32_ED_TRANSFER_STATUS_IDLE                     0
 #define UX_DCD_STM32_ED_TRANSFER_STATUS_SETUP                    1
 #define UX_DCD_STM32_ED_TRANSFER_STATUS_IN_COMPLETION            2
 #define UX_DCD_STM32_ED_TRANSFER_STATUS_OUT_COMPLETION           3
 
-/* Define USB STM32 physical endpoint structure.  */
+/* Define USB STM32 physical endpoint structure. */
 typedef struct UX_DCD_STM32_ED_STRUCT
 {
 	ULONG ux_dcd_stm32_ed_status;
@@ -478,7 +478,7 @@ typedef struct UX_DCD_STM32_ED_STRUCT
 	struct UX_SLAVE_ENDPOINT_STRUCT* ux_dcd_stm32_ed_endpoint;
 } UX_DCD_STM32_ED;
 
-/* Define USB STM32 DCD structure definition.  */
+/* Define USB STM32 DCD structure definition. */
 typedef struct UX_DCD_STM32_STRUCT
 {
 	struct UX_SLAVE_DCD_STRUCT* ux_dcd_stm32_dcd_owner;
@@ -487,7 +487,7 @@ typedef struct UX_DCD_STM32_STRUCT
 	ULONG ux_dcd_stm32_debug;
 } UX_DCD_STM32;
 
-/* Define USB STM32 DCD prototypes.  */
+/* Define USB STM32 DCD prototypes. */
 UINT _ux_dcd_stm32_address_set(UX_DCD_STM32* dcd_stm32, ULONG address);
 ULONG _ux_dcd_stm32_endpoint_register_address_get(UX_DCD_STM32_ED* ed);
 UINT _ux_dcd_stm32_endpoint_create(UX_DCD_STM32* dcd_stm32, UX_SLAVE_ENDPOINT* endpoint);

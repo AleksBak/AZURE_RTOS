@@ -1,4 +1,8 @@
 # AZURE_RTOS
+
+Description
+-----------
+
 Collection of examples of working with <b>Microsoft® Azure RTOS</b> on <b>STM32F746-Discovery</b>
 
 All projects work in the <b>STM2CubeIDE</b> environment. You can download and place all these

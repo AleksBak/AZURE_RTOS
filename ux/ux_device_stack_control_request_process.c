@@ -220,21 +220,28 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 			/* (0) For Device Reads the settings of the power supply (self or bus) and remote wakeup.
 			 * For Endpoint Reads the halt status. */
 			case UX_GET_STATUS:
+				DEBUG_PRINT("GET_STATUS: %04X, %04X\r\n", (UINT)request_type,
+						(UINT)request_index);
 				status = _ux_device_stack_get_status(request_type, request_index, request_length);
 				break;
 
 			/* (1) For Device Clears remote wakeup. For Endpoint Cancels the halt status (DATA PID = 0). */
 			case UX_CLEAR_FEATURE:
+				DEBUG_PRINT("GET_STATUS: %04X, %04X, %04X\r\n", (UINT)request_type,
+						(UINT)request_value, (UINT)request_index);
 				status = _ux_device_stack_clear_feature(request_type, request_value, request_index);
 				break;
 
 			/* (3) For Device Specifies remote wakeup or test mode. For Endpoint Specifies the halt status. */
 			case UX_SET_FEATURE:
+				DEBUG_PRINT("SET_FEATURE: %04X, %04X, %04X\r\n", (UINT)request_type,
+						(UINT)request_value, (UINT)request_index);
 				status = _ux_device_stack_set_feature(request_type, request_value, request_index);
 				break;
 
 			/* (5) Specifies the USB address */
 			case UX_SET_ADDRESS:
+				DEBUG_PRINT("SET_ADDRESS: %04X\r\n", (UINT)request_value);
 				/* Memorize the address. Some controllers memorize the address here. Some don't. */
 				dcd->ux_slave_dcd_device_address = request_value;
 
@@ -245,38 +252,47 @@ UINT _ux_device_stack_control_request_process(UX_SLAVE_TRANSFER* transfer_reques
 
 			/* (6) Reads the target descriptor (Device, Configuration, String) */
 			case UX_GET_DESCRIPTOR:
+				DEBUG_PRINT("GET_DESCRIPTOR: %04X, %04X\r\n", (UINT)request_value,
+						(UINT)request_index);
 				status = _ux_device_stack_descriptor_send(request_value, request_index,
 						request_length);
 				break;
 
 			/* (7) Changes the target descriptor (optional) */
 			case UX_SET_DESCRIPTOR:
+				DEBUG_PRINT("FUNCTION_NOT_SUPPORTED\r\n");
 				status = UX_FUNCTION_NOT_SUPPORTED;
 				break;
 
 			/* (8) Reads the currently specified configuration values */
 			case UX_GET_CONFIGURATION:
+				DEBUG_PRINT("GET_CONFIGURATION\r\n");
 				status = _ux_device_stack_configuration_get();
 				break;
 
 			/* (9) Specifies the configuration values */
 			case UX_SET_CONFIGURATION:
 				status = _ux_device_stack_configuration_set(request_value);
+				DEBUG_PRINT("SET_CONFIGURATION: %04X STATUS: %04X\r\n", (UINT)request_value, status);
 				break;
 
 			/* (10) Reads the alternatively specified value among the currently specified values of
 			 * the target interface */
 			case UX_GET_INTERFACE:
+				DEBUG_PRINT("GET_INTERFACE: %04X\r\n", (UINT)request_index);
 				status = _ux_device_stack_alternate_setting_get(request_index);
 				break;
 
 			/* (11) Specifies the alternatively specified value of the target interface */
 			case UX_SET_INTERFACE:
+				DEBUG_PRINT("SET_INTERFACE: %04X, %04X\r\n", (UINT)request_index,
+						(UINT)request_value);
 				status = _ux_device_stack_alternate_setting_set(request_index, request_value);
 				break;
 
 			/* (12) Reads frame-synchronous data */
 			case UX_SYNCH_FRAME:
+				DEBUG_PRINT("SYNCH_FRAME\r\n");
 				status = UX_SUCCESS;
 				break;
 

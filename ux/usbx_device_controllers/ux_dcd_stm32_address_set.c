@@ -9,11 +9,10 @@
 /*                                                                        */
 /**************************************************************************/
 
-
 /**************************************************************************/
 /**************************************************************************/
-/**                                                                       */ 
-/** USBX Component                                                        */ 
+/**                                                                       */
+/** USBX Component                                                        */
 /**                                                                       */
 /**   STM32 Controller Driver                                             */
 /**                                                                       */
@@ -22,13 +21,10 @@
 
 #define UX_SOURCE_CODE
 
-
-/* Include necessary system files.  */
-
+/* Include necessary system files. */
 #include "ux_api.h"
 #include "ux_dcd_stm32.h"
 #include "ux_device_stack.h"
-
 
 /**************************************************************************/
 /*                                                                        */
@@ -52,33 +48,33 @@
 /*                                                                        */
 /*  OUTPUT                                                                */
 /*                                                                        */
-/*    Completion Status                                                   */ 
+/*    Completion Status                                                   */
 /*                                                                        */
-/*  CALLS                                                                 */ 
+/*  CALLS                                                                 */
 /*                                                                        */
-/*    _ux_dcd_stm32_register_write          Write register                */ 
-/*                                                                        */ 
-/*  CALLED BY                                                             */ 
-/*                                                                        */ 
+/*    _ux_dcd_stm32_register_write          Write register                */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
 /*    STM32 Controller Driver                                             */
-/*                                                                        */ 
-/*  RELEASE HISTORY                                                       */ 
-/*                                                                        */ 
-/*    DATE              NAME                      DESCRIPTION             */ 
-/*                                                                        */ 
+/*                                                                        */
+/*  RELEASE HISTORY                                                       */
+/*                                                                        */
+/*    DATE              NAME                      DESCRIPTION             */
+/*                                                                        */
 /*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-UINT  _ux_dcd_stm32_address_set(UX_DCD_STM32 *dcd_stm32, ULONG address)
+UINT _ux_dcd_stm32_address_set(UX_DCD_STM32* dcd_stm32, ULONG address)
 {
+    /* Clear the previous address. */
+    _ux_dcd_stm32_register_clear(dcd_stm32, UX_DCD_STM32_OTG_FS_DCFG,
+            UX_DCD_STM32_OTG_FS_DCFG_DAD_MASK);
 
-    /* Clear the previous address.  */
-    _ux_dcd_stm32_register_clear(dcd_stm32, UX_DCD_STM32_OTG_FS_DCFG, UX_DCD_STM32_OTG_FS_DCFG_DAD_MASK);
-    
-    /* Store the new address of the device.  */
-    _ux_dcd_stm32_register_set(dcd_stm32, UX_DCD_STM32_OTG_FS_DCFG, address << UX_DCD_STM32_OTG_FS_DCFG_DAD_SHIFT);
+    /* Store the new address of the device. */
+    _ux_dcd_stm32_register_set(dcd_stm32, UX_DCD_STM32_OTG_FS_DCFG,
+            address << UX_DCD_STM32_OTG_FS_DCFG_DAD_SHIFT);
 
-    /* This function always succeeds.  */
-    return(UX_SUCCESS);         
+    /* This function always succeeds. */
+    return (UX_SUCCESS);
 }
-

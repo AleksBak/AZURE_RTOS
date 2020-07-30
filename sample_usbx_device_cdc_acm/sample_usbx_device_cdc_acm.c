@@ -33,8 +33,8 @@ void hardware_setup(void);
 
 /* Define local function prototypes */
 void demo_thread_entry(ULONG arg);
-void demo_cdc_instance_activate(   void* cdc_instance);
-void demo_cdc_instance_deactivate( void* cdc_instance);
+void demo_cdc_instance_activate(void* cdc_instance);
+void demo_cdc_instance_deactivate(void* cdc_instance);
 void demo_cdc_acm_parameter_change(void* cdc_instance);
 void USB_OTG_BSP_HS_Init(void);
 
@@ -80,143 +80,144 @@ void USB_OTG_BSP_HS_Init(void);
 #define INTERF_DAT_NUM						0x01		/* Data Interface (1) */
 #endif
 
+
 /* UCHAR device_framework_full_speed[] */
 #if 1
 UCHAR device_framework_full_speed[] =
 {
-	/* Device Descriptor (must be first in this array) */
-	0x12,										/* 0 bLength */
-	UX_DEVICE_DESCRIPTOR_ITEM,					/* 1 bDescriptorType     : Device Descriptor */
-	0x00,										/* 2 bcdUSB */
-	0x02,										/* 3 bcdUSB */
-	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
-	0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
-	0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
-	0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
-	LOBYTE(USBD_VID),							/* 8 idVendor */
-	HIBYTE(USBD_VID),							/* 9 idVendor */
-	LOBYTE(USBD_PID),							/* 10 idProduct */
-	HIBYTE(USBD_PID),							/* 11 idProduct */
-	LOBYTE(USBD_DEV),							/* 12 bcdDevice */
-	HIBYTE(USBD_DEV),							/* 13 bcdDevice */
-	0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
-	0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
-	0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
-	0x01,										/* 17 bNumConfigurations : 1 Configuration used */
+    /* Device Descriptor (must be first in this array) */
+    0x12,										/* 0 bLength */
+    UX_DEVICE_DESCRIPTOR_ITEM,					/* 1 bDescriptorType     : Device Descriptor */
+    0x00,										/* 2 bcdUSB */
+    0x02,										/* 3 bcdUSB */
+    USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
+    0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
+    0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
+    0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
+    LOBYTE(USBD_VID),							/* 8 idVendor */
+    HIBYTE(USBD_VID),							/* 9 idVendor */
+    LOBYTE(USBD_PID),							/* 10 idProduct */
+    HIBYTE(USBD_PID),							/* 11 idProduct */
+    LOBYTE(USBD_DEV),							/* 12 bcdDevice */
+    HIBYTE(USBD_DEV),							/* 13 bcdDevice */
+    0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
+    0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
+    0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
+    0x01,										/* 17 bNumConfigurations : 1 Configuration used */
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* Configuration Descriptor */
-	0x09,										/* 0 bLength */
-	UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
-	0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
-	0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
-	0x02,										/* 4 bNumInterfaces      : 2 Interfaces */
-	0x01,										/* 5 bConfigurationValue : Configuration 1 */
-	0x00,										/* 6 iConfiguration      : No String Descriptor */
-	0x80 | (1 << 6) | (0 << 5),					/* 7 bmAttributes        : D7-Reserved, set 1; D6-Self Powered; D5-Remote Wakeup; D4..0-Reserved, set 0 */
-	0x32,										/* 8 bMaxPower           : 0x32 = 100 mA */
+    /* Configuration Descriptor */
+    0x09,										/* 0 bLength */
+    UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
+    0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
+    0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
+    0x02,										/* 4 bNumInterfaces      : 2 Interfaces */
+    0x01,										/* 5 bConfigurationValue : Configuration 1 */
+    0x00,										/* 6 iConfiguration      : No String Descriptor */
+    0x80 | (1 << 6) | (0 << 5),					/* 7 bmAttributes        : D7-Reserved, set 1; D6-Self Powered; D5-Remote Wakeup; D4..0-Reserved, set 0 */
+    0x32,										/* 8 bMaxPower           : 0x32 = 100 mA */
 
-	/* Interface Association Descriptor (IAD) (should be declared before the Interfaces and contain
-	 * the first interface of the CDC-ACM class and how many interfaces are attached) */
-	0x08,										/* 0 bLength */
-	UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : */
-	INTERF_COM_NUM,								/* 2 bFirstInterface     : */
-	0x02,										/* 3 bInterfaceCount     : */
-	0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
-	0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
-	0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
-	0x00,										/* 7 iFunction           : No String Descriptor */
+    /* Interface Association Descriptor (IAD) (should be declared before the Interfaces and contain
+     * the first interface of the CDC-ACM class and how many interfaces are attached) */
+    0x08,										/* 0 bLength */
+    UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : */
+    INTERF_COM_NUM,								/* 2 bFirstInterface     : */
+    0x02,										/* 3 bInterfaceCount     : */
+    0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
+    0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
+    0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
+    0x00,										/* 7 iFunction           : No String Descriptor */
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* (not used by USBX) */
+    /* (not used by USBX) */
 #if 1
-	/* Header Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x00,										/* 2 bDescriptorSubtype     : HEADER (0x00) */
-	0x10,										/* 3 bcdCDC                 : CDC Version 1.10 */
-	0x01,										/* 4 bcdCDC */
+    /* Header Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x00,										/* 2 bDescriptorSubtype     : HEADER (0x00) */
+    0x10,										/* 3 bcdCDC                 : CDC Version 1.10 */
+    0x01,										/* 4 bcdCDC */
 
-	/* Call Management Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x01,										/* 2 bDescriptorSubtype     : CALL MANAGEMENT (0x01) */
-	0x03,										/* 3 bmCapabilities */
-	INTERF_DAT_NUM,								/* 4 bDataInterface */
+    /* Call Management Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x01,										/* 2 bDescriptorSubtype     : CALL MANAGEMENT (0x01) */
+    0x03,										/* 3 bmCapabilities */
+    INTERF_DAT_NUM,								/* 4 bDataInterface */
 
-	/* Abstract Control Management (ACM) Functional Descriptor */
-	0x04,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
-	0x02,										/* 3 bmCapabilities         : Supports subset of ACM commands:
-					D7..4	: 0x00 (Reserved)
-					D3		: 0x00 (not supports the notification Network_Connection)
-					D2		: 0x00 (not supports the request Send_Break)
-					D1		: 0x01 (supports the request combination of Set_Line_Coding,
-							  Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State)
-					D0		: 0x00 (not supports the request combination of Set_Comm_Feature,
-							  Clear_Comm_Feature, and Get_Comm_Feature) */
+    /* Abstract Control Management (ACM) Functional Descriptor */
+    0x04,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
+    0x02,										/* 3 bmCapabilities         : Supports subset of ACM commands:
+                    D7..4	: 0x00 (Reserved)
+                    D3		: 0x00 (not supports the notification Network_Connection)
+                    D2		: 0x00 (not supports the request Send_Break)
+                    D1		: 0x01 (supports the request combination of Set_Line_Coding,
+                              Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State)
+                    D0		: 0x00 (not supports the request combination of Set_Comm_Feature,
+                              Clear_Comm_Feature, and Get_Comm_Feature) */
 
-	/* Union Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x06,										/* 2 bDescriptorSubtype     : UNION (0x06) */
-	INTERF_COM_NUM,								/* 3 bControlInterface      : Interface 0 */
-	INTERF_DAT_NUM,								/* 4 bSubordinateInterface0 : Interface 1 */
+    /* Union Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x06,										/* 2 bDescriptorSubtype     : UNION (0x06) */
+    INTERF_COM_NUM,								/* 3 bControlInterface      : Interface 0 */
+    INTERF_DAT_NUM,								/* 4 bSubordinateInterface0 : Interface 1 */
 #endif
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* Command Interface Descriptor */
-	0x09,										/* 0 bLength */
-	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Identification number of this Interface */
-	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
-	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
-	USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
-	USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
-	USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
-	0x00,										/* 8 iInterface Index    : No String Descriptor */
+    /* Command Interface Descriptor */
+    0x09,										/* 0 bLength */
+    UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
+    INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Identification number of this Interface */
+    0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+    0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
+    USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
+    USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
+    USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
+    0x00,										/* 8 iInterface Index    : No String Descriptor */
 
-	/* Command Endpoint Descriptor */
-	0x07,										/* 0 bLength */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
-	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
-	LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
-	HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
-	CDC_FS_BINTERVAL,							/* 6 bInterval           : */
+    /* Command Endpoint Descriptor */
+    0x07,										/* 0 bLength */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
+    UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
+    LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
+    HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
+    CDC_FS_BINTERVAL,							/* 6 bInterval           : */
 
-	/* Data Interface Descriptor */
-	0x09,										/* 0 bLength */
-	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
-	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
-	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
-	USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
-	0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
-	0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
-	0x00,										/* 8 iInterface Index    : No string descriptor */
+    /* Data Interface Descriptor */
+    0x09,										/* 0 bLength */
+    UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
+    INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+    0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+    0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
+    USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
+    0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
+    0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
+    0x00,										/* 8 iInterface Index    : No string descriptor */
 
-	/* Data Endpoint Descriptor (IN) */
-	0x07,										/* 0 bLength */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
-	LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
-	HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
-	0x00,										/* 6 bInterval           : never NAKs */
+    /* Data Endpoint Descriptor (IN) */
+    0x07,										/* 0 bLength */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
+    UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
+    LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
+    HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
+    0x00,										/* 6 bInterval           : never NAKs */
 
-	/* Data Endpoint Descriptor (OUT) */
-	0x07,										/* 0 bLength: Endpoint Descriptor size */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
-	LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
-	HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
-	0x00,										/* 6 bInterval           : never NAKs */
+    /* Data Endpoint Descriptor (OUT) */
+    0x07,										/* 0 bLength: Endpoint Descriptor size */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
+    UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
+    LOBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
+    HIBYTE(CDC_DATA_FS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
+    0x00,										/* 6 bInterval           : never NAKs */
 };
 #endif
 
@@ -224,178 +225,178 @@ UCHAR device_framework_full_speed[] =
 #if 1
 UCHAR device_framework_high_speed[] =
 {
-	/* Device Descriptor (must be first in this array) */
-	0x12,										/* 0 bLength */
-	UX_DEVICE_DESCRIPTOR_ITEM,					/* 1 bDescriptorType     : Device Descriptor */
+    /* Device Descriptor (must be first in this array) */
+    0x12,										/* 0 bLength */
+    UX_DEVICE_DESCRIPTOR_ITEM,					/* 1 bDescriptorType     : Device Descriptor */
 #if (USBD_LPM_ENABLED == 1)
-	/* changed to USB version 2.01 in order to support LPM L1 suspend resume test of USBCV3.0 */
-	0x01,										/* 2 bcdUSB */
-	0x02,										/* 3 bcdUSB */
+    /* changed to USB version 2.01 in order to support LPM L1 suspend resume test of USBCV3.0 */
+    0x01,										/* 2 bcdUSB */
+    0x02,										/* 3 bcdUSB */
 #else
-	0x00,										/* 2 bcdUSB */
-	0x02,										/* 3 bcdUSB */
+    0x00,										/* 2 bcdUSB */
+    0x02,										/* 3 bcdUSB */
 #endif
-	USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
-	0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
-	0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
-	0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
-	LOBYTE(USBD_VID),							/* 8 idVendor */
-	HIBYTE(USBD_VID),							/* 9 idVendor */
-	LOBYTE(USBD_PID),							/* 10 idProduct */
-	HIBYTE(USBD_PID),							/* 11 idProduct */
-	LOBYTE(USBD_DEV),							/* 12 bcdDevice */
-	HIBYTE(USBD_DEV),							/* 13 bcdDevice */
-	0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
-	0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
-	0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
-	0x01,										/* 17 bNumConfigurations : 1 Configuration used */
+    USB_CLASS_MISCELLANEOUS,					/* 4 bDeviceClass        : if there 3 bytes one by one are equal */
+    0x02,										/* 5 bDeviceSubClass     : to 0xEF, 0x02 and 0x01,  */
+    0x01,										/* 6 bDeviceProtocol     : then here Composite Device with IAD (see below) */
+    0x40,										/* 7 bMaxPacketSize0     : (only 8, 16, 32, or 64 are valid) */
+    LOBYTE(USBD_VID),							/* 8 idVendor */
+    HIBYTE(USBD_VID),							/* 9 idVendor */
+    LOBYTE(USBD_PID),							/* 10 idProduct */
+    HIBYTE(USBD_PID),							/* 11 idProduct */
+    LOBYTE(USBD_DEV),							/* 12 bcdDevice */
+    HIBYTE(USBD_DEV),							/* 13 bcdDevice */
+    0x01,										/* 14 iManufacturer      : Index of Manufacturer string (String Descriptor 1) */
+    0x02,										/* 15 iProduct           : Index of Product string (String Descriptor 2) */
+    0x03,										/* 16 iSerialNumber      : Index of Serial Number string (String Descriptor 3) */
+    0x01,										/* 17 bNumConfigurations : 1 Configuration used */
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
 #if (USBD_LPM_ENABLED == 1)
-	/* Binary Object Store (BOS) Descriptor */
-	0x05,										/* 0 bLength */
-	UX_BOS_DESCRIPTOR_ITEM,						/* 1 bDescriptorType */
-	0x0C,										/* 2 wTotalLength        : Length of this descriptor and all of its sub descriptors */
-	0x00,										/* 3 wTotalLength        : Length of this descriptor and all of its sub descriptors */
-	0x01,										/* 4 bNumDeviceCaps      : The number of separate device capability descriptors in the BOS */
+    /* Binary Object Store (BOS) Descriptor */
+    0x05,										/* 0 bLength */
+    UX_BOS_DESCRIPTOR_ITEM,						/* 1 bDescriptorType */
+    0x0C,										/* 2 wTotalLength        : Length of this descriptor and all of its sub descriptors */
+    0x00,										/* 3 wTotalLength        : Length of this descriptor and all of its sub descriptors */
+    0x01,										/* 4 bNumDeviceCaps      : The number of separate device capability descriptors in the BOS */
 
-	/* Device Capability Descriptor (USB 2.0 Extension Descriptor) */
-	0x07,										/* 0 bLength */
-	UX_BOS_DEVICE_CAPABILITY_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : Device Capability Descriptor */
-	0x02,										/* 2 bDevCapabilityType  : USB 2.0 Extension */
-	0x02,										/* 3 dev_capability_data : size varies - LPM capability bit set */
-	0x00,										/* 4 dev_capability_data : size varies */
-	0x00,										/* 5 dev_capability_data : size varies */
-	0x00,										/* 6 dev_capability_data : size varies */
+    /* Device Capability Descriptor (USB 2.0 Extension Descriptor) */
+    0x07,										/* 0 bLength */
+    UX_BOS_DEVICE_CAPABILITY_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : Device Capability Descriptor */
+    0x02,										/* 2 bDevCapabilityType  : USB 2.0 Extension */
+    0x02,										/* 3 dev_capability_data : size varies - LPM capability bit set */
+    0x00,										/* 4 dev_capability_data : size varies */
+    0x00,										/* 5 dev_capability_data : size varies */
+    0x00,										/* 6 dev_capability_data : size varies */
 #endif
 
-	/* Device Qualifier Descriptor (describes information about a high-speed capable device that
-	 * would change if the device were operating at the other speed) */
-	0x0A,										/* 0 bLength */
-	UX_DEVICE_QUALIFIER_DESCRIPTOR_ITEM,		/* 1 bDescriptorType */
-	0x00,										/* 2 bcdUSB              : 0x0200 (must be at least 2.0) */
-	0x02,										/* 3 bcdUSB */
-	USB_CLASS_COMMUNICATIONS,					/* 4 bDeviceClass        : Device Class */
-	0x00,										/* 5 bDeviceSubClass     : none */
-	0x00,										/* 6 bDeviceProtocol     : none */
-	0x40,										/* 7 bMaxPacketSize      : size for other speed*/
-	0x01,										/* 8 bNumConfigs         : 1 (number of Other-speed Configurations) */
-	0x00,										/* 9 bReserved           : 0 (must be zero) */
+    /* Device Qualifier Descriptor (describes information about a high-speed capable device that
+     * would change if the device were operating at the other speed) */
+    0x0A,										/* 0 bLength */
+    UX_DEVICE_QUALIFIER_DESCRIPTOR_ITEM,		/* 1 bDescriptorType */
+    0x00,										/* 2 bcdUSB              : 0x0200 (must be at least 2.0) */
+    0x02,										/* 3 bcdUSB */
+    USB_CLASS_COMMUNICATIONS,					/* 4 bDeviceClass        : Device Class */
+    0x00,										/* 5 bDeviceSubClass     : none */
+    0x00,										/* 6 bDeviceProtocol     : none */
+    0x40,										/* 7 bMaxPacketSize      : size for other speed*/
+    0x01,										/* 8 bNumConfigs         : 1 (number of Other-speed Configurations) */
+    0x00,										/* 9 bReserved           : 0 (must be zero) */
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* Configuration Descriptor */
-	0x09,										/* 0 bLength */
-	UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
-	0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
-	0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
-	0x02,										/* 4 bNumInterfaces      : 2 Interfaces used */
-	0x01,										/* 5 bConfigurationValue : Configuration 1 */
-	0x00,										/* 6 iConfiguration      : No String Descriptor */
-	0x80 | (1 << 6) | (0 << 5),					/* 7 bmAttributes        : D7-Reserved, set 1; D6-Self Powered; D5-Remote Wakeup; D4..0-Reserved, set 0 */
-	0x32,										/* 8 bMaxPower           : 0x32 = 100 mA, 0xFA = 500 mA */
+    /* Configuration Descriptor */
+    0x09,										/* 0 bLength */
+    UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
+    0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
+    0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
+    0x02,										/* 4 bNumInterfaces      : 2 Interfaces used */
+    0x01,										/* 5 bConfigurationValue : Configuration 1 */
+    0x00,										/* 6 iConfiguration      : No String Descriptor */
+    0x80 | (1 << 6) | (0 << 5),					/* 7 bmAttributes        : D7-Reserved, set 1; D6-Self Powered; D5-Remote Wakeup; D4..0-Reserved, set 0 */
+    0x32,										/* 8 bMaxPower           : 0x32 = 100 mA, 0xFA = 500 mA */
 
-	/* Interface Association Descriptor (IAD) (should be declared before the Interfaces and contain
-	 * the first interface of the CDC-ACM class and how many interfaces are attached) */
-	0x08,										/* 0 bLength */
-	UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : */
-	INTERF_COM_NUM,								/* 2 bFirstInterface     : */
-	0x02,										/* 3 bInterfaceCount     : */
-	0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
-	0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
-	0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
-	0x00,										/* 7 iFunction           : No String Descriptor */
+    /* Interface Association Descriptor (IAD) (should be declared before the Interfaces and contain
+     * the first interface of the CDC-ACM class and how many interfaces are attached) */
+    0x08,										/* 0 bLength */
+    UX_INTERFACE_ASSOCIATION_DESCRIPTOR_ITEM,	/* 1 bDescriptorType     : */
+    INTERF_COM_NUM,								/* 2 bFirstInterface     : */
+    0x02,										/* 3 bInterfaceCount     : */
+    0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
+    0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
+    0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
+    0x00,										/* 7 iFunction           : No String Descriptor */
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* (not used by USBX) */
+    /* (not used by USBX) */
 #if 1
-	/* Header Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x00,										/* 2 bDescriptorSubtype     : HEADER (0x00) */
-	0x10,										/* 3 bcdCDC                 : CDC Version 1.10 */
-	0x01,										/* 4 bcdCDC */
+    /* Header Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x00,										/* 2 bDescriptorSubtype     : HEADER (0x00) */
+    0x10,										/* 3 bcdCDC                 : CDC Version 1.10 */
+    0x01,										/* 4 bcdCDC */
 
-	/* Call Management Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x01,										/* 2 bDescriptorSubtype     : CALL MANAGEMENT (0x01) */
-	0x03,										/* 3 bmCapabilities */
-	INTERF_DAT_NUM,								/* 4 bDataInterface */
+    /* Call Management Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x01,										/* 2 bDescriptorSubtype     : CALL MANAGEMENT (0x01) */
+    0x00,								/*0x03*//* 3 bmCapabilities */
+    INTERF_DAT_NUM,								/* 4 bDataInterface */
 
-	/* Abstract Control Management (ACM) Functional Descriptor */
-	0x04,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
-	0x02,										/* 3 bmCapabilities         : Supports subset of ACM commands:
-					D7..4	: 0x00 (Reserved)
-					D3		: 0x00 (not supports the notification Network_Connection)
-					D2		: 0x00 (not supports the request Send_Break)
-					D1		: 0x01 (supports the request combination of Set_Line_Coding,
-							  Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State)
-					D0		: 0x00 (not supports the request combination of Set_Comm_Feature,
-							  Clear_Comm_Feature, and Get_Comm_Feature) */
+    /* Abstract Control Management (ACM) Functional Descriptor */
+    0x04,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
+    0x02,										/* 3 bmCapabilities         : Supports subset of ACM commands:
+                    D7..4	: 0x00 (Reserved)
+                    D3		: 0x00 (not supports the notification Network_Connection)
+                    D2		: 0x00 (not supports the request Send_Break)
+                    D1		: 0x01 (supports the request combination of Set_Line_Coding,
+                              Set_Control_Line_State, Get_Line_Coding, and the notification Serial_State)
+                    D0		: 0x00 (not supports the request combination of Set_Comm_Feature,
+                              Clear_Comm_Feature, and Get_Comm_Feature) */
 
-	/* Union Functional Descriptor */
-	0x05,										/* 0 bFunctionLength */
-	USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
-	0x06,										/* 2 bDescriptorSubtype     : UNION (0x06) */
-	INTERF_COM_NUM,								/* 3 bControlInterface      : Interface 0 */
-	INTERF_DAT_NUM,								/* 4 bSubordinateInterface0 : Interface 1 */
+    /* Union Functional Descriptor */
+    0x05,										/* 0 bFunctionLength */
+    USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
+    0x06,										/* 2 bDescriptorSubtype     : UNION (0x06) */
+    INTERF_COM_NUM,								/* 3 bControlInterface      : Interface 0 */
+    INTERF_DAT_NUM,								/* 4 bSubordinateInterface0 : Interface 1 */
 #endif
 
-	/*--------------------------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------------*/
 
-	/* Command Interface Descriptor */
-	0x09,										/* 0 bLength */
-	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
-	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
-	0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
-	USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
-	USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
-	USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
-	0x00,										/* 8 iInterface Index    : No string descriptor */
+    /* Command Interface Descriptor */
+    0x09,										/* 0 bLength */
+    UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
+    INTERF_COM_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+    0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+    0x01,										/* 4 bNumEndpoints       : 1 Endpoint for this Command Interface */
+    USB_CLASS_COMMUNICATIONS,					/* 5 bInterfaceClass     : Communications and CDC Control (0x02) */
+    USB_CDC_ACM_SUBCLASS,						/* 6 bInterfaceSubClass  : Abstract Control Model (0x02) */
+    USB_CDC_AT_COMMAND_PROTOCOL,				/* 7 bInterfaceProtocol  : AT Commands defined by ITU-T V.250 etc (0x01) */
+    0x00,										/* 8 iInterface Index    : No string descriptor */
 
-	/* Command Endpoint Descriptor */
-	0x07,										/* 0 bLength */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
-	UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
-	LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
-	HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
-	CDC_HS_BINTERVAL,							/* 6 bInterval           : */
+    /* Command Endpoint Descriptor */
+    0x07,										/* 0 bLength */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_IN | 3),						/* 2 bEndpointAddress    : IN EP address for CDC commands (3 or 2) */
+    UX_INTERRUPT_ENDPOINT,						/* 3 bmAttributes        : EP type is Interrupt */
+    LOBYTE(CDC_CMD_PACKET_SIZE),				/* 4 wMaxPacketSize */
+    HIBYTE(CDC_CMD_PACKET_SIZE),				/* 5 wMaxPacketSize */
+    CDC_HS_BINTERVAL,							/* 6 bInterval           : */
 
-	/* Data Interface Descriptor */
-	0x09,										/* 0 bLength */
-	UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
-	INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
-	0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
-	0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
-	USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
-	0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
-	0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
-	0x00,										/* 8 iInterface Index    : No string descriptor */
+    /* Data Interface Descriptor */
+    0x09,										/* 0 bLength */
+    UX_INTERFACE_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Interface Descriptor */
+    INTERF_DAT_NUM,								/* 2 bInterfaceNumber    : Index of this Interface */
+    0x00,										/* 3 bAlternateSetting   : No alternate for 'SET INTERFACE' Request */
+    0x02,										/* 4 bNumEndpoints       : 2 Endpoints for this Data Interface */
+    USB_CLASS_CDC_DATA,							/* 5 bInterfaceClass     : Data Interface Class (0x0A) */
+    0x00,										/* 6 bInterfaceSubClass  : No class specific subclass required */
+    0x00,										/* 7 bInterfaceProtocol  : No class specific protocol required */
+    0x00,										/* 8 iInterface Index    : No string descriptor */
 
-	/* Data Endpoint Descriptor (IN) */
-	0x07,										/* 0 bLength */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
-	LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
-	HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
-	0x00,										/* 6 bInterval           : never NAKs */
+    /* Data Endpoint Descriptor (IN) */
+    0x07,										/* 0 bLength */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_IN | 1),						/* 2 bEndpointAddress    : EP address for Data IN (1) */
+    UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
+    LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
+    HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
+    0x00,										/* 6 bInterval           : never NAKs */
 
-	/* Data Endpoint Descriptor (OUT) */
-	0x07,										/* 0 bLength: Endpoint Descriptor size */
-	UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
-	(UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
-	UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
-	LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
-	HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
-	0x00,										/* 6 bInterval           : never NAKs */
+    /* Data Endpoint Descriptor (OUT) */
+    0x07,										/* 0 bLength: Endpoint Descriptor size */
+    UX_ENDPOINT_DESCRIPTOR_ITEM,				/* 1 bDescriptorType     : Endpoint Descriptor */
+    (UX_ENDPOINT_OUT | 2),						/* 2 bEndpointAddress    : EP address for Data OUT (2 or 1) */
+    UX_BULK_ENDPOINT,							/* 3 bmAttributes        : EP type is Bulk */
+    LOBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 4 wMaxPacketSize */
+    HIBYTE(CDC_DATA_HS_MAX_PACKET_SIZE),		/* 5 wMaxPacketSize */
+    0x00,										/* 6 bInterval           : never NAKs */
 };
 #endif
 
@@ -406,62 +407,61 @@ UCHAR device_framework_high_speed[] =
  * the length adjusted accordingly. */
 UCHAR language_id_framework[] =
 {
-	/* String Descriptor 0 (Language) */
-	0x09, 0x04									/* English - United States */
+    /* String Descriptor 0 (Language) */
+    0x09, 0x04									/* English - United States */
 };
 
 UCHAR string_framework[] =
 {
-	/* String Descriptor 1 (Manufacturer - see 'Device Descriptor') */
-	0x09, 0x04,						/* English - United States */
-	0x01,							/* Index of the descriptor */
+    /* String Descriptor 1 (Manufacturer - see 'Device Descriptor') */
+    0x09, 0x04,						/* English - United States */
+    0x01,							/* Index of the descriptor */
 #if (USB_ID_SETTINGS == 1)
-	0x12,							/* Length of string below (ASCII) */
-	'S', 'T', 'M', 'i', 'c', 'r', 'o', 'e', 'l', 'e', 'c', 't', 'r', 'o', 'n', 'i', 'c', 's',
+    0x12,							/* Length of string below (ASCII) */
+    'S', 'T', 'M', 'i', 'c', 'r', 'o', 'e', 'l', 'e', 'c', 't', 'r', 'o', 'n', 'i', 'c', 's',
 #elif (USB_ID_SETTINGS == 2)
-	0x0C,							/* Length of string below (ASCII) */
-	'E', 'x', 'p', 'r', 'e', 's', ' ', 'L', 'o', 'g', 'i', 'c',
+    0x0C,							/* Length of string below (ASCII) */
+    'E', 'x', 'p', 'r', 'e', 's', ' ', 'L', 'o', 'g', 'i', 'c',
 #elif (USB_ID_SETTINGS == 3)
-	0x0C,							/* Length of string below (ASCII) */
-	'E', 'x', 'p', 'r', 'e', 's', ' ', 'L', 'o', 'g', 'i', 'c',
+    0x0C,							/* Length of string below (ASCII) */
+    'E', 'x', 'p', 'r', 'e', 's', ' ', 'L', 'o', 'g', 'i', 'c',
 #endif
 
-	/* String Descriptor 2 (Product - see 'Device Descriptor') */
-	0x09, 0x04,						/* English - United States */
-	0x02,							/* Index of the descriptor */
+    /* String Descriptor 2 (Product - see 'Device Descriptor') */
+    0x09, 0x04,						/* English - United States */
+    0x02,							/* Index of the descriptor */
 #if (USB_ID_SETTINGS == 1)
-	0x15,							/* Length of string below (ASCII) */
-	'S', 'T', 'M', '3', '2', ' ', 'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'C', 'o', 'm', 'P', 'o', 'r', 't',
+    0x15,							/* Length of string below (ASCII) */
+    'S', 'T', 'M', '3', '2', ' ', 'V', 'i', 'r', 't', 'u', 'a', 'l', ' ', 'C', 'o', 'm', 'P', 'o', 'r', 't',
 #elif (USB_ID_SETTINGS == 2)
-	0x13,							/* Length of string below (ASCII) */
-	'E', 'L', ' ', 'C', 'o', 'm', 'p', 'o', 's', 'i', 't', 'e', ' ', 'd', 'e', 'v', 'i', 'c', 'e',
+    0x13,							/* Length of string below (ASCII) */
+    'E', 'L', ' ', 'C', 'o', 'm', 'p', 'o', 's', 'i', 't', 'e', ' ', 'd', 'e', 'v', 'i', 'c', 'e',
 #elif (USB_ID_SETTINGS == 3)
-	0x13,							/* Length of string below (ASCII) */
-	'E', 'L', ' ', 'C', 'o', 'm', 'p', 'o', 's', 'i', 't', 'e', ' ', 'd', 'e', 'v', 'i', 'c', 'e',
+    0x13,							/* Length of string below (ASCII) */
+    'E', 'L', ' ', 'C', 'o', 'm', 'p', 'o', 's', 'i', 't', 'e', ' ', 'd', 'e', 'v', 'i', 'c', 'e',
 #endif
 
-	/* String Descriptor 3 (Serial Number - see 'Device Descriptor') */
-	0x09, 0x04,						/* English - United States */
-	0x03,							/* Index of the descriptor */
+    /* String Descriptor 3 (Serial Number - see 'Device Descriptor') */
+    0x09, 0x04,						/* English - United States */
+    0x03,							/* Index of the descriptor */
 #if (USB_ID_SETTINGS == 1)
-	0x0C,							/* Length of string below (ASCII) */
-	'3', '9', '7', '4', '3', '9', '6', 'C', '3', '0', '3', '5',
+    0x0C,							/* Length of string below (ASCII) */
+    '3', '9', '7', '4', '3', '9', '6', 'C', '3', '0', '3', '5',
 #elif (USB_ID_SETTINGS == 2)
-	0x04,							/* Length of string below (ASCII) */
-	'0', '0', '0', '1',
+    0x04,							/* Length of string below (ASCII) */
+    '0', '0', '0', '1',
 #elif (USB_ID_SETTINGS == 3)
-	0x04,							/* Length of string below (ASCII) */
-	'0', '0', '0', '1',
+    0x04,							/* Length of string below (ASCII) */
+    '0', '0', '0', '1',
 #endif
 
-	/* String Descriptor 4 (Config) */
-	0x09, 0x04,						/* English - United States */
-	0x04,							/* Index of the descriptor */
-	0x0A,							/* Length of string below (ASCII) */
-	'C', 'D', 'C', ' ', 'C', 'o', 'n', 'f', 'i', 'g',
+    /* String Descriptor 4 (Config) */
+    0x09, 0x04,						/* English - United States */
+    0x04,							/* Index of the descriptor */
+    0x0A,							/* Length of string below (ASCII) */
+    'C', 'D', 'C', ' ', 'C', 'o', 'n', 'f', 'i', 'g',
 };
 #endif // @formatter:on
-
 int main(int argc, char** argv)
 {
 	/* Setup the hardware: MPU, CACHE, HAL_Init, Clock, SDRAM, USART1, RNG */
@@ -479,12 +479,12 @@ UX_SLAVE_CLASS_CDC_ACM* cdc;
 TX_THREAD demo_thread;
 UCHAR buffer[UX_DEMO_BUFFER_SIZE];
 UX_SLAVE_CLASS_CDC_ACM_PARAMETER cdc_parameter =
-{
-	/* Set the parameters for callback when insertion/extraction of a CDC device. */
-	.ux_slave_class_cdc_acm_instance_activate = demo_cdc_instance_activate,
-	.ux_slave_class_cdc_acm_instance_deactivate = demo_cdc_instance_deactivate,
-	.ux_slave_class_cdc_acm_parameter_change = demo_cdc_acm_parameter_change
-};
+		{
+			/* Set the parameters for callback when insertion/extraction of a CDC device. */
+			.ux_slave_class_cdc_acm_instance_activate = demo_cdc_instance_activate,
+			.ux_slave_class_cdc_acm_instance_deactivate = demo_cdc_instance_deactivate,
+			.ux_slave_class_cdc_acm_parameter_change = demo_cdc_acm_parameter_change
+		};
 
 void tx_application_define(void* first_unused_memory)
 {
@@ -525,7 +525,7 @@ void tx_application_define(void* first_unused_memory)
 	 * 		ULONG stack_size, UINT priority, UINT preempt_threshold, ULONG time_slice,
 	 * 		UINT auto_start); */
 	status = _tx_thread_create(&demo_thread, "tx demo", demo_thread_entry, 0, stack_pointer,
-			UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
+	UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
 	if (status != TX_SUCCESS)
 		return;
 
@@ -549,6 +549,30 @@ void demo_thread_entry(ULONG arg)
 		/* Ensure the CDC class is mounted. */
 		if (cdc != UX_NULL)
 		{
+			if (DEBUG_BUTTON_PRESSED() != 0)
+			{
+				_tx_thread_sleep(1);
+
+				if (DEBUG_BUTTON_PRESSED() != 0)
+				{
+					/* Fill buffer. */
+					buffer[0] = 'a';
+					buffer[1] = 'b';
+					buffer[2] = 'c';
+					buffer[3] = 'd';
+					buffer[4] = 'e';
+					buffer[5] = 'f';
+					buffer[6] = '\r';
+					buffer[7] = '\n';
+
+					/* And send 8 bytes. */
+					status = _ux_device_class_cdc_acm_write(cdc, buffer, 8, &actual_length);
+
+					/* And send 0 byte packet. Forced ZLP. */
+					status = _ux_device_class_cdc_acm_write(cdc, buffer, 0, &actual_length);
+				}
+			}
+
 //			/* Read from the CDC class. */
 //			status = _ux_device_class_cdc_acm_read(cdc, buffer, UX_DEMO_BUFFER_SIZE,
 //					&actual_length);
@@ -568,20 +592,20 @@ void demo_thread_entry(ULONG arg)
 //				/* And send it again. */
 //				status = _ux_device_class_cdc_acm_write(cdc, buffer, 1, &actual_length);
 //			}
-
-			/* Fill buffer. */
-			buffer[0] = 'a';
-			buffer[1] = 'b';
-			buffer[2] = 'c';
-			buffer[3] = 'd';
-			buffer[4] = 'e';
-			buffer[5] = 'f';
-			buffer[6] = '\r';
-			buffer[7] = '\n';
-
-			/* And send 8 bytes. */
-			status = _ux_device_class_cdc_acm_write(cdc, buffer, 8, &actual_length);
-
+//
+//			/* Fill buffer. */
+//			buffer[0] = 'a';
+//			buffer[1] = 'b';
+//			buffer[2] = 'c';
+//			buffer[3] = 'd';
+//			buffer[4] = 'e';
+//			buffer[5] = 'f';
+//			buffer[6] = '\r';
+//			buffer[7] = '\n';
+//
+//			/* And send 8 bytes. */
+//			status = _ux_device_class_cdc_acm_write(cdc, buffer, 8, &actual_length);
+//
 //			/* And send 0 byte packet. Forced ZLP. */
 //			status = _ux_device_class_cdc_acm_write(cdc, buffer, 0, &actual_length);
 //
@@ -595,60 +619,60 @@ void demo_thread_entry(ULONG arg)
 }
 
 /* static void Mb_usbfs_rcv_task(ULONG ptr)
-{
-	UINT res;
-	ULONG actual_length;
-	ULONG actual_flags;
-	T_usbfs_drv_cbl* p = (T_usbfs_drv_cbl*)ptr;
-	uint32_t n;
+ {
+ UINT res;
+ ULONG actual_length;
+ ULONG actual_flags;
+ T_usbfs_drv_cbl* p = (T_usbfs_drv_cbl*)ptr;
+ uint32_t n;
 
-	do
-	{
-		if (p->active)
-		{
-			n = p->head_n;
-			res = ux_device_class_cdc_acm_read(p->cdc, p->rd_pack[n].buff, USBDRV_BUFFER_MAX_LENGTH,
-					&actual_length); // Чтение пакета из USB
+ do
+ {
+ if (p->active)
+ {
+ n = p->head_n;
+ res = ux_device_class_cdc_acm_read(p->cdc, p->rd_pack[n].buff, USBDRV_BUFFER_MAX_LENGTH,
+ &actual_length); // Чтение пакета из USB
 
-			p->rd_pack[n].len = actual_length;
-			if (res == UX_SUCCESS)
-			{
-				// Перемещаем указатель головы очереди
-				n++;
-				if (n >= IN_BUF_QUANTITY)
-					n = 0;
-				p->head_n = n;
+ p->rd_pack[n].len = actual_length;
+ if (res == UX_SUCCESS)
+ {
+ // Перемещаем указатель головы очереди
+ n++;
+ if (n >= IN_BUF_QUANTITY)
+ n = 0;
+ p->head_n = n;
 
-				// Выставляем флаг выполненного чтения
-				if (tx_event_flags_set(&(p->evt), MB_USBFS_READ_DONE, TX_OR) != TX_SUCCESS)
-				{
-					tx_thread_sleep(2); // Задержка после ошибки
-				}
+ // Выставляем флаг выполненного чтения
+ if (tx_event_flags_set(&(p->evt), MB_USBFS_READ_DONE, TX_OR) != TX_SUCCESS)
+ {
+ tx_thread_sleep(2); // Задержка после ошибки
+ }
 
-				// Если все буферы на прием заполнены, то значит системе не требуются данные
-				if (p->tail_n == n)
-				{
-					// Перестаем принимать данные из USB и ждем когда система обработает уже принятые данные и подаст сигнал к началу приема по USB
-					p->no_space = 1;
-					if (tx_event_flags_get(&(p->evt), MB_USBFS_READ_REQUEST, TX_AND_CLEAR,
-							&actual_flags, TX_WAIT_FOREVER) != TX_SUCCESS)
-					{
-						tx_thread_sleep(2); // Задержка после ошибки
-					}
-				}
-			}
-			else
-			{
-				tx_thread_sleep(2); // Задержка после ошибки
-			}
-		}
-		else
-		{
-			tx_thread_sleep(2); // Задержки после ошибки нужны для того чтобы задача не захватила все ресурсы в случает постоянного появления ошибки
-		}
+ // Если все буферы на прием заполнены, то значит системе не требуются данные
+ if (p->tail_n == n)
+ {
+ // Перестаем принимать данные из USB и ждем когда система обработает уже принятые данные и подаст сигнал к началу приема по USB
+ p->no_space = 1;
+ if (tx_event_flags_get(&(p->evt), MB_USBFS_READ_REQUEST, TX_AND_CLEAR,
+ &actual_flags, TX_WAIT_FOREVER) != TX_SUCCESS)
+ {
+ tx_thread_sleep(2); // Задержка после ошибки
+ }
+ }
+ }
+ else
+ {
+ tx_thread_sleep(2); // Задержка после ошибки
+ }
+ }
+ else
+ {
+ tx_thread_sleep(2); // Задержки после ошибки нужны для того чтобы задача не захватила все ресурсы в случает постоянного появления ошибки
+ }
 
-	} while (1);
-} */
+ } while (1);
+ } */
 
 void demo_cdc_instance_activate(void* cdc_instance)
 {
@@ -750,12 +774,6 @@ void USB_OTG_BSP_HS_Init(void)
 
 	/* Enable USB HS Interrupt */
 	HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
-
-//	/* Set USBHS Interrupt to the lowest priority */
-//	HAL_NVIC_SetPriority(OTG_FS_IRQn, 4, 0);		// (OTG_HS_IRQn, 0, 0)
-//
-//	/* Enable USB HS Interrupt */
-//	HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
 }
 
 /* Definition of STM32 registers. */

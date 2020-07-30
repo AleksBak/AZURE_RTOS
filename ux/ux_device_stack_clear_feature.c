@@ -82,6 +82,8 @@ UINT _ux_device_stack_clear_feature(ULONG request_type, ULONG request_value, ULO
 	/* Get the control endpoint for the device. */
 	UX_SLAVE_ENDPOINT* endpoint = &device->ux_slave_device_control_endpoint;
 
+	UX_SLAVE_INTERFACE* interface;
+
 	/* The request can be for either the device or the endpoint. */
 	switch (request_type & UX_REQUEST_TARGET)
 	{
@@ -106,7 +108,7 @@ UINT _ux_device_stack_clear_feature(ULONG request_type, ULONG request_value, ULO
 			/* The only clear feature for endpoint is ENDPOINT_STALL. This clears the endpoint of
 			 * the stall situation and resets its data toggle. We need to find the endpoint through
 			 * the interface(s). */
-			UX_SLAVE_INTERFACE* interface = device->ux_slave_device_first_interface;
+			interface = device->ux_slave_device_first_interface;
 
 			while (interface != UX_NULL)
 			{

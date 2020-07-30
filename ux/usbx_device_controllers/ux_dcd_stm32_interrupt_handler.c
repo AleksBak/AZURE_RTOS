@@ -73,24 +73,6 @@
 /**************************************************************************/
 VOID _ux_dcd_stm32_interrupt_handler(VOID)
 {
-//	ULONG stm32_pending_interrupt;
-//	ULONG stm32_masked_interrupt;
-//	ULONG endpoint_index;
-//	ULONG endpoint_mask;
-//	ULONG transfer_length;
-//	ULONG transfer_status;
-//	ULONG stm32_daint_interrupt;
-//	ULONG stm32_dsts_register;
-//	ULONG stm32_grxstp_register;
-//	ULONG stm32_doepint_register;
-//	ULONG stm32_diepint_register;
-//	UX_SLAVE_TRANSFER* transfer_request;
-//	UX_DCD_STM32_ED* ed;
-//	UX_SLAVE_ENDPOINT* endpoint;
-//	UX_SLAVE_DCD* dcd;
-//	UX_DCD_STM32* dcd_stm32;
-//	UX_SLAVE_DEVICE* device;
-
 	/* Get the pointer to the DCD. */
 	UX_SLAVE_DCD* dcd = &_ux_system_slave->ux_system_slave_dcd;
 
@@ -99,6 +81,8 @@ VOID _ux_dcd_stm32_interrupt_handler(VOID)
 
 	/* Get the pointer to the device. */
 	UX_SLAVE_DEVICE* device = &_ux_system_slave->ux_system_slave_device;
+
+	/*------------------------------- Global USB interrupt status --------------------------------*/
 
 	/* Read the interrupt status register from the controller. */
 	ULONG stm32_pending_interrupt = _ux_dcd_stm32_register_read(dcd_stm32,
@@ -160,7 +144,8 @@ VOID _ux_dcd_stm32_interrupt_handler(VOID)
 				&& device->ux_slave_device_state != UX_DEVICE_CONFIGURED)
 		{
 			/* Read the DSTS register to isolate speed. */
-			ULONG stm32_dsts_register = _ux_dcd_stm32_register_read(dcd_stm32, UX_DCD_STM32_OTG_FS_DSTS);
+			ULONG stm32_dsts_register = _ux_dcd_stm32_register_read(dcd_stm32,
+					UX_DCD_STM32_OTG_FS_DSTS);
 
 			/* We have a device connection, read at what speed we are connected. */
 			if ((stm32_dsts_register & UX_DCD_STM32_OTG_FS_DSTS_ENUMSPD_MASK)
@@ -316,7 +301,7 @@ VOID _ux_dcd_stm32_interrupt_handler(VOID)
 					/* Get the register for the DOEPTINT. */
 					stm32_doepint_register = _ux_dcd_stm32_register_read(dcd_stm32,
 							UX_DCD_STM32_OTG_FS_DOEPINT +
-									(endpoint_index * UX_DCD_STM32_ENDPOINT_CHANNEL_SIZE));
+							(endpoint_index * UX_DCD_STM32_ENDPOINT_CHANNEL_SIZE));
 
 					/* Find out what triggered the interrupt.  Maybe SETUP ? */
 					if (stm32_doepint_register & UX_DCD_STM32_OTG_FS_DOEPINT_STUP)
@@ -344,13 +329,13 @@ VOID _ux_dcd_stm32_interrupt_handler(VOID)
 					/* Get the register for the DIEPINT. */
 					stm32_diepint_register = _ux_dcd_stm32_register_read(dcd_stm32,
 							UX_DCD_STM32_OTG_FS_DIEPINT +
-									(endpoint_index * UX_DCD_STM32_ENDPOINT_CHANNEL_SIZE));
+							(endpoint_index * UX_DCD_STM32_ENDPOINT_CHANNEL_SIZE));
 
 					/* Find out what triggered the interrupt.  Maybe XFRC ? */
 					if (stm32_diepint_register & UX_DCD_STM32_OTG_FS_DIEPINT_XFRC)
 						/* Flag the transfer completion. */
 						ed->ux_dcd_stm32_ed_transfer_status =
-								UX_DCD_STM32_ED_TRANSFER_STATUS_IN_COMPLETION;
+						UX_DCD_STM32_ED_TRANSFER_STATUS_IN_COMPLETION;
 				}
 
 				/* Get the logical endpoint from the physical endpoint. */

@@ -82,6 +82,8 @@ UINT _ux_device_stack_set_feature(ULONG request_type, ULONG request_value, ULONG
 	/* Get the control endpoint for the device. */
 	UX_SLAVE_ENDPOINT* endpoint = &device->ux_slave_device_control_endpoint;
 
+	UX_SLAVE_INTERFACE* interface;
+
 	/* The feature can be for either the device or the endpoint. */
 	switch (request_type & UX_REQUEST_TARGET)
 	{
@@ -124,7 +126,7 @@ UINT _ux_device_stack_set_feature(ULONG request_type, ULONG request_value, ULONG
 		case UX_REQUEST_TARGET_ENDPOINT:
 			/* The only set feature for endpoint is ENDPOINT_STALL. This forces the endpoint to
 			 * the stall situation. We need to find the endpoint through the interface(s). */
-			UX_SLAVE_INTERFACE* interface = device->ux_slave_device_first_interface;
+			interface = device->ux_slave_device_first_interface;
 
 			while (interface != UX_NULL)
 			{

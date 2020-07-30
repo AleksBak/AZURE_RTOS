@@ -76,25 +76,6 @@
 /*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-
-#define MAX_DESC_COUNT		64
-
-/* получается, что всего 7 раз запрашиваются дескрипторы */
-uint32_t g_DescIndex = 0;
-
-/** TODO: тут формируем порядок запросов дескрипторов (значения больше 0x80 - поддескрипторы):
- * в итоге такой массив тут: 1, 0x80, 1, 0x80, 2, F, 3, 0xA3, 3, 0xA0, 3, 0xA2
- * т.е. порядок запросов дескрипторов такой в итоге:
- * 1 -> USB_DESC_TYPE_DEVICE и pdev->dev_speed = USBD_SPEED_HIGH;
- * 1 -> USB_DESC_TYPE_DEVICE и pdev->dev_speed = USBD_SPEED_HIGH;
- * 2 -> USB_DESC_TYPE_CONFIGURATION;
- * F -> USB_DESC_TYPE_BOS;
- * 3 -> USB_DESC_TYPE_STRING и req->wValue = USBD_IDX_SERIAL_STR;
- * 3 -> USB_DESC_TYPE_STRING и req->wValue = USBD_IDX_LANGID_STR;
- * 3 -> USB_DESC_TYPE_STRING и req->wValue = USBD_IDX_PRODUCT_STR;
- */
-uint8_t g_DescOrder[MAX_DESC_COUNT] = { 0 };
-
 UINT _ux_device_stack_descriptor_send(ULONG descriptor_type, ULONG request_index, ULONG host_length)
 {
 	/* If trace is enabled, insert this event into the trace buffer. */
@@ -127,15 +108,6 @@ UINT _ux_device_stack_descriptor_send(ULONG descriptor_type, ULONG request_index
 
 	/*--------------------------------------------------------------------------------------------*/
 
-	if (g_DescIndex < MAX_DESC_COUNT)
-	{
-		g_DescOrder[g_DescIndex++] = (uint8_t)descriptor_type;
-	}
-	else
-	{
-		g_DescIndex = 0;
-	}
-
 	ULONG length;
 	UINT status = UX_ERROR;
 
@@ -156,8 +128,6 @@ UINT _ux_device_stack_descriptor_send(ULONG descriptor_type, ULONG request_index
 			/* Setup the length appropriately. */
 			length = (host_length > UX_DEVICE_DESCRIPTOR_LENGTH) ? UX_DEVICE_DESCRIPTOR_LENGTH :
 					host_length;
-
-			g_DescOrder[g_DescIndex++] = (uint8_t)length;
 
 			/* Copy the device descriptor into the transfer request memory. */
 			_ux_utility_memory_copy(transfer_request->ux_slave_transfer_request_data_pointer,

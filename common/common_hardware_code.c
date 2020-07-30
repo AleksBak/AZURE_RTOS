@@ -289,6 +289,21 @@ static void GreenLed_Init(void)
 	GPIOI->BSRR |= GPIO_BSRR_BR_1;
 }
 
+static void BlueButton_Init(void)
+{
+	/* Activate PULLUP for GPIOI11 */
+	uint32_t temp = GPIOI->PUPDR;
+	temp &= ~(GPIO_PUPDR_PUPDR0 << (11 * 2));
+	temp |= (1 << (11 * 2));
+	GPIOI->PUPDR = temp;
+
+	/* Configure IO Direction mode (Input) for GPIOI11 */
+	temp = GPIOI->MODER;
+	temp &= ~(GPIO_MODER_MODER0 << (11 * 2));
+	temp |= ((0 & 0x00000003U) << (11 * 2));
+	GPIOI->MODER = temp;
+}
+
 void GreenLed_On(void)
 {
 	GPIOI->BSRR |= GPIO_BSRR_BS_1;
@@ -302,6 +317,11 @@ void GreenLed_Off(void)
 void GreenLed_Toggle(void)
 {
 	GPIOI->BSRR |= ((GPIOI->ODR & 0x02) != 0x00u) ? GPIO_BSRR_BR_1 : GPIO_BSRR_BS_1;
+}
+
+int BlueButton_Pressed(void)
+{
+	return (GPIOI->IDR & ((uint16_t)(1 << 11)));
 }
 
 /** Initialize: MPU, CACHE, HAL_Init, Clock, SDRAM, USART1, RNG */
@@ -329,6 +349,7 @@ void hardware_setup(void)
 	hardware_rand_initialize();
 
 	GreenLed_Init();
+	BlueButton_Init();
 }
 
 /*------------------------------------------------------------------------------------------------*/

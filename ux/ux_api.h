@@ -1818,13 +1818,27 @@ UINT ux_device_stack_transfer_request_abort(UX_SLAVE_TRANSFER* transfer_request,
 #include "ux_utility.h"
 #include "ux_system.h"
 
+/*-------------------------------------------- DEBUG ---------------------------------------------*/
+
 void GreenLed_On(void);
 void GreenLed_Off(void);
 void GreenLed_Toggle(void);
+int BlueButton_Pressed(void);
 
 #define DEBUG_LED_ON			GreenLed_On
 #define DEBUG_LED_OFF			GreenLed_Off
 #define DEBUG_LED_TOGGLE		GreenLed_Toggle
+#define DEBUG_BUTTON_PRESSED	BlueButton_Pressed
+
+#define UX_ENABLE_DEBUG_OUT
+
+#ifdef UX_ENABLE_DEBUG_OUT
+#define DEBUG_PRINT				printf
+#else
+#define DEBUG_PRINT
+#endif
+
+/*------------------------------------------------------------------------------------------------*/
 
 /* Determine if a C++ compiler is being used. If so,
  * complete the standard C conditional started above. */
