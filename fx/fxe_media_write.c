@@ -9,6 +9,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+
 /**************************************************************************/
 /**************************************************************************/
 /**                                                                       */
@@ -21,12 +22,15 @@
 
 #define FX_SOURCE_CODE
 
+
 /* Include necessary system files.  */
 
 #include "fx_api.h"
 #include "fx_media.h"
 
+
 FX_CALLER_CHECKING_EXTERNS
+
 
 /**************************************************************************/
 /*                                                                        */
@@ -67,22 +71,25 @@ FX_CALLER_CHECKING_EXTERNS
 /*  05-19-2020     William E. Lamie         Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-UINT _fxe_media_write(FX_MEDIA* media_ptr, ULONG logical_sector, VOID* buffer_ptr)
+UINT  _fxe_media_write(FX_MEDIA *media_ptr, ULONG logical_sector, VOID *buffer_ptr)
 {
-	UINT status;
 
-	/* Check for a null media pointer.  */
-	if (media_ptr == FX_NULL)
-	{
-		return (FX_PTR_ERROR);
-	}
+UINT status;
 
-	/* Check for a valid caller.  */
-	FX_CALLER_CHECKING_CODE
 
-	/* Call actual media write service.  */
-	status = _fx_media_write(media_ptr, logical_sector, buffer_ptr);
+    /* Check for a null media pointer.  */
+    if (media_ptr == FX_NULL)
+    {
+        return(FX_PTR_ERROR);
+    }
 
-	/* Return a successful status to the caller.  */
-	return (status);
+    /* Check for a valid caller.  */
+    FX_CALLER_CHECKING_CODE
+
+    /* Call actual media write service.  */
+    status =  _fx_media_write(media_ptr, logical_sector, buffer_ptr);
+
+    /* Return a successful status to the caller.  */
+    return(status);
 }
+

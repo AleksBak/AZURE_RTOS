@@ -20,13 +20,12 @@
 /**************************************************************************/
 /**************************************************************************/
 
+ 
 
 /* Include necessary system files.  */
 
 #include "stm32f7xx.h"
 #include "stm32746g_discovery_sd.h"
-
-
 #include "tx_api.h"
 #include "fx_api.h"
 
@@ -242,13 +241,13 @@ ULONG       partition_size;
 
             wait_transfer_ok();
 
-            /* Invalidate cache before DMA read.  */
-            SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer, media_ptr -> fx_media_driver_sectors * 512);
-
+            /*Invalidate cache before DMA read */
+            SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer,media_ptr -> fx_media_driver_sectors*512);
+            
             /* Use the STM32 SDIO library to ready one or more sectors.  */
-            SDIO_Status = BSP_SD_ReadBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer,                                         /* Destination buffer  */
-                                                media_ptr -> fx_media_driver_logical_sector + media_ptr -> fx_media_hidden_sectors,     /* SD card address     */
-                                                media_ptr -> fx_media_driver_sectors);                                                  /* Number of sectors   */
+            SDIO_Status = BSP_SD_ReadBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer,                                       /* Destination buffer  */
+                                                (media_ptr -> fx_media_driver_logical_sector + media_ptr -> fx_media_hidden_sectors), /* SD card address     */
+                                                media_ptr -> fx_media_driver_sectors);                                                /* Number of sectors   */
 
             /* Check status of SDIO Read.  */
             if (SDIO_Status == MSD_OK)
@@ -274,14 +273,14 @@ ULONG       partition_size;
         {
 
             wait_transfer_ok();
-
-            /* Clean cache before DMA write.  */
-            SCB_CleanDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer, media_ptr -> fx_media_driver_sectors * 512);
+            
+            /*Clean cache before DMA write */
+            SCB_CleanDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer,media_ptr -> fx_media_driver_sectors*512);
 
             /* Use the STM32 SDIO library to write one or more sectors.  */
-            SDIO_Status = BSP_SD_WriteBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer,                                        /* Source buffer        */
-                                                 media_ptr -> fx_media_driver_logical_sector + media_ptr -> fx_media_hidden_sectors,    /* SD card address      */ 
-                                                 media_ptr -> fx_media_driver_sectors);                                                 /* Number of sectors   */
+            SDIO_Status = BSP_SD_WriteBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer,                                         /* Source buffer        */
+                                                 ((media_ptr -> fx_media_driver_logical_sector + media_ptr -> fx_media_hidden_sectors)), /* SD card address      */ 
+                                                 media_ptr -> fx_media_driver_sectors);                                                  /* Number of sectors   */
 
             /* Check status of SDIO Write.  */
             if (SDIO_Status == MSD_OK)
@@ -300,7 +299,6 @@ ULONG       partition_size;
             }
 
             break;
-
         }
 
         case FX_DRIVER_FLUSH:
@@ -319,27 +317,27 @@ ULONG       partition_size;
             break;
         }
 
-        case FX_DRIVER_INIT:
+    case FX_DRIVER_INIT:
         {
 
             /* FLASH drivers are responsible for setting several fields in the 
-               media structure, as follows:
-
-                    media_ptr -> fx_media_driver_free_sector_update
-                    media_ptr -> fx_media_driver_write_protect
-
-               The fx_media_driver_free_sector_update flag is used to instruct
-               FileX to inform the driver whenever sectors are not being used.
-               This is especially useful for FLASH managers so they don't have 
-               maintain mapping for sectors no longer in use.
-
-               The fx_media_driver_write_protect flag can be set anytime by the
-               driver to indicate the media is not writable.  Write attempts made
-               when this flag is set are returned as errors.  */
-
+            media structure, as follows:
+            
+            media_ptr -> fx_media_driver_free_sector_update
+            media_ptr -> fx_media_driver_write_protect
+            
+            The fx_media_driver_free_sector_update flag is used to instruct
+            FileX to inform the driver whenever sectors are not being used.
+            This is especially useful for FLASH managers so they don't have 
+            maintain mapping for sectors no longer in use.
+            
+            The fx_media_driver_write_protect flag can be set anytime by the
+            driver to indicate the media is not writable.  Write attempts made
+            when this flag is set are returned as errors.  */
+            
             /* Perform basic initialization here... since the boot record is going
-               to be read subsequently and again for volume name requests.  */
-
+            to be read subsequently and again for volume name requests.  */
+            
             if(tx_semaphore_create(&semaphore_transfer, "SD transfer semaphore", 0) != TX_SUCCESS)
             {
 
@@ -362,12 +360,18 @@ ULONG       partition_size;
 
             /* Check status of SDIO Initialize.  */
             if (SDIO_Status == MSD_OK)
+            {
+
                 /* Successful driver request.  */
                 media_ptr -> fx_media_driver_status =  FX_SUCCESS;
+            }
             else
+            {
+
                 /* Unsuccessful driver request.  */
                 media_ptr -> fx_media_driver_status =  FX_IO_ERROR;
-            
+            }
+
             break;
         }
 
@@ -390,7 +394,7 @@ ULONG       partition_size;
             wait_transfer_ok();
 
             /*Invalidate cache before DMA read */
-            SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer, 512);
+            SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer,512);
 
             /* Read the boot record of 512 bytes.  */
             SDIO_Status = BSP_SD_ReadBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer, 0, 1);
@@ -398,6 +402,7 @@ ULONG       partition_size;
             /* Check status of SDIO Read.  */
             if (SDIO_Status != MSD_OK)
             {
+
                 /* Unsuccessful driver request.  */
                 media_ptr -> fx_media_driver_status =  FX_IO_ERROR;
                 return;
@@ -410,11 +415,12 @@ ULONG       partition_size;
             partition_start =  0;
 
             status =  _fx_partition_offset_calculate(media_ptr -> fx_media_driver_buffer, 0,
-                                                                &partition_start, &partition_size);
+                                                     &partition_start, &partition_size);
 
             /* Check partition read error.  */
             if (status)
             {
+
                 /* Unsuccessful driver request.  */
                 media_ptr -> fx_media_driver_status =  FX_IO_ERROR;
                 return;
@@ -425,12 +431,12 @@ ULONG       partition_size;
             {
 
                 wait_transfer_ok();
-
+                
                 /*Invalidate cache before DMA read */
-                SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer, 512);
+                SCB_CleanInvalidateDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer,512);
 
                 /* Yes, now lets read the actual boot record.  */
-                SDIO_Status = BSP_SD_ReadBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer, partition_start , 1);
+                SDIO_Status = BSP_SD_ReadBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer, partition_start, 1);
 
                 /* Check status of SDIO Read.  */
                 if (SDIO_Status != MSD_OK)
@@ -455,11 +461,10 @@ ULONG       partition_size;
 
             wait_transfer_ok();
 
-            /* Clean cache before DMA write.  */
-            SCB_CleanDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer, 512);
-
+            /*Clean cache before DMA write */
+            SCB_CleanDCache_by_Addr((uint32_t*)media_ptr -> fx_media_driver_buffer,512);
             /* Write the boot record.  */
-            SDIO_Status = BSP_SD_WriteBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer, media_ptr -> fx_media_hidden_sectors, 1);
+            SDIO_Status = BSP_SD_WriteBlocks_DMA((uint32_t*)media_ptr -> fx_media_driver_buffer, (media_ptr -> fx_media_hidden_sectors),1);
 
             /* Check status of SDIO Write.  */
             if (SDIO_Status == MSD_OK)

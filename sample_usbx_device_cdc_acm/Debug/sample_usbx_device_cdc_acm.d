@@ -2,9 +2,10 @@ sample_usbx_device_cdc_acm.o: ../sample_usbx_device_cdc_acm.c \
  ../../ux/ux_api.h ../../tx/tx_api.h ../../tx/tx_port.h \
  ../../ux/ux_port.h ../../ux/ux_utility.h ../../ux/ux_system.h \
  ../../ux/ux_system.h ../../ux/ux_utility.h \
- ../../ux/usbx_device_controllers/ux_dcd_stm32.h \
  ../../ux/usbx_device_classes/ux_device_class_cdc_acm.h \
- ../../ux/ux_device_stack.h ../../stm32f7xx_library/stm32f7xx.h \
+ ../../ux/ux_device_stack.h \
+ ../../ux/usbx_device_controllers/ux_dcd_stm32.h \
+ ../../stm32f7xx_library/stm32f7xx.h \
  ../../stm32f7xx_library/stm32f746xx.h ../../stm32f7xx_library/core_cm7.h \
  ../../stm32f7xx_library/cmsis_version.h \
  ../../stm32f7xx_library/cmsis_compiler.h \
@@ -94,11 +95,11 @@ sample_usbx_device_cdc_acm.o: ../sample_usbx_device_cdc_acm.c \
 
 ../../ux/ux_utility.h:
 
-../../ux/usbx_device_controllers/ux_dcd_stm32.h:
-
 ../../ux/usbx_device_classes/ux_device_class_cdc_acm.h:
 
 ../../ux/ux_device_stack.h:
+
+../../ux/usbx_device_controllers/ux_dcd_stm32.h:
 
 ../../stm32f7xx_library/stm32f7xx.h:
 

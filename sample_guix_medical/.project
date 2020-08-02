@@ -3,8 +3,6 @@
 	<name>sample_guix_medical</name>
 	<comment></comment>
 	<projects>
-		<project>stm32f7xx_library</project>
-		<project>tx</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

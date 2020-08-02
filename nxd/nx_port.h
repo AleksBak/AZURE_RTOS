@@ -25,13 +25,13 @@
 /*                                                                        */ 
 /*  PORT SPECIFIC C INFORMATION                            RELEASE        */ 
 /*                                                                        */ 
-/*    nx_port.h                                         STM32F7xx/GNU     */ 
+/*    nx_port.h                                         Cortex-M7/GNU     */ 
 /*                                                           6.0          */
 /*                                                                        */
-/*  AUTHOR                                                                */ 
-/*                                                                        */ 
+/*  AUTHOR                                                                */
+/*                                                                        */
 /*    Yuxin Zhou, Microsoft Corporation                                   */
-/*                                                                        */ 
+/*                                                                        */
 /*  DESCRIPTION                                                           */ 
 /*                                                                        */ 
 /*    This file contains data type definitions that make the NetX         */ 
@@ -40,15 +40,14 @@
 /*                                                                        */ 
 /*  RELEASE HISTORY                                                       */ 
 /*                                                                        */ 
-/*    DATE              NAME                      DESCRIPTION             */ 
-/*                                                                        */ 
+/*    DATE              NAME                      DESCRIPTION             */
+/*                                                                        */
 /*  05-19-2020     Yuxin Zhou               Initial Version 6.0           */
-/*                                                                        */ 
-/**************************************************************************/ 
+/*                                                                        */
+/**************************************************************************/
 
 #ifndef NX_PORT_H
 #define NX_PORT_H
-
 
 /* Determine if the optional NetX user define file should be used.  */
 
@@ -61,16 +60,27 @@
 #include "nx_user.h"
 #endif
 
+
+/* Default to little endian, since this is what most ARM targets are.  */
+
+#define NX_LITTLE_ENDIAN    1
+
+
+/* By default IPv6 is enabled. */
+
+#ifndef FEATURE_NX_IPV6
+#define FEATURE_NX_IPV6
+#endif /* FEATURE_NX_IPV6 */
+
+#ifdef NX_DISABLE_IPV6 
+#undef FEATURE_NX_IPV6 
+#endif /* !NX_DISABLE_IPV6 */
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 #define NX_SECURE_ENABLE
-
-/* Default to little endian, since this is what most ARM targets are.  */
-
-#define NX_LITTLE_ENDIAN
-
 
 /* Define various constants for the port.  */ 
 
@@ -108,9 +118,6 @@
 #endif
 
 
-/* The STM32F7xx Ethernet controller has the capability of offloading the checksum computation.  
-   The device driver enables the checksum offload feature. Therefore the following symbols must be
-   defined when building the NetX library. */
 
 #define NX_DISABLE_ERROR_CHECKING
 #define NX_TCP_ACK_EVERY_N_PACKETS  2
@@ -182,11 +189,10 @@
 
 #ifdef NX_SYSTEM_INIT
 CHAR                            _nx_version_id[] = 
-                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  NetX Duo STM32F7xx/GNU Version G6.0 *";
+                                    "Copyright (c) Microsoft Corporation. All rights reserved.  *  NetX Duo Cortex-M7/GNU Version 6.0 *";
 #else
 extern  CHAR                    _nx_version_id[];
 #endif
 
 #endif
-
 

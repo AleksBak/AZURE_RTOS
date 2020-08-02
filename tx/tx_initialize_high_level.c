@@ -9,6 +9,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+
 /**************************************************************************/
 /**************************************************************************/
 /**                                                                       */
@@ -20,6 +21,7 @@
 /**************************************************************************/
 
 #define TX_SOURCE_CODE
+
 
 /* Include necessary system files.  */
 
@@ -41,12 +43,14 @@
 #include "tx_block_pool.h"
 #include "tx_byte_pool.h"
 
-/* Define the unused memory pointer.  The value of the first available
- memory address is placed in this variable in the low-level
- initialization function.  The content of this variable is passed
- to the application's system definition function.  */
 
-VOID* _tx_initialize_unused_memory;
+/* Define the unused memory pointer.  The value of the first available 
+   memory address is placed in this variable in the low-level
+   initialization function.  The content of this variable is passed 
+   to the application's system definition function.  */
+
+VOID     *_tx_initialize_unused_memory;
+
 
 /**************************************************************************/
 /*                                                                        */
@@ -104,40 +108,43 @@ VOID* _tx_initialize_unused_memory;
 /*  05-19-2020     William E. Lamie         Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-VOID _tx_initialize_high_level(VOID)
+VOID    _tx_initialize_high_level(VOID)
 {
-	/* Initialize event tracing, if enabled.  */
-	TX_TRACE_INITIALIZE
 
-	/* Initialize the event log, if enabled.  */
-	TX_EL_INITIALIZE
+    /* Initialize event tracing, if enabled.  */
+    TX_TRACE_INITIALIZE
 
-	/* Call the thread control initialization function.  */
-	_tx_thread_initialize();
+    /* Initialize the event log, if enabled.  */
+    TX_EL_INITIALIZE
+
+    /* Call the thread control initialization function.  */
+    _tx_thread_initialize();
 
 #ifndef TX_NO_TIMER
-	/* Call the timer control initialization function.  */
-	_tx_timer_initialize();
+
+    /* Call the timer control initialization function.  */
+    _tx_timer_initialize();
 #endif
 
 #ifndef TX_DISABLE_REDUNDANT_CLEARING
-	/* Call the semaphore initialization function.  */
-	_tx_semaphore_initialize();
 
-	/* Call the queue initialization function.  */
-	_tx_queue_initialize();
+    /* Call the semaphore initialization function.  */
+    _tx_semaphore_initialize();
 
-	/* Call the event flag initialization function.  */
-	_tx_event_flags_initialize();
+    /* Call the queue initialization function.  */
+    _tx_queue_initialize();
 
-	/* Call the block pool initialization function.  */
-	_tx_block_pool_initialize();
+    /* Call the event flag initialization function.  */
+    _tx_event_flags_initialize();
 
-	/* Call the byte pool initialization function.  */
-	_tx_byte_pool_initialize();
+    /* Call the block pool initialization function.  */
+    _tx_block_pool_initialize();
 
-	/* Call the mutex initialization function.  */
-	_tx_mutex_initialize();
+    /* Call the byte pool initialization function.  */
+    _tx_byte_pool_initialize();
+
+    /* Call the mutex initialization function.  */
+    _tx_mutex_initialize();
 #endif
 }
 

@@ -95,6 +95,11 @@ EXECUTION_TIME                          _tx_execution_idle_time_total;
 EXECUTION_TIME_SOURCE_TYPE              _tx_execution_idle_time_last_start;
 
 
+/* For Cortex-M targets, we need to keep track of nested interrupts internally.  */
+
+ULONG                                   _tx_execution_isr_nest_counter;
+
+
 /**************************************************************************/ 
 /*                                                                        */ 
 /*  FUNCTION                                               RELEASE        */ 
@@ -326,7 +331,7 @@ EXECUTION_TIME              delta_time;
 /*                                                                        */ 
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
-/*    _tx_execution_isr_enter                             PORTABLE C      */ 
+/*    _tx_execution_isr_enter                             Cortex-M        */ 
 /*                                                           6.0          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -369,11 +374,14 @@ EXECUTION_TIME              new_total_time;
 EXECUTION_TIME_SOURCE_TYPE  last_start_time;
 EXECUTION_TIME              delta_time;
 
-
+    /* Increment the nested interrupt counter.  */
+    _tx_execution_isr_nest_counter++;
+    
     /* Determine if this is the first interrupt. Nested interrupts are all treated as 
        general interrupt processing.  */
-    if (_tx_thread_system_state == 1)
+    if ((TX_THREAD_GET_SYSTEM_STATE()) && (_tx_execution_isr_nest_counter == 1))
     {
+     
         /* Pickup the current time.  */
         current_time =  TX_EXECUTION_TIME_SOURCE;
 
@@ -486,6 +494,7 @@ EXECUTION_TIME              delta_time;
         /* Save the ISR start time.  */
         _tx_execution_isr_time_last_start =  current_time;
     }
+
 }
 
 
@@ -493,7 +502,7 @@ EXECUTION_TIME              delta_time;
 /*                                                                        */ 
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
-/*    _tx_execution_isr_exit                              PORTABLE C      */ 
+/*    _tx_execution_isr_exit                               Cortex-M       */ 
 /*                                                           6.0          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -539,7 +548,7 @@ EXECUTION_TIME              delta_time;
 
     /* Determine if this is the first interrupt. Nested interrupts are all treated as 
        general interrupt processing.  */
-    if (_tx_thread_system_state == 1)
+    if ((TX_THREAD_GET_SYSTEM_STATE()) && (_tx_execution_isr_nest_counter == 1))
     {
 
         /* Pickup the current time.  */
@@ -603,6 +612,9 @@ EXECUTION_TIME              delta_time;
             _tx_execution_idle_time_last_start =  TX_EXECUTION_TIME_SOURCE;
         }
     }
+    
+    /* Decrement the nested interrupt counter.  */
+    _tx_execution_isr_nest_counter--;
 }
 
 

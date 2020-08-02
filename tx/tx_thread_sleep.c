@@ -9,6 +9,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+
 /**************************************************************************/
 /**************************************************************************/
 /**                                                                       */
@@ -21,7 +22,9 @@
 
 #define TX_SOURCE_CODE
 
-/* Include necessary system files. */
+
+/* Include necessary system files.  */
+
 #include "tx_api.h"
 #include "tx_trace.h"
 #include "tx_thread.h"
@@ -44,11 +47,11 @@
 /*                                                                        */
 /*  INPUT                                                                 */
 /*                                                                        */
-/*    timer_ticks                       Number of timer ticks to sleep    */
+/*    timer_ticks                           Number of timer ticks to sleep*/
 /*                                                                        */
 /*  OUTPUT                                                                */
 /*                                                                        */
-/*    status                            Return completion status          */
+/*    status                                Return completion status      */
 /*                                                                        */
 /*  CALLS                                                                 */
 /*                                                                        */
@@ -66,117 +69,130 @@
 /*  05-19-2020     William E. Lamie         Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-UINT _tx_thread_sleep(ULONG timer_ticks)
+UINT  _tx_thread_sleep(ULONG timer_ticks)
 {
-	TX_INTERRUPT_SAVE_AREA
 
-	UINT status;
-	TX_THREAD* thread_ptr;
+TX_INTERRUPT_SAVE_AREA
 
-	/* Lockout interrupts while the thread is being resumed. */
-	TX_DISABLE
+UINT            status;
+TX_THREAD       *thread_ptr;
 
-	/* Pickup thread pointer. */
-	TX_THREAD_GET_CURRENT(thread_ptr)
 
-	/* Determine if this is a legal request. */
+    /* Lockout interrupts while the thread is being resumed.  */
+    TX_DISABLE
 
-	/* Is there a current thread?  */
-	if (thread_ptr == TX_NULL)
-	{
-		/* Restore interrupts. */
-		TX_RESTORE
+    /* Pickup thread pointer.  */
+    TX_THREAD_GET_CURRENT(thread_ptr)
 
-		/* Illegal caller of this service. */
-		status = TX_CALLER_ERROR;
-	}
-	/* Is the caller an ISR or Initialization?  */
-	else if (TX_THREAD_GET_SYSTEM_STATE() != ((ULONG)0))
-	{
-		/* Restore interrupts. */
-		TX_RESTORE
+    /* Determine if this is a legal request.  */
 
-		/* Illegal caller of this service. */
-		status = TX_CALLER_ERROR;
-	}
+    /* Is there a current thread?  */
+    if (thread_ptr == TX_NULL)
+    {
+
+        /* Restore interrupts.  */
+        TX_RESTORE
+        
+        /* Illegal caller of this service.  */
+        status =  TX_CALLER_ERROR;
+    }
+    
+    /* Is the caller an ISR or Initialization?  */
+    else if (TX_THREAD_GET_SYSTEM_STATE() != ((ULONG) 0))
+    {
+
+        /* Restore interrupts.  */
+        TX_RESTORE
+        
+        /* Illegal caller of this service.  */
+        status =  TX_CALLER_ERROR;
+    }
+
 #ifndef TX_TIMER_PROCESS_IN_ISR
-	/* Is the caller the system timer thread?  */
-	else if (thread_ptr == &_tx_timer_thread)
-	{
-		/* Restore interrupts. */
-		TX_RESTORE
 
-		/* Illegal caller of this service. */
-		status = TX_CALLER_ERROR;
-	}
+    /* Is the caller the system timer thread?  */
+    else if (thread_ptr == &_tx_timer_thread)
+    {
+
+        /* Restore interrupts.  */
+        TX_RESTORE
+        
+        /* Illegal caller of this service.  */
+        status =  TX_CALLER_ERROR;
+    }
 #endif
-	/* Determine if the requested number of ticks is zero. */
-	else if (timer_ticks == ((ULONG)0))
-	{
-		/* Restore interrupts. */
-		TX_RESTORE
 
-		/* Just return with a successful status. */
-		status = TX_SUCCESS;
-	}
-	else
-	{
-		/* Determine if the preempt disable flag is non-zero. */
-		if (_tx_thread_preempt_disable != ((UINT)0))
-		{
-			/* Restore interrupts. */
-			TX_RESTORE
+    /* Determine if the requested number of ticks is zero.  */
+    else if (timer_ticks == ((ULONG) 0))
+    {
 
-			/* Suspension is not allowed if the preempt disable flag is non-zero
-			 * at this point - return error completion. */
-			status = TX_CALLER_ERROR;
-		}
-		else
-		{
-			/* If trace is enabled, insert this event into the trace buffer. */
-			TX_TRACE_IN_LINE_INSERT(TX_TRACE_THREAD_SLEEP, TX_ULONG_TO_POINTER_CONVERT(timer_ticks),
-					thread_ptr -> tx_thread_state, TX_POINTER_TO_ULONG_CONVERT(&status), 0,
-					TX_TRACE_THREAD_EVENTS)
+        /* Restore interrupts.  */
+        TX_RESTORE
+      
+        /* Just return with a successful status.  */
+        status =  TX_SUCCESS;
+    }
+    else
+    {
 
-			/* Log this kernel call. */
-			TX_EL_THREAD_SLEEP_INSERT
+        /* Determine if the preempt disable flag is non-zero.  */
+        if (_tx_thread_preempt_disable != ((UINT) 0))
+        {
 
-			/* Suspend the current thread. */
+            /* Restore interrupts.  */
+            TX_RESTORE
+        
+            /* Suspension is not allowed if the preempt disable flag is non-zero at this point - return error completion.  */
+            status =  TX_CALLER_ERROR;
+        }
+        else
+        {
+        
+            /* If trace is enabled, insert this event into the trace buffer.  */
+            TX_TRACE_IN_LINE_INSERT(TX_TRACE_THREAD_SLEEP, TX_ULONG_TO_POINTER_CONVERT(timer_ticks), thread_ptr -> tx_thread_state, TX_POINTER_TO_ULONG_CONVERT(&status), 0, TX_TRACE_THREAD_EVENTS)
 
-			/* Set the state to suspended. */
-			thread_ptr->tx_thread_state = TX_SLEEP;
+            /* Log this kernel call.  */
+            TX_EL_THREAD_SLEEP_INSERT
+
+            /* Suspend the current thread.  */
+
+            /* Set the state to suspended.  */
+            thread_ptr -> tx_thread_state =    TX_SLEEP;
 
 #ifdef TX_NOT_INTERRUPTABLE
-            /* Call actual non-interruptable thread suspension routine. */
+
+            /* Call actual non-interruptable thread suspension routine.  */
             _tx_thread_system_ni_suspend(thread_ptr, timer_ticks);
 
-            /* Restore interrupts. */
+            /* Restore interrupts.  */
             TX_RESTORE
 #else
-			/* Set the suspending flag. */
-			thread_ptr->tx_thread_suspending = TX_TRUE;
 
-			/* Initialize the status to successful. */
-			thread_ptr->tx_thread_suspend_status = TX_SUCCESS;
+            /* Set the suspending flag. */
+            thread_ptr -> tx_thread_suspending =  TX_TRUE;
 
-			/* Setup the timeout period. */
-			thread_ptr->tx_thread_timer.tx_timer_internal_remaining_ticks = timer_ticks;
+            /* Initialize the status to successful.  */
+            thread_ptr -> tx_thread_suspend_status =  TX_SUCCESS;
 
-			/* Temporarily disable preemption. */
-			_tx_thread_preempt_disable++;
+            /* Setup the timeout period.  */
+            thread_ptr -> tx_thread_timer.tx_timer_internal_remaining_ticks =  timer_ticks;
 
-			/* Restore interrupts. */
-			TX_RESTORE
+            /* Temporarily disable preemption.  */
+            _tx_thread_preempt_disable++;
 
-			/* Call actual thread suspension routine. */
-			_tx_thread_system_suspend(thread_ptr);
+            /* Restore interrupts.  */
+            TX_RESTORE
+
+            /* Call actual thread suspension routine.  */
+            _tx_thread_system_suspend(thread_ptr);
 #endif
 
-			/* Return status to the caller. */
-			status = thread_ptr->tx_thread_suspend_status;
-		}
-	}
-
-	/* Return completion status. */
-	return (status);
+            /* Return status to the caller.  */
+            status =  thread_ptr -> tx_thread_suspend_status;
+        }
+    }
+    
+    /* Return completion status.  */
+    return(status);
 }
+

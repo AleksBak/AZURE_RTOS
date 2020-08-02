@@ -53,7 +53,6 @@ int _write(int file, char* ptr, int len)
 
 /*-------------------------------------------- common --------------------------------------------*/
 
-/** используется в 'sample_azure_iot' */
 int hardware_rand(void)
 {
 	/* Wait for data ready.  */

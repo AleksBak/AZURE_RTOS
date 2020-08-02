@@ -16,30 +16,26 @@
 #include "ux_api.h"
 #include "ux_system.h"
 #include "ux_utility.h"
-#include "ux_dcd_stm32.h"
 #include "ux_device_class_cdc_acm.h"
 #include "ux_device_stack.h"
-
+#include "ux_dcd_stm32.h"
 #include "stm32f7xx.h"
 #include "stm32f7xx_hal.h"
 
-void hardware_setup(void);
-
 /* Define local constants. */
-#define UX_DEMO_DEBUG_SIZE                  (4096 * 8)
-#define UX_DEMO_STACK_SIZE                  4096
-#define UX_DEMO_BUFFER_SIZE                 512
+#define UX_DEMO_STACK_SIZE                  2048		// 4096
+#define UX_DEMO_BUFFER_SIZE                 64			// 512
 #define UX_USBX_MEMORY_SIZE                 (32 * 1024)
 
-/* Define local function prototypes */
+/* Define local/extern function prototypes */
+void hardware_setup(void);
 void demo_thread_entry(ULONG arg);
 void demo_cdc_instance_activate(void* cdc_instance);
 void demo_cdc_instance_deactivate(void* cdc_instance);
 void demo_cdc_acm_parameter_change(void* cdc_instance);
 void USB_OTG_BSP_HS_Init(void);
 
-// @formatter:off
-#if 1
+/* Define local macros. */
 #define LOBYTE(x)							((uint8_t)((x) & 0x00FFU))
 #define HIBYTE(x)							((uint8_t)(((x) & 0xFF00U) >> 8U))
 
@@ -50,10 +46,10 @@ void USB_OTG_BSP_HS_Init(void);
 #define USB_CDC_AT_COMMAND_PROTOCOL			0x01
 #define USB_CLASS_CDC_DATA					0x0A
 
-#define USB_DESCTYPE_CS_INTERFACE			0x24					/* CDC interface descriptor type */
+#define USB_DESCTYPE_CS_INTERFACE			0x24		/* CDC interface descriptor type */
 #define USBD_LPM_ENABLED					0
 
-#define USB_ID_SETTINGS						1						/* Select: 1, 2, or 3 */
+#define USB_ID_SETTINGS						2			/* Select: 1, 2, or 3 */
 
 #if (USB_ID_SETTINGS == 1)
 #define USBD_VID							0x0483
@@ -71,18 +67,17 @@ void USB_OTG_BSP_HS_Init(void);
 
 #define CDC_CMD_PACKET_SIZE					8U			/* Control Endpoint Packet size */
 #define CDC_DATA_FS_MAX_PACKET_SIZE			64U			/* FS Endpoint IN & OUT Packet size */
-#define CDC_DATA_HS_MAX_PACKET_SIZE			512U		/* HS Endpoint IN & OUT Packet size */
+#define CDC_DATA_HS_MAX_PACKET_SIZE			64U	//512U		/* HS Endpoint IN & OUT Packet size */
 
 #define CDC_FS_BINTERVAL					0x10U		/* 0x10 - 16 ms */
 #define CDC_HS_BINTERVAL					0x10U		/* 0x10 */
 
 #define INTERF_COM_NUM						0x00		/* Control Interface (0) */
 #define INTERF_DAT_NUM						0x01		/* Data Interface (1) */
-#endif
 
-
-/* UCHAR device_framework_full_speed[] */
+/* Define device framework. */
 #if 1
+// @formatter:off
 UCHAR device_framework_full_speed[] =
 {
     /* Device Descriptor (must be first in this array) */
@@ -110,8 +105,7 @@ UCHAR device_framework_full_speed[] =
     /* Configuration Descriptor */
     0x09,										/* 0 bLength */
     UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
-    0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
-    0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
+    0x4B, 0x00,									/* 2, 3 wTotalLength     : */
     0x02,										/* 4 bNumInterfaces      : 2 Interfaces */
     0x01,										/* 5 bConfigurationValue : Configuration 1 */
     0x00,										/* 6 iConfiguration      : No String Descriptor */
@@ -126,7 +120,7 @@ UCHAR device_framework_full_speed[] =
     0x02,										/* 3 bInterfaceCount     : */
     0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
     0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
-    0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
+    0x00,										/* 6 bFunctionProtocol   : No class specific protocol required */
     0x00,										/* 7 iFunction           : No String Descriptor */
 
     /*--------------------------------------------------------------------------------------------*/
@@ -147,7 +141,7 @@ UCHAR device_framework_full_speed[] =
     0x03,										/* 3 bmCapabilities */
     INTERF_DAT_NUM,								/* 4 bDataInterface */
 
-    /* Abstract Control Management (ACM) Functional Descriptor */
+    /* CDC ACM Functional Descriptor */
     0x04,										/* 0 bFunctionLength */
     USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
     0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
@@ -221,7 +215,6 @@ UCHAR device_framework_full_speed[] =
 };
 #endif
 
-/* UCHAR device_framework_high_speed[] */
 #if 1
 UCHAR device_framework_high_speed[] =
 {
@@ -289,8 +282,7 @@ UCHAR device_framework_high_speed[] =
     /* Configuration Descriptor */
     0x09,										/* 0 bLength */
     UX_CONFIGURATION_DESCRIPTOR_ITEM,			/* 1 bDescriptorType     : Configuration Descriptor */
-    0x4B,										/* 2 wTotalLength        : This will be calculated at run-time. (0x4B) */
-    0x00,										/* 3 wTotalLength        : This will be calculated at run-time. */
+    0x4B, 0x00,									/* 2, 3 wTotalLength     : */
     0x02,										/* 4 bNumInterfaces      : 2 Interfaces used */
     0x01,										/* 5 bConfigurationValue : Configuration 1 */
     0x00,										/* 6 iConfiguration      : No String Descriptor */
@@ -305,7 +297,7 @@ UCHAR device_framework_high_speed[] =
     0x02,										/* 3 bInterfaceCount     : */
     0x02,										/* 4 bFunctionClass      : Communications and CDC Control */
     0x02,										/* 5 bFunctionSubClass   : Abstract Control Model */
-    0x01,										/* 6 bFunctionProtocol   : Standard or enhanced AT Command set protocol */
+    0x00,										/* 6 bFunctionProtocol   : No class specific protocol required */
     0x00,										/* 7 iFunction           : No String Descriptor */
 
     /*--------------------------------------------------------------------------------------------*/
@@ -323,10 +315,10 @@ UCHAR device_framework_high_speed[] =
     0x05,										/* 0 bFunctionLength */
     USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
     0x01,										/* 2 bDescriptorSubtype     : CALL MANAGEMENT (0x01) */
-    0x00,								/*0x03*//* 3 bmCapabilities */
+    0x00,										/* 3 bmCapabilities */
     INTERF_DAT_NUM,								/* 4 bDataInterface */
 
-    /* Abstract Control Management (ACM) Functional Descriptor */
+    /* CDC ACM Functional Descriptor */
     0x04,										/* 0 bFunctionLength */
     USB_DESCTYPE_CS_INTERFACE,					/* 1 bDescriptorType        : CS_INTERFACE */
     0x02,										/* 2 bDescriptorSubtype     : ABSTRACT CONTROL MANAGEMENT (0x02) */
@@ -400,7 +392,6 @@ UCHAR device_framework_high_speed[] =
 };
 #endif
 
-/* UCHAR language_id_framework[] + UCHAR string_framework[] */
 #if 1
 /* Multiple languages are supported on the device, to add a language besides english,
  * the Unicode language code must be appended to the language_id_framework array and
@@ -462,92 +453,144 @@ UCHAR string_framework[] =
     'C', 'D', 'C', ' ', 'C', 'o', 'n', 'f', 'i', 'g',
 };
 #endif // @formatter:on
+
+/* Define global data structures. */
+TX_THREAD demo_thread;
+UX_SLAVE_CLASS_CDC_ACM* cdc_acm_slave;
+UX_SLAVE_CLASS_CDC_ACM_PARAMETER parameter;
+UCHAR buffer[UX_DEMO_BUFFER_SIZE];
+
+void error_handler()
+{
+	while (1);
+}
+
+VOID error_callback(UINT system_level, UINT system_context, UINT error_code)
+{
+	error_handler();
+}
+
 int main(int argc, char** argv)
 {
 	/* Setup the hardware: MPU, CACHE, HAL_Init, Clock, SDRAM, USART1, RNG */
 	hardware_setup();
-	USB_OTG_BSP_HS_Init();
 
-	_ux_dcd_stm32_delay(100000U);
+//	USB_OTG_BSP_HS_Init();
+//	_ux_dcd_stm32_delay(100000U);
 
 	/* Enter the ThreadX kernel. */
 	tx_kernel_enter();
 }
 
-/* Define local variables and definitions. */
-UX_SLAVE_CLASS_CDC_ACM* cdc;
-TX_THREAD demo_thread;
-UCHAR buffer[UX_DEMO_BUFFER_SIZE];
-UX_SLAVE_CLASS_CDC_ACM_PARAMETER cdc_parameter =
-		{
-			/* Set the parameters for callback when insertion/extraction of a CDC device. */
-			.ux_slave_class_cdc_acm_instance_activate = demo_cdc_instance_activate,
-			.ux_slave_class_cdc_acm_instance_deactivate = demo_cdc_instance_deactivate,
-			.ux_slave_class_cdc_acm_parameter_change = demo_cdc_acm_parameter_change
-		};
-
 void tx_application_define(void* first_unused_memory)
 {
 	/* Initialize the free memory pointer. */
 	CHAR* stack_pointer = (CHAR*)first_unused_memory;
-
-	/* Initialize the RAM disk memory. */
 	CHAR* memory_pointer = stack_pointer + UX_DEMO_STACK_SIZE;
 
-	/* Initialize USBX Memory (no separate pool for cache safe memory) */
-	UINT status = _ux_system_initialize(memory_pointer, UX_USBX_MEMORY_SIZE, UX_NULL, 0);
+	/* Create the main demo thread. */
+	UINT status = tx_thread_create(&demo_thread, "tx demo", demo_thread_entry,
+			(ULONG )memory_pointer, stack_pointer, UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
 	if (status != UX_SUCCESS)
-		return;
+		error_handler();
 
-	ULONG device_framework_length_full_speed = sizeof(device_framework_full_speed);		// 93
-	ULONG device_framework_length_high_speed = sizeof(device_framework_high_speed);		// 103
-	ULONG string_framework_length = sizeof(string_framework);							// 47
-	ULONG language_id_framework_length = sizeof(language_id_framework);					// 2
+//	/* Initialize USBX Memory (no separate pool for cache safe memory) */
+//	UINT status = _ux_system_initialize(memory_pointer, UX_USBX_MEMORY_SIZE, UX_NULL, 0);
+//	if (status != UX_SUCCESS)
+//		return;
+//
+//	ULONG device_framework_length_full_speed = sizeof(device_framework_full_speed);		// 93
+//	ULONG device_framework_length_high_speed = sizeof(device_framework_high_speed);		// 103
+//	ULONG string_framework_length = sizeof(string_framework);							// 47
+//	ULONG language_id_framework_length = sizeof(language_id_framework);					// 2
+//
+//	/* The code below is required for installing the device portion of USBX.
+//	 * No call back for device status change in this example. */
+//	status = _ux_device_stack_initialize(device_framework_high_speed,
+//			device_framework_length_high_speed, device_framework_full_speed,
+//			device_framework_length_full_speed, string_framework, string_framework_length,
+//			language_id_framework, language_id_framework_length, UX_NULL);
+//	if (status != UX_SUCCESS)
+//		return;
+//
+//	/* Initialize the device cdc_acm_slave class. This class owns both interfaces starting with 0. */
+//	status = _ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name,
+//			_ux_device_class_cdc_acm_entry, INTERF_DAT_NUM, INTERF_COM_NUM, (VOID*)&parameter);
+//	if (status != UX_SUCCESS)
+//		return;
+//
+//	/* Create the main demo thread.
+//	 * UINT _tx_thread_create(TX_THREAD* thread_ptr, CHAR* name_ptr,
+//	 * 		VOID (*entry_function)(ULONG entry_input), ULONG entry_input, VOID* stack_start,
+//	 * 		ULONG stack_size, UINT priority, UINT preempt_threshold, ULONG time_slice,
+//	 * 		UINT auto_start); */
+//	status = _tx_thread_create(&demo_thread, "tx demo", demo_thread_entry, 0, stack_pointer,
+//	UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
+//	if (status != TX_SUCCESS)
+//		return;
+//
+//	/* Create the main demo thread.
+//	 * UINT _tx_thread_create(TX_THREAD* thread_ptr, CHAR* name_ptr,
+//	 * 		VOID (*entry_function)(ULONG entry_input), ULONG entry_input, VOID* stack_start,
+//	 * 		ULONG stack_size, UINT priority, UINT preempt_threshold, ULONG time_slice,
+//	 * 		UINT auto_start); */
+//	status = _tx_thread_create(&demo_thread, "tx demo", demo_thread_entry, 0, stack_pointer,
+//	UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
+//	if (status != TX_SUCCESS)
+//		return;
 
-	/* The code below is required for installing the device portion of USBX.
-	 * No call back for device status change in this example. */
-	status = _ux_device_stack_initialize(device_framework_high_speed,
-			device_framework_length_high_speed, device_framework_full_speed,
-			device_framework_length_full_speed, string_framework, string_framework_length,
-			language_id_framework, language_id_framework_length, UX_NULL);
-	if (status != UX_SUCCESS)
-		return;
-
-	/* Initialize the device cdc class. This class owns both interfaces starting with 0. */
-	status = _ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name,
-			_ux_device_class_cdc_acm_entry, INTERF_DAT_NUM, INTERF_COM_NUM, (VOID*)&cdc_parameter);
-	if (status != UX_SUCCESS)
-		return;
-
-	/* Create the main demo thread.
-	 * UINT _tx_thread_create(TX_THREAD* thread_ptr, CHAR* name_ptr,
-	 * 		VOID (*entry_function)(ULONG entry_input), ULONG entry_input, VOID* stack_start,
-	 * 		ULONG stack_size, UINT priority, UINT preempt_threshold, ULONG time_slice,
-	 * 		UINT auto_start); */
-	status = _tx_thread_create(&demo_thread, "tx demo", demo_thread_entry, 0, stack_pointer,
-	UX_DEMO_STACK_SIZE, 20, 20, 1, TX_AUTO_START);
-	if (status != TX_SUCCESS)
-		return;
-
-	printf("\r\nDemo Thread created...\r\n");
-
-	return;
+//	printf("\r\nDemo Thread created...\r\n");
 }
 
 void demo_thread_entry(ULONG arg)
 {
-	/* Register the STM32  USB device controllers available in this system */
-	ULONG status = _ux_dcd_stm32_initialize(UX_DCD_STM32_OTG_FS_HIGH_SPEED, 0);
+	ULONG memory_pointer_thread_input = arg;
+
+	/* Initialize USBX. Memory */
+	UINT status = _ux_system_initialize((ULONG*)memory_pointer_thread_input, UX_USBX_MEMORY_SIZE,
+			UX_NULL, 0);
 	if (status != UX_SUCCESS)
-		return;
+			error_handler();
 
-	ULONG actual_length;
-	ULONG requested_length;
+	/* Register error callback. */
+	_ux_utility_error_callback_register(error_callback);
 
-	for (;;)
+	/* The code below is required for installing the device portion of USBX.
+	 * No call back for device status change in this example. */
+	status = ux_device_stack_initialize(device_framework_high_speed,
+			sizeof(device_framework_high_speed), device_framework_full_speed,
+			sizeof(device_framework_full_speed), string_framework, sizeof(string_framework),
+			language_id_framework, sizeof(language_id_framework), UX_NULL);
+	if (status != UX_SUCCESS)
+		error_handler();
+
+	/* Set the parameters for callback when insertion/extraction of a CDC device. */
+	parameter.ux_slave_class_cdc_acm_instance_activate = demo_cdc_instance_activate;
+	parameter.ux_slave_class_cdc_acm_instance_deactivate = demo_cdc_instance_deactivate;
+
+	/* Initialize the device cdc class. This class owns both interfaces starting with 0. */
+	status = ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name,
+			ux_device_class_cdc_acm_entry, INTERF_DAT_NUM, INTERF_COM_NUM, (VOID*)&parameter);
+	if (status != UX_SUCCESS)
+		error_handler();
+
+	/* Initialize the bsp layer of the USB OTG HS Controller. */
+	USB_OTG_BSP_HS_Init();
+	status = tx_thread_sleep(10);
+	if (status != UX_SUCCESS)
+		error_handler();
+
+	/* Register the STM32  USB device controllers available in this system */
+	status = _ux_dcd_stm32_initialize(UX_DCD_STM32_OTG_FS_HIGH_SPEED, 0);
+	if (status != UX_SUCCESS)
+		error_handler();
+
+	ULONG message_length;
+
+	while (1)
 	{
 		/* Ensure the CDC class is mounted. */
-		if (cdc != UX_NULL)
+		while (cdc_acm_slave != UX_NULL)
 		{
 			if (DEBUG_BUTTON_PRESSED() != 0)
 			{
@@ -566,118 +609,196 @@ void demo_thread_entry(ULONG arg)
 					buffer[7] = '\n';
 
 					/* And send 8 bytes. */
-					status = _ux_device_class_cdc_acm_write(cdc, buffer, 8, &actual_length);
+					status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 8,
+							&message_length);
 
-					/* And send 0 byte packet. Forced ZLP. */
-					status = _ux_device_class_cdc_acm_write(cdc, buffer, 0, &actual_length);
+					/* Device disconnect? */
+					if (status != UX_SUCCESS)
+						break;
 				}
 			}
 
-//			/* Read from the CDC class. */
-//			status = _ux_device_class_cdc_acm_read(cdc, buffer, UX_DEMO_BUFFER_SIZE,
-//					&actual_length);
+			/* Read from the host. */
+			status = ux_device_class_cdc_acm_read(cdc_acm_slave, buffer, UX_DEMO_BUFFER_SIZE,
+					&message_length);
+
+			/* Device disconnect? */
+			if (status != UX_SUCCESS)
+				break;
+
+			/* Echo it back to the host. */
+			status = ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, message_length,
+					&message_length);
+
+			/* Device disconnect? */
+			if (status != UX_SUCCESS)
+				break;
+		}
+	}
+
+//	ULONG device_framework_length_full_speed = sizeof(device_framework_full_speed);		// 93
+//	ULONG device_framework_length_high_speed = sizeof(device_framework_high_speed);		// 103
+//	ULONG string_framework_length = sizeof(string_framework);							// 47
+//	ULONG language_id_framework_length = sizeof(language_id_framework);					// 2
 //
-//			/* The actual length becomes the requested length. */
-//			requested_length = actual_length;
+//	/* The code below is required for installing the device portion of USBX.
+//	 * No call back for device status change in this example. */
+//	ULONG status = _ux_device_stack_initialize(device_framework_high_speed,
+//			device_framework_length_high_speed, device_framework_full_speed,
+//			device_framework_length_full_speed, string_framework, string_framework_length,
+//			language_id_framework, language_id_framework_length, UX_NULL);
+//	if (status != UX_SUCCESS)
+//		return;
 //
-//			/* Check the status.  If OK, we will write to the CDC instance. */
-//			status = _ux_device_class_cdc_acm_write(cdc, buffer, requested_length, &actual_length);
+//	/* Initialize the device cdc_acm_slave class. This class owns both interfaces starting with 0. */
+//	status = _ux_device_stack_class_register(_ux_system_slave_class_cdc_acm_name,
+//			_ux_device_class_cdc_acm_entry, INTERF_DAT_NUM, INTERF_COM_NUM, (VOID*)&parameter);
+//	if (status != UX_SUCCESS)
+//		return;
 //
-//			/* Check for CR/LF. */
-//			if (buffer[requested_length - 1] == '\r')
+//	/* Register the STM32  USB device controllers available in this system */
+//	status = _ux_dcd_stm32_initialize(UX_DCD_STM32_OTG_FS_HIGH_SPEED, 0);
+//	if (status != UX_SUCCESS)
+//		return;
+//
+//	ULONG actual_length;
+//	ULONG requested_length;
+//
+//	for (;;)
+//	{
+//		/* Ensure the CDC class is mounted. */
+//		if (cdc_acm_slave != UX_NULL)
+//		{
+//			if (DEBUG_BUTTON_PRESSED() != 0)
 //			{
-//				/* Copy LF value into user buffer. */
-//				_ux_utility_memory_copy(buffer, "\n", 1);
+//				_tx_thread_sleep(1);
 //
-//				/* And send it again. */
-//				status = _ux_device_class_cdc_acm_write(cdc, buffer, 1, &actual_length);
+//				if (DEBUG_BUTTON_PRESSED() != 0)
+//				{
+//					/* Fill buffer. */
+//					buffer[0] = 'a';
+//					buffer[1] = 'b';
+//					buffer[2] = 'c';
+//					buffer[3] = 'd';
+//					buffer[4] = 'e';
+//					buffer[5] = 'f';
+//					buffer[6] = '\r';
+//					buffer[7] = '\n';
+//
+//					/* And send 8 bytes. */
+//					status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 8, &actual_length);
+//
+//					/* And send 0 byte packet. Forced ZLP. */
+//					status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 0, &actual_length);
+//				}
 //			}
 //
-//			/* Fill buffer. */
-//			buffer[0] = 'a';
-//			buffer[1] = 'b';
-//			buffer[2] = 'c';
-//			buffer[3] = 'd';
-//			buffer[4] = 'e';
-//			buffer[5] = 'f';
-//			buffer[6] = '\r';
-//			buffer[7] = '\n';
+////			/* Read from the CDC class. */
+////			status = _ux_device_class_cdc_acm_read(cdc_acm_slave, buffer, UX_DEMO_BUFFER_SIZE,
+////					&actual_length);
+////
+////			/* The actual length becomes the requested length. */
+////			requested_length = actual_length;
+////
+////			/* Check the status.  If OK, we will write to the CDC instance. */
+////			status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, requested_length, &actual_length);
+////
+////			/* Check for CR/LF. */
+////			if (buffer[requested_length - 1] == '\r')
+////			{
+////				/* Copy LF value into user buffer. */
+////				_ux_utility_memory_copy(buffer, "\n", 1);
+////
+////				/* And send it again. */
+////				status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 1, &actual_length);
+////			}
+////
+////			/* Fill buffer. */
+////			buffer[0] = 'a';
+////			buffer[1] = 'b';
+////			buffer[2] = 'c';
+////			buffer[3] = 'd';
+////			buffer[4] = 'e';
+////			buffer[5] = 'f';
+////			buffer[6] = '\r';
+////			buffer[7] = '\n';
+////
+////			/* And send 8 bytes. */
+////			status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 8, &actual_length);
+////
+////			/* And send 0 byte packet. Forced ZLP. */
+////			status = _ux_device_class_cdc_acm_write(cdc_acm_slave, buffer, 0, &actual_length);
+////
+////			/* Read from the CDC class. */
+////			status = _ux_device_class_cdc_acm_read(cdc_acm_slave, buffer, UX_DEMO_BUFFER_SIZE,
+////					&actual_length);
+//		}
 //
-//			/* And send 8 bytes. */
-//			status = _ux_device_class_cdc_acm_write(cdc, buffer, 8, &actual_length);
-//
-//			/* And send 0 byte packet. Forced ZLP. */
-//			status = _ux_device_class_cdc_acm_write(cdc, buffer, 0, &actual_length);
-//
-//			/* Read from the CDC class. */
-//			status = _ux_device_class_cdc_acm_read(cdc, buffer, UX_DEMO_BUFFER_SIZE,
-//					&actual_length);
-		}
-
-		_tx_thread_sleep(50);
-	}
+//		_tx_thread_sleep(50);
+//	}
 }
 
 /* static void Mb_usbfs_rcv_task(ULONG ptr)
- {
- UINT res;
- ULONG actual_length;
- ULONG actual_flags;
- T_usbfs_drv_cbl* p = (T_usbfs_drv_cbl*)ptr;
- uint32_t n;
+{
+	UINT res;
+	ULONG actual_length;
+	ULONG actual_flags;
+	T_usbfs_drv_cbl* p = (T_usbfs_drv_cbl*)ptr;
+	uint32_t n;
 
- do
- {
- if (p->active)
- {
- n = p->head_n;
- res = ux_device_class_cdc_acm_read(p->cdc, p->rd_pack[n].buff, USBDRV_BUFFER_MAX_LENGTH,
- &actual_length); // Чтение пакета из USB
+	do
+	{
+		if (p->active)
+		{
+			n = p->head_n;
+			res = ux_device_class_cdc_acm_read(p->cdc_acm_slave, p->rd_pack[n].buff,
+					USBDRV_BUFFER_MAX_LENGTH,
+					&actual_length); // Чтение пакета из USB
 
- p->rd_pack[n].len = actual_length;
- if (res == UX_SUCCESS)
- {
- // Перемещаем указатель головы очереди
- n++;
- if (n >= IN_BUF_QUANTITY)
- n = 0;
- p->head_n = n;
+			p->rd_pack[n].len = actual_length;
+			if (res == UX_SUCCESS)
+			{
+				// Перемещаем указатель головы очереди
+				n++;
+				if (n >= IN_BUF_QUANTITY)
+					n = 0;
+				p->head_n = n;
 
- // Выставляем флаг выполненного чтения
- if (tx_event_flags_set(&(p->evt), MB_USBFS_READ_DONE, TX_OR) != TX_SUCCESS)
- {
- tx_thread_sleep(2); // Задержка после ошибки
- }
+				// Выставляем флаг выполненного чтения
+				if (tx_event_flags_set(&(p->evt), MB_USBFS_READ_DONE, TX_OR) != TX_SUCCESS)
+				{
+					tx_thread_sleep(2); // Задержка после ошибки
+				}
 
- // Если все буферы на прием заполнены, то значит системе не требуются данные
- if (p->tail_n == n)
- {
- // Перестаем принимать данные из USB и ждем когда система обработает уже принятые данные и подаст сигнал к началу приема по USB
- p->no_space = 1;
- if (tx_event_flags_get(&(p->evt), MB_USBFS_READ_REQUEST, TX_AND_CLEAR,
- &actual_flags, TX_WAIT_FOREVER) != TX_SUCCESS)
- {
- tx_thread_sleep(2); // Задержка после ошибки
- }
- }
- }
- else
- {
- tx_thread_sleep(2); // Задержка после ошибки
- }
- }
- else
- {
- tx_thread_sleep(2); // Задержки после ошибки нужны для того чтобы задача не захватила все ресурсы в случает постоянного появления ошибки
- }
+				// Если все буферы на прием заполнены, то значит системе не требуются данные
+				if (p->tail_n == n)
+				{
+					// Перестаем принимать данные из USB и ждем когда система обработает уже принятые данные и подаст сигнал к началу приема по USB
+					p->no_space = 1;
+					if (tx_event_flags_get(&(p->evt), MB_USBFS_READ_REQUEST, TX_AND_CLEAR,
+							&actual_flags, TX_WAIT_FOREVER) != TX_SUCCESS)
+					{
+						tx_thread_sleep(2); // Задержка после ошибки
+					}
+				}
+			}
+			else
+			{
+				tx_thread_sleep(2); // Задержка после ошибки
+			}
+		}
+		else
+		{
+			tx_thread_sleep(2); // Задержки после ошибки нужны для того чтобы задача не захватила все ресурсы в случает постоянного появления ошибки
+		}
 
- } while (1);
- } */
+	} while (1);
+} */
 
 void demo_cdc_instance_activate(void* cdc_instance)
 {
 	/* Save the CDC instance. */
-	cdc = (UX_SLAVE_CLASS_CDC_ACM*)cdc_instance;
+	cdc_acm_slave = (UX_SLAVE_CLASS_CDC_ACM*)cdc_instance;
 
 	DEBUG_LED_ON();
 }
@@ -685,7 +806,7 @@ void demo_cdc_instance_activate(void* cdc_instance)
 void demo_cdc_instance_deactivate(void* cdc_instance)
 {
 	/* Reset the CDC instance. */
-	cdc = UX_NULL;
+	cdc_acm_slave = UX_NULL;
 
 	DEBUG_LED_OFF();
 }

@@ -9,6 +9,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+
 /**************************************************************************/
 /**************************************************************************/
 /**                                                                       */
@@ -19,12 +20,13 @@
 /**************************************************************************/
 /**************************************************************************/
 
+
 /**************************************************************************/
 /*                                                                        */
 /*  APPLICATION INTERFACE DEFINITION                       RELEASE        */
 /*                                                                        */
 /*    tx_api.h                                            PORTABLE C      */
-/*                                                           6.0          */
+/*                                                           6.0.1        */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    William E. Lamie, Microsoft Corporation                             */
@@ -42,32 +44,48 @@
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
 /*  05-19-2020     William E. Lamie         Initial Version 6.0           */
+/*  06-30-2020     William E. Lamie         Modified comment(s), and      */
+/*                                            updated product constants,  */
+/*                                            resulting in version 6.0.1  */
 /*                                                                        */
 /**************************************************************************/
 
 #ifndef TX_API_H
 #define TX_API_H
 
+
 /* Determine if a C++ compiler is being used.  If so, ensure that standard
- C is used to process the API information. */
+   C is used to process the API information.  */
 
 #ifdef __cplusplus
-/* Yes, C++ compiler is present.  Use standard C. */
+
+/* Yes, C++ compiler is present.  Use standard C.  */
 extern   "C" {
+
 #endif
 
-/* Include the port-specific data type file. */
+
+/* Include the port-specific data type file.  */
+
 #include "tx_port.h"
 
-/* Define basic constants for the ThreadX kernel. */
 
-/* Define the major/minor version information that can be used by the application
- and the ThreadX source as well. */
-#define EL_PRODUCT_THREADX
+/* Define basic constants for the ThreadX kernel.  */
+
+
+/* Define the major/minor version information that can be used by the application 
+   and the ThreadX source as well.  */
+   
+#define AZURE_RTOS_THREADX
 #define THREADX_MAJOR_VERSION           6
 #define THREADX_MINOR_VERSION           0
+#define THREADX_PATCH_VERSION           1
 
-/* API input parameters and general constants. */
+/* Define the following symbol for backward compatibility */
+#define EL_PRODUCT_THREADX
+
+/* API input parameters and general constants.  */
+
 #define TX_NO_WAIT                      ((ULONG)  0)
 #define TX_WAIT_FOREVER                 ((ULONG)  0xFFFFFFFFUL)
 #define TX_AND                          ((UINT)   2)
@@ -97,7 +115,9 @@ extern   "C" {
 #define TX_CLEAR_ID                     ((ULONG)  0)
 #define TX_STACK_FILL                   ((ULONG)  0xEFEFEFEFUL)
 
-/* Thread execution state values. */
+
+/* Thread execution state values.  */
+
 #define TX_READY                        ((UINT) 0)
 #define TX_COMPLETED                    ((UINT) 1)
 #define TX_TERMINATED                   ((UINT) 2)
@@ -113,7 +133,9 @@ extern   "C" {
 #define TX_TCP_IP                       ((UINT) 12)
 #define TX_MUTEX_SUSP                   ((UINT) 13)
 
-/* API return values. */
+
+/* API return values.  */
+
 #define TX_SUCCESS                      ((UINT) 0x00)
 #define TX_DELETED                      ((UINT) 0x01)
 #define TX_NO_MEMORY                    ((UINT) 0x10)
@@ -152,28 +174,34 @@ extern   "C" {
 #define TX_INVALID_CEILING              ((UINT) 0x22)
 #define TX_FEATURE_NOT_ENABLED          ((UINT) 0xFF)
 
+
 /* Define the common timer tick reference for use by other middleware components. The default
- value is 10ms, but may be replaced by a port specific version in tx_port.h or by the user
- as a compilation option. */
+   value is 10ms, but may be replaced by a port specific version in tx_port.h or by the user
+   as a compilation option.  */
+
 #ifndef TX_TIMER_TICKS_PER_SECOND
 #define TX_TIMER_TICKS_PER_SECOND       ((ULONG) 100)
 #endif
 
-/* Event numbers 0 through 4095 are reserved by Azure RTOS. Specific event assignments are:
 
- ThreadX events:     1-199
- FileX events:       200-299
- NetX events:        300-599
- USBX events:        600-999
- GUIX events:        1000-1500
+/* Event numbers 0 through 4095 are reserved by Azure RTOS. Specific event assignments are: 
+                                
+                                ThreadX events:     1-199 
+                                FileX events:       200-299
+                                NetX events:        300-599
+                                USBX events:        600-999
+                                GUIX events:        1000-1500
+   
+   User-defined event numbers start at 4096 and continue through 65535, as defined by the constants 
+   TX_TRACE_USER_EVENT_START and TX_TRACE_USER_EVENT_END, respectively. User events should be based 
+   on these constants in case the user event number assignment is changed in future releases.  */
 
- User-defined event numbers start at 4096 and continue through 65535, as defined by the constants
- TX_TRACE_USER_EVENT_START and TX_TRACE_USER_EVENT_END, respectively. User events should be based
- on these constants in case the user event number assignment is changed in future releases. */
 #define TX_TRACE_USER_EVENT_START           4096            /* I1, I2, I3, I4 are user defined           */
 #define TX_TRACE_USER_EVENT_END             65535           /* I1, I2, I3, I4 are user defined           */
 
-/* Define event filters that can be used to selectively disable certain events or groups of events. */
+
+/* Define event filters that can be used to selectively disable certain events or groups of events.  */
+
 #define TX_TRACE_ALL_EVENTS                 0x000007FF      /* All ThreadX events                        */
 #define TX_TRACE_INTERNAL_EVENTS            0x00000001      /* ThreadX internal events                   */
 #define TX_TRACE_BLOCK_POOL_EVENTS          0x00000002      /* ThreadX Block Pool events                 */
@@ -188,615 +216,743 @@ extern   "C" {
 #define TX_TRACE_TIMER_EVENTS               0x00000400      /* ThreadX Timer events                      */
 #define TX_TRACE_USER_EVENTS                0x80000000UL    /* ThreadX User Events                       */
 
+
 /* Define basic alignment type used in block and byte pool operations. This data type must
- be at least 32-bits in size and also be large enough to hold a pointer type. */
+   be at least 32-bits in size and also be large enough to hold a pointer type.  */
+   
 #ifndef ALIGN_TYPE_DEFINED
 #define ALIGN_TYPE      ULONG
 #endif
 
-/* Define the control block definitions for all system objects. */
 
-/* Define the basic timer management structures.  These are the structures
- used to manage thread sleep, timeout, and user timer requests. */
+/* Define the control block definitions for all system objects.  */
 
-/* Determine if the internal timer control block has an extension defined. If not,
- define the extension to whitespace. */
+
+/* Define the basic timer management structures.  These are the structures 
+   used to manage thread sleep, timeout, and user timer requests.  */
+
+/* Determine if the internal timer control block has an extension defined. If not, 
+   define the extension to whitespace.  */
+
 #ifndef TX_TIMER_INTERNAL_EXTENSION
 #define TX_TIMER_INTERNAL_EXTENSION
 #endif
 
-/* Define the common internal timer control block. */
+
+/* Define the common internal timer control block.  */
+
 typedef struct TX_TIMER_INTERNAL_STRUCT
 {
-	/* Define the remaining ticks and re-initialization tick values. */
-	ULONG tx_timer_internal_remaining_ticks;
-	ULONG tx_timer_internal_re_initialize_ticks;
 
-	/* Define the timeout function and timeout function parameter. */
-	VOID (*tx_timer_internal_timeout_function)(ULONG id);
-	ULONG tx_timer_internal_timeout_param;
+    /* Define the remaining ticks and re-initialization tick values.  */
+    ULONG               tx_timer_internal_remaining_ticks;
+    ULONG               tx_timer_internal_re_initialize_ticks;
 
-	/* Define the next and previous internal link pointers for active
-	 internal timers. */
-	struct TX_TIMER_INTERNAL_STRUCT
-	* tx_timer_internal_active_next,
-			* tx_timer_internal_active_previous;
+    /* Define the timeout function and timeout function parameter.  */
+    VOID                (*tx_timer_internal_timeout_function)(ULONG id);
+    ULONG               tx_timer_internal_timeout_param;
 
-	/* Keep track of the pointer to the head of this list as well. */
-	struct TX_TIMER_INTERNAL_STRUCT
-	** tx_timer_internal_list_head;
 
-	/* Define optional extension to internal timer control block. */
-	TX_TIMER_INTERNAL_EXTENSION
+    /* Define the next and previous internal link pointers for active
+       internal timers.  */
+    struct TX_TIMER_INTERNAL_STRUCT
+                        *tx_timer_internal_active_next,
+                        *tx_timer_internal_active_previous;
+
+    /* Keep track of the pointer to the head of this list as well.  */
+    struct TX_TIMER_INTERNAL_STRUCT
+                        **tx_timer_internal_list_head;
+
+    /* Define optional extension to internal timer control block.  */
+    TX_TIMER_INTERNAL_EXTENSION
+
 } TX_TIMER_INTERNAL;
 
-/* Determine if the timer control block has an extension defined. If not,
- define the extension to whitespace. */
+
+/* Determine if the timer control block has an extension defined. If not, 
+   define the extension to whitespace.  */
 
 #ifndef TX_TIMER_EXTENSION
 #define TX_TIMER_EXTENSION
 #endif
 
-/* Define the timer structure utilized by the application. */
+
+/* Define the timer structure utilized by the application.  */
 
 typedef struct TX_TIMER_STRUCT
 {
-	/* Define the timer ID used for error checking. */
-	ULONG tx_timer_id;
 
-	/* Define the timer's name. */
-	CHAR* tx_timer_name;
+    /* Define the timer ID used for error checking.  */
+    ULONG               tx_timer_id;
 
-	/* Define the actual contents of the timer.  This is the block that
-	 is used in the actual timer expiration processing. */
-	TX_TIMER_INTERNAL tx_timer_internal;
+    /* Define the timer's name.  */
+    CHAR                *tx_timer_name;
 
-	/* Define the pointers for the created list. */
-	struct TX_TIMER_STRUCT* tx_timer_created_next, * tx_timer_created_previous;
+    /* Define the actual contents of the timer.  This is the block that
+       is used in the actual timer expiration processing.  */
+    TX_TIMER_INTERNAL   tx_timer_internal;
 
-	/* Define optional extension to timer control block. */
-	TX_TIMER_EXTENSION
+    /* Define the pointers for the created list.  */
+    struct TX_TIMER_STRUCT
+                        *tx_timer_created_next,
+                        *tx_timer_created_previous;
+
+    /* Define optional extension to timer control block.  */
+    TX_TIMER_EXTENSION
 
 #ifdef TX_TIMER_ENABLE_PERFORMANCE_INFO
-	/* Define the number of timer activations. */
-	ULONG tx_timer_performance_activate_count;
 
-	/* Define the number of timer reactivations. */
-	ULONG tx_timer_performance_reactivate_count;
+    /* Define the number of timer activations.  */
+    ULONG               tx_timer_performance_activate_count;
 
-	/* Define the number of timer deactivations. */
-	ULONG tx_timer_performance_deactivate_count;
+    /* Define the number of timer reactivations.  */
+    ULONG               tx_timer_performance_reactivate_count;
 
-	/* Define the number of timer expirations. */
-	ULONG tx_timer_performance_expiration_count;
+    /* Define the number of timer deactivations.  */
+    ULONG               tx_timer_performance_deactivate_count;
 
-	/* Define the total number of timer expiration adjustments. */
-	ULONG tx_timer_performance__expiration_adjust_count;
+    /* Define the number of timer expirations.  */
+    ULONG               tx_timer_performance_expiration_count;
+
+    /* Define the total number of timer expiration adjustments.  */
+    ULONG               tx_timer_performance__expiration_adjust_count;
 #endif
 
 } TX_TIMER;
 
+
 /* ThreadX thread control block structure follows.  Additional fields
- can be added providing they are added after the information that is
- referenced in the port-specific assembly code. */
+   can be added providing they are added after the information that is
+   referenced in the port-specific assembly code.  */
+
 typedef struct TX_THREAD_STRUCT
 {
-	/* The first section of the control block contains critical
-	 information that is referenced by the port-specific
-	 assembly language code.  Any changes in this section could
-	 necessitate changes in the assembly language. */
-	ULONG tx_thread_id; /* Control block ID         */
-	ULONG tx_thread_run_count; /* Thread's run counter     */
-	VOID* tx_thread_stack_ptr; /* Thread's stack pointer   */
-	VOID* tx_thread_stack_start; /* Stack starting address   */
-	VOID* tx_thread_stack_end; /* Stack ending address     */
-	ULONG tx_thread_stack_size; /* Stack size               */
-	ULONG tx_thread_time_slice; /* Current time-slice       */
-	ULONG tx_thread_new_time_slice; /* New time-slice           */
+    /* The first section of the control block contains critical
+       information that is referenced by the port-specific 
+       assembly language code.  Any changes in this section could
+       necessitate changes in the assembly language.  */
 
-	/* Define pointers to the next and previous ready threads. */
-	struct TX_THREAD_STRUCT* tx_thread_ready_next, * tx_thread_ready_previous;
+    ULONG               tx_thread_id;                   /* Control block ID         */
+    ULONG               tx_thread_run_count;            /* Thread's run counter     */
+    VOID                *tx_thread_stack_ptr;           /* Thread's stack pointer   */
+    VOID                *tx_thread_stack_start;         /* Stack starting address   */
+    VOID                *tx_thread_stack_end;           /* Stack ending address     */
+    ULONG               tx_thread_stack_size;           /* Stack size               */
+    ULONG               tx_thread_time_slice;           /* Current time-slice       */
+    ULONG               tx_thread_new_time_slice;       /* New time-slice           */
 
-	/***************************************************************/
+    /* Define pointers to the next and previous ready threads.  */
+    struct TX_THREAD_STRUCT
+                        *tx_thread_ready_next,
+                        *tx_thread_ready_previous;
 
-	/* Define the first port extension in the thread control block. This
-	 is typically defined to whitespace or a pointer type in tx_port.h. */
-	TX_THREAD_EXTENSION_0
+    /***************************************************************/
 
-	CHAR* tx_thread_name; /* Pointer to thread's name     */
-	UINT tx_thread_priority; /* Priority of thread (0-1023)  */
-	UINT tx_thread_state; /* Thread's execution state     */
-	UINT tx_thread_delayed_suspend; /* Delayed suspend flag         */
-	UINT tx_thread_suspending; /* Thread suspending flag       */
-	UINT tx_thread_preempt_threshold; /* Preemption threshold         */
+    /* Define the first port extension in the thread control block. This 
+       is typically defined to whitespace or a pointer type in tx_port.h.  */
+    TX_THREAD_EXTENSION_0
+         
+    CHAR                *tx_thread_name;                /* Pointer to thread's name     */
+    UINT                tx_thread_priority;             /* Priority of thread (0-1023)  */
+    UINT                tx_thread_state;                /* Thread's execution state     */
+    UINT                tx_thread_delayed_suspend;      /* Delayed suspend flag         */
+    UINT                tx_thread_suspending;           /* Thread suspending flag       */
+    UINT                tx_thread_preempt_threshold;    /* Preemption threshold         */
+    
+    /* Define the thread schedule hook. The usage of this is port/application specific, 
+       but when used, the function pointer designated is called whenever the thread is
+       scheduled and unscheduled.  */
+    VOID                (*tx_thread_schedule_hook)(struct TX_THREAD_STRUCT *thread_ptr, ULONG id);
 
-	/* Define the thread schedule hook. The usage of this is port/application specific,
-	 but when used, the function pointer designated is called whenever the thread is
-	 scheduled and unscheduled. */
-	VOID (*tx_thread_schedule_hook)(struct TX_THREAD_STRUCT* thread_ptr, ULONG id);
+    /* Nothing after this point is referenced by the target-specific
+       assembly language.  Hence, information after this point can 
+       be added to the control block providing the complete system 
+       is recompiled.  */
 
-	/* Nothing after this point is referenced by the target-specific assembly language.
-	 * Hence, information after this point can be added to the control block providing
-	 * the complete system is recompiled. */
+    /* Define the thread's entry point and input parameter.  */
+    VOID                (*tx_thread_entry)(ULONG id);
+    ULONG               tx_thread_entry_parameter;
 
-	/* Define the thread's entry point and input parameter. */
-	VOID (*tx_thread_entry)(ULONG id);
-	ULONG tx_thread_entry_parameter;
+    /* Define the thread's timer block.   This is used for thread 
+       sleep and timeout requests.  */
+    TX_TIMER_INTERNAL   tx_thread_timer;
 
-	/* Define the thread's timer block.   This is used for thread sleep and timeout requests. */
-	TX_TIMER_INTERNAL tx_thread_timer;
+    /* Define the thread's cleanup function and associated data.  This
+       is used to cleanup various data structures when a thread 
+       suspension is lifted or terminated either by the user or 
+       a timeout.  */
+    VOID                (*tx_thread_suspend_cleanup)(struct TX_THREAD_STRUCT *thread_ptr, ULONG suspension_sequence);
+    VOID                *tx_thread_suspend_control_block;
+    struct TX_THREAD_STRUCT
+                        *tx_thread_suspended_next,
+                        *tx_thread_suspended_previous;
+    ULONG               tx_thread_suspend_info;
+    VOID                *tx_thread_additional_suspend_info;
+    UINT                tx_thread_suspend_option;
+    UINT                tx_thread_suspend_status;
 
-	/* Define the thread's cleanup function and associated data. This is used to cleanup various data
-	 * structures when a thread suspension is lifted or terminated either by the user or a timeout. */
-	VOID (*tx_thread_suspend_cleanup)(struct TX_THREAD_STRUCT* thread_ptr, ULONG suspension_sequence);
-	VOID* tx_thread_suspend_control_block;
-	struct TX_THREAD_STRUCT* tx_thread_suspended_next, * tx_thread_suspended_previous;
-	ULONG tx_thread_suspend_info;
-	VOID* tx_thread_additional_suspend_info;
-	UINT tx_thread_suspend_option;
-	UINT tx_thread_suspend_status;
+    /* Define the second port extension in the thread control block. This 
+       is typically defined to whitespace or a pointer type in tx_port.h.  */
+    TX_THREAD_EXTENSION_1
 
-	/* Define the second port extension in the thread control block. This is typically defined
-	 * to whitespace or a pointer type in tx_port.h. */
-	TX_THREAD_EXTENSION_1
+    /* Define pointers to the next and previous threads in the 
+       created list.  */
+    struct TX_THREAD_STRUCT
+                        *tx_thread_created_next,
+                        *tx_thread_created_previous;
 
-	/* Define pointers to the next and previous threads in the created list. */
-	struct TX_THREAD_STRUCT* tx_thread_created_next, * tx_thread_created_previous;
+    /* Define the third port extension in the thread control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_THREAD_EXTENSION_2
 
-	/* Define the third port extension in the thread control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_THREAD_EXTENSION_2
+    /* Define a pointer type for FileX extensions.  */
+    VOID                *tx_thread_filex_ptr;
 
-	/* Define a pointer type for FileX extensions. */
-	VOID* tx_thread_filex_ptr;
-
-	/* Define the priority inheritance variables. These will be used to manage priority inheritance
-	 * changes applied to this thread as a result of mutex get operations. */
-	UINT tx_thread_user_priority;
-	UINT tx_thread_user_preempt_threshold;
-	UINT tx_thread_inherit_priority;
-
-	/* Define the owned mutex count and list head pointer. */
-	UINT tx_thread_owned_mutex_count;
-	struct TX_MUTEX_STRUCT* tx_thread_owned_mutex_list;
+    /* Define the priority inheritance variables. These will be used
+       to manage priority inheritance changes applied to this thread 
+       as a result of mutex get operations.  */
+    UINT                tx_thread_user_priority;
+    UINT                tx_thread_user_preempt_threshold;
+    UINT                tx_thread_inherit_priority;
+    
+    /* Define the owned mutex count and list head pointer.  */
+    UINT                tx_thread_owned_mutex_count;
+    struct TX_MUTEX_STRUCT
+                        *tx_thread_owned_mutex_list;
 
 #ifdef TX_THREAD_ENABLE_PERFORMANCE_INFO
-	/* Define the number of times this thread is resumed. */
-	ULONG tx_thread_performance_resume_count;
 
-	/* Define the number of times this thread suspends. */
-	ULONG tx_thread_performance_suspend_count;
+    /* Define the number of times this thread is resumed.  */
+    ULONG               tx_thread_performance_resume_count;
 
-	/* Define the number of times this thread is preempted by calling a ThreadX API service. */
-	ULONG tx_thread_performance_solicited_preemption_count;
+    /* Define the number of times this thread suspends.  */
+    ULONG               tx_thread_performance_suspend_count;
 
-	/* Define the number of times this thread is preempted by an ISR calling a ThreadX API service. */
-	ULONG tx_thread_performance_interrupt_preemption_count;
+    /* Define the number of times this thread is preempted by calling 
+       a ThreadX API service.  */
+    ULONG               tx_thread_performance_solicited_preemption_count;
 
-	/* Define the number of priority inversions for this thread. */
-	ULONG tx_thread_performance_priority_inversion_count;
+    /* Define the number of times this thread is preempted by an
+       ISR calling a ThreadX API service.  */
+    ULONG               tx_thread_performance_interrupt_preemption_count;
 
-	/* Define the last thread pointer to preempt this thread. */
-	struct TX_THREAD_STRUCT* tx_thread_performance_last_preempting_thread;
+    /* Define the number of priority inversions for this thread.  */
+    ULONG               tx_thread_performance_priority_inversion_count;
 
-	/* Define the total number of times this thread was time-sliced. */
-	ULONG tx_thread_performance_time_slice_count;
+    /* Define the last thread pointer to preempt this thread.  */
+    struct TX_THREAD_STRUCT
+                        *tx_thread_performance_last_preempting_thread;
 
-	/* Define the total number of times this thread relinquishes. */
-	ULONG tx_thread_performance_relinquish_count;
+    /* Define the total number of times this thread was time-sliced.  */
+    ULONG               tx_thread_performance_time_slice_count;
 
-	/* Define the total number of times this thread had a timeout. */
-	ULONG tx_thread_performance_timeout_count;
+    /* Define the total number of times this thread relinquishes.  */
+    ULONG               tx_thread_performance_relinquish_count;
 
-	/* Define the total number of times this thread had suspension lifted because
-	 * of the tx_thread_wait_abort service. */
-	ULONG tx_thread_performance_wait_abort_count;
+    /* Define the total number of times this thread had a timeout.  */
+    ULONG               tx_thread_performance_timeout_count;
+
+    /* Define the total number of times this thread had suspension lifted
+       because of the tx_thread_wait_abort service.  */
+    ULONG               tx_thread_performance_wait_abort_count;
 #endif
 
-	/* Define the highest stack pointer variable. */
-	VOID* tx_thread_stack_highest_ptr; /* Stack highest usage pointer  */
+    /* Define the highest stack pointer variable.  */
+    VOID                *tx_thread_stack_highest_ptr;   /* Stack highest usage pointer  */
+
 
 #ifndef TX_DISABLE_NOTIFY_CALLBACKS
-	/* Define the application callback routine used to notify the application when the thread
-	 * is entered or exits. */
-	VOID (*tx_thread_entry_exit_notify)(struct TX_THREAD_STRUCT* thread_ptr, UINT type);
+
+    /* Define the application callback routine used to notify the application when 
+       the thread is entered or exits.  */
+    VOID                (*tx_thread_entry_exit_notify)(struct TX_THREAD_STRUCT *thread_ptr, UINT type);
 #endif
 
-	/* Define the fourth port extension in the thread control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_THREAD_EXTENSION_3
+    /* Define the fourth port extension in the thread control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_THREAD_EXTENSION_3
 
-	/* Define suspension sequence number.  This is used to ensure suspension is still valid when
-	 * cleanup routine executes. */
-	ULONG tx_thread_suspension_sequence;
+    /* Define suspension sequence number.  This is used to ensure suspension is still valid when 
+       cleanup routine executes.  */
+    ULONG               tx_thread_suspension_sequence;
 
-	/* Define the user extension field.  This typically is defined to white space, but some ports
-	 * of ThreadX may need to have additional fields in the thread control block. This is
-	 * defined in the file tx_port.h. */
-	TX_THREAD_USER_EXTENSION
+    /* Define the user extension field.  This typically is defined 
+       to white space, but some ports of ThreadX may need to have 
+       additional fields in the thread control block.  This is 
+       defined in the file tx_port.h.  */
+    TX_THREAD_USER_EXTENSION
+
 } TX_THREAD;
 
-/* Define the block memory pool structure utilized by the application. */
+
+/* Define the block memory pool structure utilized by the application.  */
+
 typedef struct TX_BLOCK_POOL_STRUCT
 {
-	/* Define the block pool ID used for error checking. */
-	ULONG tx_block_pool_id;
 
-	/* Define the block pool's name. */
-	CHAR* tx_block_pool_name;
+    /* Define the block pool ID used for error checking.  */
+    ULONG               tx_block_pool_id;
 
-	/* Define the number of available memory blocks in the pool. */
-	UINT tx_block_pool_available;
+    /* Define the block pool's name.  */
+    CHAR                *tx_block_pool_name;
 
-	/* Save the initial number of blocks. */
-	UINT tx_block_pool_total;
+    /* Define the number of available memory blocks in the pool.  */
+    UINT                tx_block_pool_available;
 
-	/* Define the head pointer of the available block pool. */
-	UCHAR* tx_block_pool_available_list;
+    /* Save the initial number of blocks.  */
+    UINT                tx_block_pool_total;
 
-	/* Save the start address of the block pool's memory area. */
-	UCHAR* tx_block_pool_start;
+    /* Define the head pointer of the available block pool.  */
+    UCHAR               *tx_block_pool_available_list;
 
-	/* Save the block pool's size in bytes. */
-	ULONG tx_block_pool_size;
+    /* Save the start address of the block pool's memory area.  */
+    UCHAR               *tx_block_pool_start;
 
-	/* Save the individual memory block size - rounded for alignment. */
-	UINT tx_block_pool_block_size;
+    /* Save the block pool's size in bytes.  */
+    ULONG               tx_block_pool_size;
 
-	/* Define the block pool suspension list head along with a count of how many threads are suspended. */
-	struct TX_THREAD_STRUCT* tx_block_pool_suspension_list;
-	UINT tx_block_pool_suspended_count;
+    /* Save the individual memory block size - rounded for alignment.  */
+    UINT                tx_block_pool_block_size;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_BLOCK_POOL_STRUCT *tx_block_pool_created_next, *tx_block_pool_created_previous;
+    /* Define the block pool suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_block_pool_suspension_list;
+    UINT                tx_block_pool_suspended_count;
+
+    /* Define the created list next and previous pointers.  */
+    struct TX_BLOCK_POOL_STRUCT
+                        *tx_block_pool_created_next,
+                        *tx_block_pool_created_previous;
 
 #ifdef TX_BLOCK_POOL_ENABLE_PERFORMANCE_INFO
-	/* Define the number of block allocates. */
-	ULONG tx_block_pool_performance_allocate_count;
 
-	/* Define the number of block releases. */
-	ULONG tx_block_pool_performance_release_count;
+    /* Define the number of block allocates.  */
+    ULONG               tx_block_pool_performance_allocate_count;
 
-	/* Define the number of block pool suspensions. */
-	ULONG tx_block_pool_performance_suspension_count;
+    /* Define the number of block releases.  */
+    ULONG               tx_block_pool_performance_release_count;
 
-	/* Define the number of block pool timeouts. */
-	ULONG tx_block_pool_performance_timeout_count;
+    /* Define the number of block pool suspensions.  */
+    ULONG               tx_block_pool_performance_suspension_count;
+
+    /* Define the number of block pool timeouts.  */
+    ULONG               tx_block_pool_performance_timeout_count;
 #endif
 
-	/* Define the port extension in the block pool control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_BLOCK_POOL_EXTENSION
+    /* Define the port extension in the block pool control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_BLOCK_POOL_EXTENSION
+
 } TX_BLOCK_POOL;
 
-/* Determine if the byte allocate extension is defined. If not, define the extension to whitespace. */
+
+/* Determine if the byte allocate extension is defined. If not, define the 
+   extension to whitespace.  */
+
 #ifndef TX_BYTE_ALLOCATE_EXTENSION
 #define TX_BYTE_ALLOCATE_EXTENSION
 #endif
 
-/* Determine if the byte release extension is defined. If not, define the extension to whitespace. */
+
+/* Determine if the byte release extension is defined. If not, define the 
+   extension to whitespace.  */
+
 #ifndef TX_BYTE_RELEASE_EXTENSION
 #define TX_BYTE_RELEASE_EXTENSION
 #endif
 
-/* Define the byte memory pool structure utilized by the application. */
+
+/* Define the byte memory pool structure utilized by the application.  */
+
 typedef struct TX_BYTE_POOL_STRUCT
 {
-	/* Define the byte pool ID used for error checking. */
-	ULONG tx_byte_pool_id;
 
-	/* Define the byte pool's name. */
-	CHAR* tx_byte_pool_name;
+    /* Define the byte pool ID used for error checking.  */
+    ULONG               tx_byte_pool_id;
 
-	/* Define the number of available bytes in the pool. */
-	ULONG tx_byte_pool_available;
+    /* Define the byte pool's name.  */
+    CHAR                *tx_byte_pool_name;
 
-	/* Define the number of fragments in the pool. */
-	UINT tx_byte_pool_fragments;
+    /* Define the number of available bytes in the pool.  */
+    ULONG               tx_byte_pool_available;
 
-	/* Define the head pointer of byte pool. */
-	UCHAR* tx_byte_pool_list;
+    /* Define the number of fragments in the pool.  */
+    UINT                tx_byte_pool_fragments;
 
-	/* Define the search pointer used for initial searching for memory in a byte pool. */
-	UCHAR* tx_byte_pool_search;
+    /* Define the head pointer of byte pool.  */
+    UCHAR               *tx_byte_pool_list;
 
-	/* Save the start address of the byte pool's memory area. */
-	UCHAR* tx_byte_pool_start;
+    /* Define the search pointer used for initial searching for memory
+       in a byte pool.  */
+    UCHAR               *tx_byte_pool_search;
 
-	/* Save the byte pool's size in bytes. */
-	ULONG tx_byte_pool_size;
+    /* Save the start address of the byte pool's memory area.  */
+    UCHAR               *tx_byte_pool_start;
 
-	/* This is used to mark the owner of the byte memory pool during a search. If this value changes
-	 * during the search, the local search pointer must be reset. */
-	struct TX_THREAD_STRUCT* tx_byte_pool_owner;
+    /* Save the byte pool's size in bytes.  */
+    ULONG               tx_byte_pool_size;
 
-	/* Define the byte pool suspension list head along with a count of how many threads are suspended. */
-	struct TX_THREAD_STRUCT* tx_byte_pool_suspension_list;
-	UINT tx_byte_pool_suspended_count;
+    /* This is used to mark the owner of the byte memory pool during
+       a search.  If this value changes during the search, the local search
+       pointer must be reset.  */
+    struct TX_THREAD_STRUCT
+                        *tx_byte_pool_owner;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_BYTE_POOL_STRUCT *tx_byte_pool_created_next, *tx_byte_pool_created_previous;
+    /* Define the byte pool suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_byte_pool_suspension_list;
+    UINT                tx_byte_pool_suspended_count;
+
+    /* Define the created list next and previous pointers.  */
+    struct TX_BYTE_POOL_STRUCT
+                        *tx_byte_pool_created_next,
+                        *tx_byte_pool_created_previous;
 
 #ifdef TX_BYTE_POOL_ENABLE_PERFORMANCE_INFO
-	/* Define the number of allocates. */
-	ULONG tx_byte_pool_performance_allocate_count;
 
-	/* Define the number of releases. */
-	ULONG tx_byte_pool_performance_release_count;
+    /* Define the number of allocates.  */
+    ULONG               tx_byte_pool_performance_allocate_count;
 
-	/* Define the number of adjacent memory fragment merges. */
-	ULONG tx_byte_pool_performance_merge_count;
+    /* Define the number of releases.  */
+    ULONG               tx_byte_pool_performance_release_count;
 
-	/* Define the number of memory fragment splits. */
-	ULONG tx_byte_pool_performance_split_count;
+    /* Define the number of adjacent memory fragment merges.  */
+    ULONG               tx_byte_pool_performance_merge_count;
 
-	/* Define the number of memory fragments searched that either were not free or could not satisfy
-	 * the request. */
-	ULONG tx_byte_pool_performance_search_count;
+    /* Define the number of memory fragment splits.  */
+    ULONG               tx_byte_pool_performance_split_count;
 
-	/* Define the number of byte pool suspensions. */
-	ULONG tx_byte_pool_performance_suspension_count;
+    /* Define the number of memory fragments searched that either were not free or could not satisfy the
+       request.  */
+    ULONG               tx_byte_pool_performance_search_count;
 
-	/* Define the number of byte pool timeouts. */
-	ULONG tx_byte_pool_performance_timeout_count;
+    /* Define the number of byte pool suspensions.  */
+    ULONG               tx_byte_pool_performance_suspension_count;
+
+    /* Define the number of byte pool timeouts.  */
+    ULONG               tx_byte_pool_performance_timeout_count;
 #endif
 
-	/* Define the port extension in the byte pool control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_BYTE_POOL_EXTENSION
+    /* Define the port extension in the byte pool control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_BYTE_POOL_EXTENSION
+
 } TX_BYTE_POOL;
 
-/* Define the event flags group structure utilized by the application. */
+
+/* Define the event flags group structure utilized by the application.  */
+
 typedef struct TX_EVENT_FLAGS_GROUP_STRUCT
 {
-	/* Define the event flags group ID used for error checking. */
-	ULONG tx_event_flags_group_id;
 
-	/* Define the event flags group's name. */
-	CHAR* tx_event_flags_group_name;
+    /* Define the event flags group ID used for error checking.  */
+    ULONG               tx_event_flags_group_id;
 
-	/* Define the actual current event flags in this group. A zero in a particular bit indicates
-	 * the event flag is not set. */
-	ULONG tx_event_flags_group_current;
+    /* Define the event flags group's name.  */
+    CHAR                *tx_event_flags_group_name;
 
-	/* Define the reset search flag that is set when an ISR sets flags during the search of
-	 * the suspended threads list. */
-	UINT tx_event_flags_group_reset_search;
+    /* Define the actual current event flags in this group. A zero in a 
+       particular bit indicates the event flag is not set.  */
+    ULONG               tx_event_flags_group_current;
 
-	/* Define the event flags group suspension list head along with a count of how many threads
-	 * are suspended. */
-	struct TX_THREAD_STRUCT* tx_event_flags_group_suspension_list;
-	UINT tx_event_flags_group_suspended_count;
+    /* Define the reset search flag that is set when an ISR sets flags during
+       the search of the suspended threads list.  */
+    UINT                tx_event_flags_group_reset_search;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_EVENT_FLAGS_GROUP_STRUCT *tx_event_flags_group_created_next,
-		*tx_event_flags_group_created_previous;
+    /* Define the event flags group suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_event_flags_group_suspension_list;
+    UINT                tx_event_flags_group_suspended_count;
 
-	/* Define the delayed clearing event flags. */
-	ULONG tx_event_flags_group_delayed_clear;
+    /* Define the created list next and previous pointers.  */
+    struct TX_EVENT_FLAGS_GROUP_STRUCT
+                        *tx_event_flags_group_created_next,
+                        *tx_event_flags_group_created_previous;
+
+    /* Define the delayed clearing event flags.  */
+    ULONG               tx_event_flags_group_delayed_clear;
 
 #ifdef TX_EVENT_FLAGS_ENABLE_PERFORMANCE_INFO
-	/* Define the number of event flag sets. */
-	ULONG tx_event_flags_group_performance_set_count;
 
-	/* Define the number of event flag gets. */
-	ULONG tx_event_flags_group__performance_get_count;
+    /* Define the number of event flag sets.  */
+    ULONG               tx_event_flags_group_performance_set_count;
 
-	/* Define the number of event flag suspensions. */
-	ULONG tx_event_flags_group___performance_suspension_count;
+    /* Define the number of event flag gets.  */
+    ULONG               tx_event_flags_group__performance_get_count;
 
-	/* Define the number of event flag timeouts. */
-	ULONG tx_event_flags_group____performance_timeout_count;
+    /* Define the number of event flag suspensions.  */
+    ULONG               tx_event_flags_group___performance_suspension_count;
+
+    /* Define the number of event flag timeouts.  */
+    ULONG               tx_event_flags_group____performance_timeout_count;
 #endif
 
 #ifndef TX_DISABLE_NOTIFY_CALLBACKS
-	/* Define the application callback routine used to notify the application when
-	 * an event flag is set. */
-	VOID (*tx_event_flags_group_set_notify)(struct TX_EVENT_FLAGS_GROUP_STRUCT* group_ptr);
+
+    /* Define the application callback routine used to notify the application when 
+       an event flag is set.  */
+    VOID                (*tx_event_flags_group_set_notify)(struct TX_EVENT_FLAGS_GROUP_STRUCT *group_ptr);
 #endif
 
-	/* Define the port extension in the event flags group control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_EVENT_FLAGS_GROUP_EXTENSION
+    /* Define the port extension in the event flags group control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_EVENT_FLAGS_GROUP_EXTENSION
+
 } TX_EVENT_FLAGS_GROUP;
 
-/* Determine if the mutex put extension 1 is defined. If not, define the extension to whitespace. */
+
+/* Determine if the mutex put extension 1 is defined. If not, define the 
+   extension to whitespace.  */
+
 #ifndef TX_MUTEX_PUT_EXTENSION_1
 #define TX_MUTEX_PUT_EXTENSION_1
 #endif
 
-/* Determine if the mutex put extension 2 is defined. If not, define the extension to whitespace. */
+
+/* Determine if the mutex put extension 2 is defined. If not, define the 
+   extension to whitespace.  */
+
 #ifndef TX_MUTEX_PUT_EXTENSION_2
 #define TX_MUTEX_PUT_EXTENSION_2
 #endif
 
-/* Determine if the mutex priority change extension is defined. If not, define the extension
- * to whitespace. */
+
+/* Determine if the mutex priority change extension is defined. If not, define the 
+   extension to whitespace.  */
+
 #ifndef TX_MUTEX_PRIORITY_CHANGE_EXTENSION
 #define TX_MUTEX_PRIORITY_CHANGE_EXTENSION
 #endif
 
-/* Define the mutex structure utilized by the application. */
+
+/* Define the mutex structure utilized by the application.  */
+
 typedef struct TX_MUTEX_STRUCT
 {
-	/* Define the mutex ID used for error checking. */
-	ULONG tx_mutex_id;
 
-	/* Define the mutex's name. */
-	CHAR* tx_mutex_name;
+    /* Define the mutex ID used for error checking.  */
+    ULONG               tx_mutex_id;
 
-	/* Define the mutex ownership count. */
-	UINT tx_mutex_ownership_count;
+    /* Define the mutex's name.  */
+    CHAR                *tx_mutex_name;
 
-	/* Define the mutex ownership pointer. This pointer points to the the thread that owns the mutex. */
-	TX_THREAD* tx_mutex_owner;
+    /* Define the mutex ownership count.  */
+    UINT                tx_mutex_ownership_count;
 
-	/* Define the priority inheritance flag.  If this flag is set, priority inheritance will
-	 * be in effect. */
-	UINT tx_mutex_inherit;
+    /* Define the mutex ownership pointer.  This pointer points to the
+       the thread that owns the mutex.  */
+    TX_THREAD           *tx_mutex_owner;
 
-	/* Define the save area for the owning thread's original priority. */
-	UINT tx_mutex_original_priority;
+    /* Define the priority inheritance flag.  If this flag is set, priority
+       inheritance will be in effect.  */
+    UINT                tx_mutex_inherit;
 
-	/* Define the mutex suspension list head along with a count of how many threads are suspended. */
-	struct TX_THREAD_STRUCT* tx_mutex_suspension_list;
-	UINT tx_mutex_suspended_count;
+    /* Define the save area for the owning thread's original priority.  */
+    UINT                tx_mutex_original_priority;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_MUTEX_STRUCT *tx_mutex_created_next, *tx_mutex_created_previous;
+    /* Define the mutex suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_mutex_suspension_list;
+    UINT                tx_mutex_suspended_count;
 
-	/* Define the priority of the highest priority thread waiting for this mutex. */
-	UINT tx_mutex_highest_priority_waiting;
+    /* Define the created list next and previous pointers.  */
+    struct TX_MUTEX_STRUCT
+                        *tx_mutex_created_next,
+                        *tx_mutex_created_previous;
 
-	/* Define the owned list next and previous pointers. */
-	struct TX_MUTEX_STRUCT *tx_mutex_owned_next, *tx_mutex_owned_previous;
+    /* Define the priority of the highest priority thread waiting for
+       this mutex.  */
+    UINT                tx_mutex_highest_priority_waiting;
+
+    /* Define the owned list next and previous pointers.  */
+    struct TX_MUTEX_STRUCT
+                        *tx_mutex_owned_next,
+                        *tx_mutex_owned_previous;
 
 #ifdef TX_MUTEX_ENABLE_PERFORMANCE_INFO
-	/* Define the number of mutex puts. */
-	ULONG tx_mutex_performance_put_count;
 
-	/* Define the total number of mutex gets. */
-	ULONG tx_mutex_performance_get_count;
+    /* Define the number of mutex puts.  */
+    ULONG               tx_mutex_performance_put_count;
 
-	/* Define the total number of mutex suspensions. */
-	ULONG tx_mutex_performance_suspension_count;
+    /* Define the total number of mutex gets.  */
+    ULONG               tx_mutex_performance_get_count;
 
-	/* Define the total number of mutex timeouts. */
-	ULONG tx_mutex_performance_timeout_count;
+    /* Define the total number of mutex suspensions.  */
+    ULONG               tx_mutex_performance_suspension_count;
 
-	/* Define the total number of priority inversions. */
-	ULONG tx_mutex_performance_priority_inversion_count;
+    /* Define the total number of mutex timeouts.  */
+    ULONG               tx_mutex_performance_timeout_count;
 
-	/* Define the total number of priority inheritance conditions. */
-	ULONG tx_mutex_performance__priority_inheritance_count;
+    /* Define the total number of priority inversions.  */
+    ULONG               tx_mutex_performance_priority_inversion_count;
+
+    /* Define the total number of priority inheritance conditions.  */
+    ULONG               tx_mutex_performance__priority_inheritance_count;
 #endif
 
-	/* Define the port extension in the mutex control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_MUTEX_EXTENSION
+    /* Define the port extension in the mutex control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_MUTEX_EXTENSION
+
 } TX_MUTEX;
 
-/* Define the queue structure utilized by the application. */
+
+/* Define the queue structure utilized by the application.  */
+
 typedef struct TX_QUEUE_STRUCT
 {
-	/* Define the queue ID used for error checking. */
-	ULONG tx_queue_id;
 
-	/* Define the queue's name. */
-	CHAR* tx_queue_name;
+    /* Define the queue ID used for error checking.  */
+    ULONG               tx_queue_id;
 
-	/* Define the message size that was specified in queue creation. */
-	UINT tx_queue_message_size;
+    /* Define the queue's name.  */
+    CHAR                *tx_queue_name;
 
-	/* Define the total number of messages in the queue. */
-	UINT tx_queue_capacity;
+    /* Define the message size that was specified in queue creation.  */
+    UINT                tx_queue_message_size;
 
-	/* Define the current number of messages enqueued and the available queue storage space. */
-	UINT tx_queue_enqueued;
-	UINT tx_queue_available_storage;
+    /* Define the total number of messages in the queue.  */
+    UINT                tx_queue_capacity;
 
-	/* Define pointers that represent the start and end for the queue's message area. */
-	ULONG* tx_queue_start;
-	ULONG* tx_queue_end;
+    /* Define the current number of messages enqueued and the available
+       queue storage space.  */
+    UINT                tx_queue_enqueued;
+    UINT                tx_queue_available_storage;
 
-	/* Define the queue read and write pointers. Send requests use the write pointer while
-	 * receive requests use the read pointer. */
-	ULONG* tx_queue_read;
-	ULONG* tx_queue_write;
+    /* Define pointers that represent the start and end for the queue's 
+       message area.  */
+    ULONG               *tx_queue_start;
+    ULONG               *tx_queue_end;
 
-	/* Define the queue suspension list head along with a count of how many threads are suspended. */
-	struct TX_THREAD_STRUCT* tx_queue_suspension_list;
-	UINT tx_queue_suspended_count;
+    /* Define the queue read and write pointers.  Send requests use the write
+       pointer while receive requests use the read pointer.  */
+    ULONG               *tx_queue_read;
+    ULONG               *tx_queue_write;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_QUEUE_STRUCT *tx_queue_created_next, *tx_queue_created_previous;
+    /* Define the queue suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_queue_suspension_list;
+    UINT                tx_queue_suspended_count;
+
+    /* Define the created list next and previous pointers.  */
+    struct TX_QUEUE_STRUCT
+                        *tx_queue_created_next,
+                        *tx_queue_created_previous;
 
 #ifdef TX_QUEUE_ENABLE_PERFORMANCE_INFO
-	/* Define the number of messages sent to this queue. */
-	ULONG tx_queue_performance_messages_sent_count;
 
-	/* Define the number of messages received from this queue. */
-	ULONG tx_queue_performance_messages_received_count;
+    /* Define the number of messages sent to this queue.  */
+    ULONG               tx_queue_performance_messages_sent_count;
 
-	/* Define the number of empty suspensions on this queue. */
-	ULONG tx_queue_performance_empty_suspension_count;
+    /* Define the number of messages received from this queue.  */
+    ULONG               tx_queue_performance_messages_received_count;
 
-	/* Define the number of full suspensions on this queue. */
-	ULONG tx_queue_performance_full_suspension_count;
+    /* Define the number of empty suspensions on this queue.  */
+    ULONG               tx_queue_performance_empty_suspension_count;
 
-	/* Define the number of full non-suspensions on this queue. These messages are rejected
-	 * with an appropriate error code. */
-	ULONG tx_queue_performance_full_error_count;
+    /* Define the number of full suspensions on this queue.  */
+    ULONG               tx_queue_performance_full_suspension_count;
 
-	/* Define the number of queue timeouts. */
-	ULONG tx_queue_performance_timeout_count;
+    /* Define the number of full non-suspensions on this queue. These
+       messages are rejected with an appropriate error code.  */
+    ULONG               tx_queue_performance_full_error_count;
+
+    /* Define the number of queue timeouts.  */
+    ULONG               tx_queue_performance_timeout_count;
 #endif
 
 #ifndef TX_DISABLE_NOTIFY_CALLBACKS
-	/* Define the application callback routine used to notify the application when
-	 * the a message is sent to the queue. */
-	VOID (*tx_queue_send_notify)(struct TX_QUEUE_STRUCT* queue_ptr);
+
+    /* Define the application callback routine used to notify the application when 
+       the a message is sent to the queue.  */
+    VOID                (*tx_queue_send_notify)(struct TX_QUEUE_STRUCT *queue_ptr);
 #endif
 
-	/* Define the port extension in the queue control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_QUEUE_EXTENSION
+    /* Define the port extension in the queue control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_QUEUE_EXTENSION
+
 } TX_QUEUE;
 
-/* Define the semaphore structure utilized by the application. */
+
+/* Define the semaphore structure utilized by the application.  */
+
 typedef struct TX_SEMAPHORE_STRUCT
 {
-	/* Define the semaphore ID used for error checking. */
-	ULONG tx_semaphore_id;
 
-	/* Define the semaphore's name. */
-	CHAR* tx_semaphore_name;
+    /* Define the semaphore ID used for error checking.  */
+    ULONG               tx_semaphore_id;
 
-	/* Define the actual semaphore count.  A zero means that no semaphore instance is available. */
-	ULONG tx_semaphore_count;
+    /* Define the semaphore's name.  */
+    CHAR                *tx_semaphore_name;
 
-	/* Define the semaphore suspension list head along with a count of how many threads are suspended. */
-	struct TX_THREAD_STRUCT* tx_semaphore_suspension_list;
-	UINT tx_semaphore_suspended_count;
+    /* Define the actual semaphore count.  A zero means that no semaphore
+       instance is available.  */
+    ULONG               tx_semaphore_count;
 
-	/* Define the created list next and previous pointers. */
-	struct TX_SEMAPHORE_STRUCT *tx_semaphore_created_next, *tx_semaphore_created_previous;
+    /* Define the semaphore suspension list head along with a count of
+       how many threads are suspended.  */
+    struct TX_THREAD_STRUCT
+                        *tx_semaphore_suspension_list;
+    UINT                tx_semaphore_suspended_count;
+
+    /* Define the created list next and previous pointers.  */
+    struct TX_SEMAPHORE_STRUCT
+                        *tx_semaphore_created_next,
+                        *tx_semaphore_created_previous;
 
 #ifdef TX_SEMAPHORE_ENABLE_PERFORMANCE_INFO
-	/* Define the number of semaphore puts. */
-	ULONG tx_semaphore_performance_put_count;
 
-	/* Define the number of semaphore gets. */
-	ULONG tx_semaphore_performance_get_count;
+    /* Define the number of semaphore puts.  */
+    ULONG               tx_semaphore_performance_put_count;
 
-	/* Define the number of semaphore suspensions. */
-	ULONG tx_semaphore_performance_suspension_count;
+    /* Define the number of semaphore gets.  */
+    ULONG               tx_semaphore_performance_get_count;
 
-	/* Define the number of semaphore timeouts. */
-	ULONG tx_semaphore_performance_timeout_count;
+    /* Define the number of semaphore suspensions.  */
+    ULONG               tx_semaphore_performance_suspension_count;
+
+    /* Define the number of semaphore timeouts.  */
+    ULONG               tx_semaphore_performance_timeout_count;
 #endif
 
 #ifndef TX_DISABLE_NOTIFY_CALLBACKS
-	/* Define the application callback routine used to notify the application when
-	 * the a semaphore is put. */
-	VOID (*tx_semaphore_put_notify)(struct TX_SEMAPHORE_STRUCT* semaphore_ptr);
+
+    /* Define the application callback routine used to notify the application when 
+       the a semaphore is put.  */
+    VOID                (*tx_semaphore_put_notify)(struct TX_SEMAPHORE_STRUCT *semaphore_ptr);
 #endif
 
-	/* Define the port extension in the semaphore control block. This is typically defined
-	 * to whitespace in tx_port.h. */
-	TX_SEMAPHORE_EXTENSION
+    /* Define the port extension in the semaphore control block. This 
+       is typically defined to whitespace in tx_port.h.  */
+    TX_SEMAPHORE_EXTENSION
+
 } TX_SEMAPHORE;
 
-/* Define the system API mappings based on the error checking selected by the user. 
- * Note: this section is only applicable to application source code, hence the conditional
- * that turns off this stuff when the include file is processed by the ThreadX source. */
+
+/* Define the system API mappings based on the error checking 
+   selected by the user.  Note: this section is only applicable to 
+   application source code, hence the conditional that turns off this
+   stuff when the include file is processed by the ThreadX source. */
+
 #ifndef TX_SOURCE_CODE
-	/* Determine if error checking is desired. If so, map API functions to the appropriate
-	 * error checking front-ends.  Otherwise, map API functions to the core functions that
-	 * actually perform the work.
-	 * Note: error checking is enabled by default. */
+
+
+/* Determine if error checking is desired.  If so, map API functions 
+   to the appropriate error checking front-ends.  Otherwise, map API
+   functions to the core functions that actually perform the work. 
+   Note: error checking is enabled by default.  */
+
 #ifdef TX_DISABLE_ERROR_CHECKING
-/* Services without error checking. */
+
+
+/* Services without error checking.  */
+
 #define tx_kernel_enter                             _tx_initialize_kernel_enter
 
 #define tx_block_allocate                           _tx_block_allocate
@@ -827,11 +983,11 @@ typedef struct TX_SEMAPHORE_STRUCT
 #define tx_event_flags_set_notify                   _tx_event_flags_set_notify
 
 #ifdef TX_ENABLE_EVENT_LOGGING
-UINT _tx_el_interrupt_control(UINT new_posture);
+UINT    _tx_el_interrupt_control(UINT new_posture);
 #define tx_interrupt_control                        _tx_el_interrupt_control
 #else
 #ifdef TX_ENABLE_EVENT_TRACE
-UINT _tx_trace_interrupt_control(UINT new_posture);
+UINT    _tx_trace_interrupt_control(UINT new_posture);
 #define tx_interrupt_control                        _tx_trace_interrupt_control
 #else
 #define tx_interrupt_control                        _tx_thread_interrupt_control
@@ -911,14 +1067,18 @@ UINT _tx_trace_interrupt_control(UINT new_posture);
 
 #else
 
-/* Services with error checking. */
+/* Services with error checking.  */
+
 #define tx_kernel_enter                             _tx_initialize_kernel_enter
 
-/* Define the system API mappings depending on the runtime error checking behavior selected
- * by the user. */
+/* Define the system API mappings depending on the runtime error
+   checking behavior selected by the user.  */
+
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
 
-/* Services with MULTI runtime error checking ThreadX. */
+
+/* Services with MULTI runtime error checking ThreadX.  */
+
 #define tx_block_allocate                           _txr_block_allocate
 #define tx_block_pool_create(p,n,b,s,l)             _txr_block_pool_create((p),(n),(b),(s),(l),(sizeof(TX_BLOCK_POOL)))
 #define tx_block_pool_delete                        _txr_block_pool_delete
@@ -947,11 +1107,11 @@ UINT _tx_trace_interrupt_control(UINT new_posture);
 #define tx_event_flags_set_notify                   _txr_event_flags_set_notify
 
 #ifdef TX_ENABLE_EVENT_LOGGING
-UINT _tx_el_interrupt_control(UINT new_posture);
+UINT    _tx_el_interrupt_control(UINT new_posture);
 #define tx_interrupt_control                        _tx_el_interrupt_control
 #else
 #ifdef TX_ENABLE_EVENT_TRACE
-UINT _tx_trace_interrupt_control(UINT new_posture);
+UINT    _tx_trace_interrupt_control(UINT new_posture);
 #define tx_interrupt_control                        _tx_trace_interrupt_control
 #else
 #define tx_interrupt_control                        _tx_thread_interrupt_control
@@ -1030,6 +1190,7 @@ UINT _tx_trace_interrupt_control(UINT new_posture);
 #define tx_trace_user_event_insert                  _tx_trace_user_event_insert
 
 #else
+
 #define tx_block_allocate                           _txe_block_allocate
 #define tx_block_pool_create(p,n,b,s,l)             _txe_block_pool_create((p),(n),(b),(s),(l),(sizeof(TX_BLOCK_POOL)))
 #define tx_block_pool_delete                        _txe_block_pool_delete
@@ -1058,7 +1219,7 @@ UINT _tx_trace_interrupt_control(UINT new_posture);
 #define tx_event_flags_set_notify                   _txe_event_flags_set_notify
 
 #ifdef TX_ENABLE_EVENT_LOGGING
-UINT _tx_el_interrupt_control(UINT new_posture);
+UINT    _tx_el_interrupt_control(UINT new_posture);
 #define tx_interrupt_control                        _tx_el_interrupt_control
 #else
 #ifdef TX_ENABLE_EVENT_TRACE
@@ -1144,205 +1305,226 @@ UINT _tx_el_interrupt_control(UINT new_posture);
 
 #endif
 
-/* Declare the tx_application_define function as having C linkage. */
-VOID tx_application_define(VOID* first_unused_memory);
 
-/* Define the function prototypes of the ThreadX API. */
+/* Declare the tx_application_define function as having C linkage.  */
 
-/* Define block memory pool management function prototypes. */
-UINT _tx_block_allocate(TX_BLOCK_POOL* pool_ptr, VOID** block_ptr, ULONG wait_option);
-UINT _tx_block_pool_create(TX_BLOCK_POOL* pool_ptr, CHAR* name_ptr, ULONG block_size,
-VOID* pool_start, ULONG pool_size);
-UINT _tx_block_pool_delete(TX_BLOCK_POOL* pool_ptr);
-UINT _tx_block_pool_info_get(TX_BLOCK_POOL* pool_ptr, CHAR** name, ULONG* available_blocks,
-ULONG* total_blocks, TX_THREAD** first_suspended,
-ULONG* suspended_count, TX_BLOCK_POOL** next_pool);
-UINT _tx_block_pool_performance_info_get(TX_BLOCK_POOL* pool_ptr, ULONG* allocates, ULONG* releases,
-ULONG* suspensions, ULONG* timeouts);
-UINT _tx_block_pool_performance_system_info_get(ULONG* allocates, ULONG* releases,
-ULONG* suspensions, ULONG* timeouts);
-UINT _tx_block_pool_prioritize(TX_BLOCK_POOL* pool_ptr);
-UINT _tx_block_release(VOID* block_ptr);
+VOID        tx_application_define(VOID *first_unused_memory);
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_block_allocate(TX_BLOCK_POOL* pool_ptr, VOID** block_ptr, ULONG wait_option);
-UINT _txe_block_pool_create(TX_BLOCK_POOL* pool_ptr, CHAR* name_ptr, ULONG block_size,
-VOID* pool_start, ULONG pool_size, UINT pool_control_block_size);
-UINT _txe_block_pool_delete(TX_BLOCK_POOL* pool_ptr);
-UINT _txe_block_pool_info_get(TX_BLOCK_POOL* pool_ptr, CHAR** name, ULONG* available_blocks,
-ULONG* total_blocks, TX_THREAD** first_suspended,
-ULONG* suspended_count, TX_BLOCK_POOL** next_pool);
-UINT _txe_block_pool_prioritize(TX_BLOCK_POOL* pool_ptr);
-UINT _txe_block_release(VOID* block_ptr);
+
+/* Define the function prototypes of the ThreadX API.  */
+
+
+/* Define block memory pool management function prototypes.  */
+
+UINT        _tx_block_allocate(TX_BLOCK_POOL *pool_ptr, VOID **block_ptr, ULONG wait_option);
+UINT        _tx_block_pool_create(TX_BLOCK_POOL *pool_ptr, CHAR *name_ptr, ULONG block_size,
+                    VOID *pool_start, ULONG pool_size);
+UINT        _tx_block_pool_delete(TX_BLOCK_POOL *pool_ptr);
+UINT        _tx_block_pool_info_get(TX_BLOCK_POOL *pool_ptr, CHAR **name, ULONG *available_blocks, 
+                    ULONG *total_blocks, TX_THREAD **first_suspended, 
+                    ULONG *suspended_count, TX_BLOCK_POOL **next_pool);
+UINT        _tx_block_pool_performance_info_get(TX_BLOCK_POOL *pool_ptr, ULONG *allocates, ULONG *releases,
+                    ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_block_pool_performance_system_info_get(ULONG *allocates, ULONG *releases,
+                    ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_block_pool_prioritize(TX_BLOCK_POOL *pool_ptr);
+UINT        _tx_block_release(VOID *block_ptr);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_block_allocate(TX_BLOCK_POOL *pool_ptr, VOID **block_ptr, ULONG wait_option);
+UINT        _txe_block_pool_create(TX_BLOCK_POOL *pool_ptr, CHAR *name_ptr, ULONG block_size,
+                    VOID *pool_start, ULONG pool_size, UINT pool_control_block_size);
+UINT        _txe_block_pool_delete(TX_BLOCK_POOL *pool_ptr);
+UINT        _txe_block_pool_info_get(TX_BLOCK_POOL *pool_ptr, CHAR **name, ULONG *available_blocks, 
+                    ULONG *total_blocks, TX_THREAD **first_suspended, 
+                    ULONG *suspended_count, TX_BLOCK_POOL **next_pool);
+UINT        _txe_block_pool_prioritize(TX_BLOCK_POOL *pool_ptr);
+UINT        _txe_block_release(VOID *block_ptr);
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
 UINT        _txr_block_allocate(TX_BLOCK_POOL *pool_ptr, VOID **block_ptr, ULONG wait_option);
 UINT        _txr_block_pool_create(TX_BLOCK_POOL *pool_ptr, CHAR *name_ptr, ULONG block_size,
                     VOID *pool_start, ULONG pool_size, UINT pool_control_block_size);
 UINT        _txr_block_pool_delete(TX_BLOCK_POOL *pool_ptr);
-UINT        _txr_block_pool_info_get(TX_BLOCK_POOL *pool_ptr, CHAR **name, ULONG *available_blocks,
-                    ULONG *total_blocks, TX_THREAD **first_suspended,
+UINT        _txr_block_pool_info_get(TX_BLOCK_POOL *pool_ptr, CHAR **name, ULONG *available_blocks, 
+                    ULONG *total_blocks, TX_THREAD **first_suspended, 
                     ULONG *suspended_count, TX_BLOCK_POOL **next_pool);
 UINT        _txr_block_pool_prioritize(TX_BLOCK_POOL *pool_ptr);
 UINT        _txr_block_release(VOID *block_ptr);
 #endif
 
-/* Define byte memory pool management function prototypes. */
-UINT _tx_byte_allocate(TX_BYTE_POOL* pool_ptr, VOID** memory_ptr, ULONG memory_size,
-ULONG wait_option);
-UINT _tx_byte_pool_create(TX_BYTE_POOL* pool_ptr, CHAR* name_ptr, VOID* pool_start,
-ULONG pool_size);
-UINT _tx_byte_pool_delete(TX_BYTE_POOL* pool_ptr);
-UINT _tx_byte_pool_info_get(TX_BYTE_POOL* pool_ptr, CHAR** name, ULONG* available_bytes,
-ULONG* fragments, TX_THREAD** first_suspended,
-ULONG* suspended_count, TX_BYTE_POOL** next_pool);
-UINT _tx_byte_pool_performance_info_get(TX_BYTE_POOL* pool_ptr, ULONG* allocates, ULONG* releases,
-ULONG* fragments_searched, ULONG* merges, ULONG* splits, ULONG* suspensions, ULONG* timeouts);
-UINT _tx_byte_pool_performance_system_info_get(ULONG* allocates, ULONG* releases,
-ULONG* fragments_searched, ULONG* merges, ULONG* splits, ULONG* suspensions, ULONG* timeouts);
-UINT _tx_byte_pool_prioritize(TX_BYTE_POOL* pool_ptr);
-UINT _tx_byte_release(VOID* memory_ptr);
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_byte_allocate(TX_BYTE_POOL* pool_ptr, VOID** memory_ptr, ULONG memory_size,
-ULONG wait_option);
-UINT _txe_byte_pool_create(TX_BYTE_POOL* pool_ptr, CHAR* name_ptr, VOID* pool_start,
-ULONG pool_size, UINT pool_control_block_size);
-UINT _txe_byte_pool_delete(TX_BYTE_POOL* pool_ptr);
-UINT _txe_byte_pool_info_get(TX_BYTE_POOL* pool_ptr, CHAR** name, ULONG* available_bytes,
-ULONG* fragments, TX_THREAD** first_suspended,
-ULONG* suspended_count, TX_BYTE_POOL** next_pool);
-UINT _txe_byte_pool_prioritize(TX_BYTE_POOL* pool_ptr);
-UINT _txe_byte_release(VOID* memory_ptr);
+/* Define byte memory pool management function prototypes.  */
+
+UINT        _tx_byte_allocate(TX_BYTE_POOL *pool_ptr, VOID **memory_ptr, ULONG memory_size,
+                    ULONG wait_option);
+UINT        _tx_byte_pool_create(TX_BYTE_POOL *pool_ptr, CHAR *name_ptr, VOID *pool_start,
+                    ULONG pool_size);
+UINT        _tx_byte_pool_delete(TX_BYTE_POOL *pool_ptr);
+UINT        _tx_byte_pool_info_get(TX_BYTE_POOL *pool_ptr, CHAR **name, ULONG *available_bytes, 
+                    ULONG *fragments, TX_THREAD **first_suspended, 
+                    ULONG *suspended_count, TX_BYTE_POOL **next_pool);
+UINT        _tx_byte_pool_performance_info_get(TX_BYTE_POOL *pool_ptr, ULONG *allocates, ULONG *releases,
+                    ULONG *fragments_searched, ULONG *merges, ULONG *splits, ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_byte_pool_performance_system_info_get(ULONG *allocates, ULONG *releases,
+                    ULONG *fragments_searched, ULONG *merges, ULONG *splits, ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_byte_pool_prioritize(TX_BYTE_POOL *pool_ptr);
+UINT        _tx_byte_release(VOID *memory_ptr);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_byte_allocate(TX_BYTE_POOL *pool_ptr, VOID **memory_ptr, ULONG memory_size,
+                    ULONG wait_option);
+UINT        _txe_byte_pool_create(TX_BYTE_POOL *pool_ptr, CHAR *name_ptr, VOID *pool_start,
+                    ULONG pool_size, UINT pool_control_block_size);
+UINT        _txe_byte_pool_delete(TX_BYTE_POOL *pool_ptr);
+UINT        _txe_byte_pool_info_get(TX_BYTE_POOL *pool_ptr, CHAR **name, ULONG *available_bytes, 
+                    ULONG *fragments, TX_THREAD **first_suspended, 
+                    ULONG *suspended_count, TX_BYTE_POOL **next_pool);
+UINT        _txe_byte_pool_prioritize(TX_BYTE_POOL *pool_ptr);
+UINT        _txe_byte_release(VOID *memory_ptr);
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
 UINT        _txr_byte_allocate(TX_BYTE_POOL *pool_ptr, VOID **memory_ptr, ULONG memory_size,
                     ULONG wait_option);
 UINT        _txr_byte_pool_create(TX_BYTE_POOL *pool_ptr, CHAR *name_ptr, VOID *pool_start,
                     ULONG pool_size, UINT pool_control_block_size);
 UINT        _txr_byte_pool_delete(TX_BYTE_POOL *pool_ptr);
-UINT        _txr_byte_pool_info_get(TX_BYTE_POOL *pool_ptr, CHAR **name, ULONG *available_bytes,
-                    ULONG *fragments, TX_THREAD **first_suspended,
+UINT        _txr_byte_pool_info_get(TX_BYTE_POOL *pool_ptr, CHAR **name, ULONG *available_bytes, 
+                    ULONG *fragments, TX_THREAD **first_suspended, 
                     ULONG *suspended_count, TX_BYTE_POOL **next_pool);
 UINT        _txr_byte_pool_prioritize(TX_BYTE_POOL *pool_ptr);
 UINT        _txr_byte_release(VOID *memory_ptr);
 #endif
 
-/* Define event flags management function prototypes. */
-UINT _tx_event_flags_create(TX_EVENT_FLAGS_GROUP* group_ptr, CHAR* name_ptr);
-UINT _tx_event_flags_delete(TX_EVENT_FLAGS_GROUP* group_ptr);
-UINT _tx_event_flags_get(TX_EVENT_FLAGS_GROUP* group_ptr, ULONG requested_flags,
-UINT get_option, ULONG* actual_flags_ptr, ULONG wait_option);
-UINT _tx_event_flags_info_get(TX_EVENT_FLAGS_GROUP* group_ptr, CHAR** name, ULONG* current_flags,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_EVENT_FLAGS_GROUP** next_group);
-UINT _tx_event_flags_performance_info_get(TX_EVENT_FLAGS_GROUP* group_ptr, ULONG* sets, ULONG* gets,
-ULONG* suspensions, ULONG* timeouts);
-UINT _tx_event_flags_performance_system_info_get(ULONG* sets, ULONG* gets,
-ULONG* suspensions, ULONG* timeouts);
-UINT _tx_event_flags_set(TX_EVENT_FLAGS_GROUP* group_ptr, ULONG flags_to_set,
-UINT set_option);
-UINT _tx_event_flags_set_notify(TX_EVENT_FLAGS_GROUP* group_ptr,
-VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP* notify_group_ptr));
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_event_flags_create(TX_EVENT_FLAGS_GROUP* group_ptr, CHAR* name_ptr,
-UINT event_control_block_size);
-UINT _txe_event_flags_delete(TX_EVENT_FLAGS_GROUP* group_ptr);
-UINT _txe_event_flags_get(TX_EVENT_FLAGS_GROUP* group_ptr, ULONG requested_flags,
-UINT get_option, ULONG* actual_flags_ptr, ULONG wait_option);
-UINT _txe_event_flags_info_get(TX_EVENT_FLAGS_GROUP* group_ptr, CHAR** name, ULONG* current_flags,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_EVENT_FLAGS_GROUP** next_group);
-UINT _txe_event_flags_set(TX_EVENT_FLAGS_GROUP* group_ptr, ULONG flags_to_set,
-UINT set_option);
-UINT _txe_event_flags_set_notify(TX_EVENT_FLAGS_GROUP* group_ptr,
-VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP* notify_group_ptr));
+/* Define event flags management function prototypes.  */
+
+UINT        _tx_event_flags_create(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR *name_ptr);
+UINT        _tx_event_flags_delete(TX_EVENT_FLAGS_GROUP *group_ptr);
+UINT        _tx_event_flags_get(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG requested_flags,
+                    UINT get_option, ULONG *actual_flags_ptr, ULONG wait_option);
+UINT        _tx_event_flags_info_get(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR **name, ULONG *current_flags, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_EVENT_FLAGS_GROUP **next_group);
+UINT        _tx_event_flags_performance_info_get(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG *sets, ULONG *gets,
+                    ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_event_flags_performance_system_info_get(ULONG *sets, ULONG *gets,
+                    ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_event_flags_set(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG flags_to_set, 
+                    UINT set_option);
+UINT        _tx_event_flags_set_notify(TX_EVENT_FLAGS_GROUP *group_ptr, VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP *notify_group_ptr));
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_event_flags_create(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR *name_ptr, UINT event_control_block_size);
+UINT        _txe_event_flags_delete(TX_EVENT_FLAGS_GROUP *group_ptr);
+UINT        _txe_event_flags_get(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG requested_flags,
+                    UINT get_option, ULONG *actual_flags_ptr, ULONG wait_option);
+UINT        _txe_event_flags_info_get(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR **name, ULONG *current_flags, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_EVENT_FLAGS_GROUP **next_group);
+UINT        _txe_event_flags_set(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG flags_to_set, 
+                    UINT set_option);
+UINT        _txe_event_flags_set_notify(TX_EVENT_FLAGS_GROUP *group_ptr, VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP *notify_group_ptr));
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
-UINT _txr_event_flags_create(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR *name_ptr, UINT event_control_block_size);
-UINT _txr_event_flags_delete(TX_EVENT_FLAGS_GROUP *group_ptr);
-UINT _txr_event_flags_get(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG requested_flags,
-UINT get_option, ULONG *actual_flags_ptr, ULONG wait_option);
-UINT _txr_event_flags_info_get(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR **name, ULONG *current_flags,
-TX_THREAD **first_suspended, ULONG *suspended_count,
-TX_EVENT_FLAGS_GROUP **next_group);
-UINT _txr_event_flags_set(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG flags_to_set,
-UINT set_option);
-UINT _txr_event_flags_set_notify(TX_EVENT_FLAGS_GROUP *group_ptr, VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP *notify_group_ptr));
+UINT        _txr_event_flags_create(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR *name_ptr, UINT event_control_block_size);
+UINT        _txr_event_flags_delete(TX_EVENT_FLAGS_GROUP *group_ptr);
+UINT        _txr_event_flags_get(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG requested_flags,
+                    UINT get_option, ULONG *actual_flags_ptr, ULONG wait_option);
+UINT        _txr_event_flags_info_get(TX_EVENT_FLAGS_GROUP *group_ptr, CHAR **name, ULONG *current_flags, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_EVENT_FLAGS_GROUP **next_group);
+UINT        _txr_event_flags_set(TX_EVENT_FLAGS_GROUP *group_ptr, ULONG flags_to_set, 
+                    UINT set_option);
+UINT        _txr_event_flags_set_notify(TX_EVENT_FLAGS_GROUP *group_ptr, VOID (*events_set_notify)(TX_EVENT_FLAGS_GROUP *notify_group_ptr));
 #endif
 
-/* Define initialization function prototypes. */
-VOID _tx_initialize_kernel_enter(VOID);
 
-/* Define mutex management function prototypes. */
-UINT _tx_mutex_create(TX_MUTEX* mutex_ptr, CHAR* name_ptr, UINT inherit);
-UINT _tx_mutex_delete(TX_MUTEX* mutex_ptr);
-UINT _tx_mutex_get(TX_MUTEX* mutex_ptr, ULONG wait_option);
-UINT _tx_mutex_info_get(TX_MUTEX* mutex_ptr, CHAR** name, ULONG* count, TX_THREAD** owner,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_MUTEX** next_mutex);
-UINT _tx_mutex_performance_info_get(TX_MUTEX* mutex_ptr, ULONG* puts, ULONG* gets,
-ULONG* suspensions, ULONG* timeouts, ULONG* inversions, ULONG* inheritances);
-UINT _tx_mutex_performance_system_info_get(ULONG* puts, ULONG* gets, ULONG* suspensions,
-ULONG* timeouts,
-ULONG* inversions, ULONG* inheritances);
-UINT _tx_mutex_prioritize(TX_MUTEX* mutex_ptr);
-UINT _tx_mutex_put(TX_MUTEX* mutex_ptr);
+/* Define initialization function prototypes.  */
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_mutex_create(TX_MUTEX* mutex_ptr, CHAR* name_ptr, UINT inherit,
-UINT mutex_control_block_size);
-UINT _txe_mutex_delete(TX_MUTEX* mutex_ptr);
-UINT _txe_mutex_get(TX_MUTEX* mutex_ptr, ULONG wait_option);
-UINT _txe_mutex_info_get(TX_MUTEX* mutex_ptr, CHAR** name, ULONG* count, TX_THREAD** owner,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_MUTEX** next_mutex);
-UINT _txe_mutex_prioritize(TX_MUTEX* mutex_ptr);
-UINT _txe_mutex_put(TX_MUTEX* mutex_ptr);
+VOID        _tx_initialize_kernel_enter(VOID);
+
+
+/* Define mutex management function prototypes.  */
+
+UINT        _tx_mutex_create(TX_MUTEX *mutex_ptr, CHAR *name_ptr, UINT inherit);
+UINT        _tx_mutex_delete(TX_MUTEX *mutex_ptr);
+UINT        _tx_mutex_get(TX_MUTEX *mutex_ptr, ULONG wait_option);
+UINT        _tx_mutex_info_get(TX_MUTEX *mutex_ptr, CHAR **name, ULONG *count, TX_THREAD **owner, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_MUTEX **next_mutex);
+UINT        _tx_mutex_performance_info_get(TX_MUTEX *mutex_ptr, ULONG *puts, ULONG *gets,
+                    ULONG *suspensions, ULONG *timeouts, ULONG *inversions, ULONG *inheritances);
+UINT        _tx_mutex_performance_system_info_get(ULONG *puts, ULONG *gets, ULONG *suspensions, ULONG *timeouts,
+                    ULONG *inversions, ULONG *inheritances);
+UINT        _tx_mutex_prioritize(TX_MUTEX *mutex_ptr);
+UINT        _tx_mutex_put(TX_MUTEX *mutex_ptr);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_mutex_create(TX_MUTEX *mutex_ptr, CHAR *name_ptr, UINT inherit, UINT mutex_control_block_size);
+UINT        _txe_mutex_delete(TX_MUTEX *mutex_ptr);
+UINT        _txe_mutex_get(TX_MUTEX *mutex_ptr, ULONG wait_option);
+UINT        _txe_mutex_info_get(TX_MUTEX *mutex_ptr, CHAR **name, ULONG *count, TX_THREAD **owner, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_MUTEX **next_mutex);
+UINT        _txe_mutex_prioritize(TX_MUTEX *mutex_ptr);
+UINT        _txe_mutex_put(TX_MUTEX *mutex_ptr);
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
 UINT        _txr_mutex_create(TX_MUTEX *mutex_ptr, CHAR *name_ptr, UINT inherit, UINT mutex_control_block_size);
 UINT        _txr_mutex_delete(TX_MUTEX *mutex_ptr);
 UINT        _txr_mutex_get(TX_MUTEX *mutex_ptr, ULONG wait_option);
-UINT        _txr_mutex_info_get(TX_MUTEX *mutex_ptr, CHAR **name, ULONG *count, TX_THREAD **owner,
-                    TX_THREAD **first_suspended, ULONG *suspended_count,
+UINT        _txr_mutex_info_get(TX_MUTEX *mutex_ptr, CHAR **name, ULONG *count, TX_THREAD **owner, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
                     TX_MUTEX **next_mutex);
 UINT        _txr_mutex_prioritize(TX_MUTEX *mutex_ptr);
 UINT        _txr_mutex_put(TX_MUTEX *mutex_ptr);
 #endif
 
-/* Define queue management function prototypes. */
-UINT _tx_queue_create(TX_QUEUE* queue_ptr, CHAR* name_ptr, UINT message_size,
-VOID* queue_start, ULONG queue_size);
-UINT _tx_queue_delete(TX_QUEUE* queue_ptr);
-UINT _tx_queue_flush(TX_QUEUE* queue_ptr);
-UINT _tx_queue_info_get(TX_QUEUE* queue_ptr, CHAR** name, ULONG* enqueued, ULONG* available_storage,
-TX_THREAD** first_suspended, ULONG* suspended_count, TX_QUEUE** next_queue);
-UINT _tx_queue_performance_info_get(TX_QUEUE* queue_ptr, ULONG* messages_sent,
-ULONG* messages_received,
-ULONG* empty_suspensions, ULONG* full_suspensions, ULONG* full_errors, ULONG* timeouts);
-UINT _tx_queue_performance_system_info_get(ULONG* messages_sent, ULONG* messages_received,
-ULONG* empty_suspensions, ULONG* full_suspensions, ULONG* full_errors, ULONG* timeouts);
-UINT _tx_queue_prioritize(TX_QUEUE* queue_ptr);
-UINT _tx_queue_receive(TX_QUEUE* queue_ptr, VOID* destination_ptr, ULONG wait_option);
-UINT _tx_queue_send(TX_QUEUE* queue_ptr, VOID* source_ptr, ULONG wait_option);
-UINT _tx_queue_send_notify(TX_QUEUE* queue_ptr,
-VOID (*queue_send_notify)(TX_QUEUE* notify_queue_ptr));
-UINT _tx_queue_front_send(TX_QUEUE* queue_ptr, VOID* source_ptr, ULONG wait_option);
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_queue_create(TX_QUEUE* queue_ptr, CHAR* name_ptr, UINT message_size,
-VOID* queue_start, ULONG queue_size, UINT queue_control_block_size);
-UINT _txe_queue_delete(TX_QUEUE* queue_ptr);
-UINT _txe_queue_flush(TX_QUEUE* queue_ptr);
-UINT _txe_queue_info_get(TX_QUEUE* queue_ptr, CHAR** name, ULONG* enqueued,
-ULONG* available_storage,
-TX_THREAD** first_suspended, ULONG* suspended_count, TX_QUEUE** next_queue);
-UINT _txe_queue_prioritize(TX_QUEUE* queue_ptr);
-UINT _txe_queue_receive(TX_QUEUE* queue_ptr, VOID* destination_ptr, ULONG wait_option);
-UINT _txe_queue_send(TX_QUEUE* queue_ptr, VOID* source_ptr, ULONG wait_option);
-UINT _txe_queue_send_notify(TX_QUEUE* queue_ptr,
-VOID (*queue_send_notify)(TX_QUEUE* notify_queue_ptr));
-UINT _txe_queue_front_send(TX_QUEUE* queue_ptr, VOID* source_ptr, ULONG wait_option);
+/* Define queue management function prototypes.  */
+
+UINT        _tx_queue_create(TX_QUEUE *queue_ptr, CHAR *name_ptr, UINT message_size, 
+                        VOID *queue_start, ULONG queue_size);
+UINT        _tx_queue_delete(TX_QUEUE *queue_ptr);
+UINT        _tx_queue_flush(TX_QUEUE *queue_ptr);
+UINT        _tx_queue_info_get(TX_QUEUE *queue_ptr, CHAR **name, ULONG *enqueued, ULONG *available_storage,
+                    TX_THREAD **first_suspended, ULONG *suspended_count, TX_QUEUE **next_queue);
+UINT        _tx_queue_performance_info_get(TX_QUEUE *queue_ptr, ULONG *messages_sent, ULONG *messages_received,
+                    ULONG *empty_suspensions, ULONG *full_suspensions, ULONG *full_errors, ULONG *timeouts);
+UINT        _tx_queue_performance_system_info_get(ULONG *messages_sent, ULONG *messages_received,
+                    ULONG *empty_suspensions, ULONG *full_suspensions, ULONG *full_errors, ULONG *timeouts);
+UINT        _tx_queue_prioritize(TX_QUEUE *queue_ptr);
+UINT        _tx_queue_receive(TX_QUEUE *queue_ptr, VOID *destination_ptr, ULONG wait_option);
+UINT        _tx_queue_send(TX_QUEUE *queue_ptr, VOID *source_ptr, ULONG wait_option);
+UINT        _tx_queue_send_notify(TX_QUEUE *queue_ptr, VOID (*queue_send_notify)(TX_QUEUE *notify_queue_ptr));
+UINT        _tx_queue_front_send(TX_QUEUE *queue_ptr, VOID *source_ptr, ULONG wait_option);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_queue_create(TX_QUEUE *queue_ptr, CHAR *name_ptr, UINT message_size, 
+                        VOID *queue_start, ULONG queue_size, UINT queue_control_block_size);
+UINT        _txe_queue_delete(TX_QUEUE *queue_ptr);
+UINT        _txe_queue_flush(TX_QUEUE *queue_ptr);
+UINT        _txe_queue_info_get(TX_QUEUE *queue_ptr, CHAR **name, ULONG *enqueued, ULONG *available_storage,
+                    TX_THREAD **first_suspended, ULONG *suspended_count, TX_QUEUE **next_queue);
+UINT        _txe_queue_prioritize(TX_QUEUE *queue_ptr);
+UINT        _txe_queue_receive(TX_QUEUE *queue_ptr, VOID *destination_ptr, ULONG wait_option);
+UINT        _txe_queue_send(TX_QUEUE *queue_ptr, VOID *source_ptr, ULONG wait_option);
+UINT        _txe_queue_send_notify(TX_QUEUE *queue_ptr, VOID (*queue_send_notify)(TX_QUEUE *notify_queue_ptr));
+UINT        _txe_queue_front_send(TX_QUEUE *queue_ptr, VOID *source_ptr, ULONG wait_option);
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
-UINT        _txr_queue_create(TX_QUEUE *queue_ptr, CHAR *name_ptr, UINT message_size,
+UINT        _txr_queue_create(TX_QUEUE *queue_ptr, CHAR *name_ptr, UINT message_size, 
                         VOID *queue_start, ULONG queue_size, UINT queue_control_block_size);
 UINT        _txr_queue_delete(TX_QUEUE *queue_ptr);
 UINT        _txr_queue_flush(TX_QUEUE *queue_ptr);
@@ -1355,124 +1537,123 @@ UINT        _txr_queue_send_notify(TX_QUEUE *queue_ptr, VOID (*queue_send_notify
 UINT        _txr_queue_front_send(TX_QUEUE *queue_ptr, VOID *source_ptr, ULONG wait_option);
 #endif
 
-/* Define semaphore management function prototypes. */
-UINT _tx_semaphore_ceiling_put(TX_SEMAPHORE* semaphore_ptr, ULONG ceiling);
-UINT _tx_semaphore_create(TX_SEMAPHORE* semaphore_ptr, CHAR* name_ptr, ULONG initial_count);
-UINT _tx_semaphore_delete(TX_SEMAPHORE* semaphore_ptr);
-UINT _tx_semaphore_get(TX_SEMAPHORE* semaphore_ptr, ULONG wait_option);
-UINT _tx_semaphore_info_get(TX_SEMAPHORE* semaphore_ptr, CHAR** name, ULONG* current_value,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_SEMAPHORE** next_semaphore);
-UINT _tx_semaphore_performance_info_get(TX_SEMAPHORE* semaphore_ptr, ULONG* puts, ULONG* gets,
-ULONG* suspensions, ULONG* timeouts);
-UINT _tx_semaphore_performance_system_info_get(ULONG* puts, ULONG* gets, ULONG* suspensions,
-ULONG* timeouts);
-UINT _tx_semaphore_prioritize(TX_SEMAPHORE* semaphore_ptr);
-UINT _tx_semaphore_put(TX_SEMAPHORE* semaphore_ptr);
-UINT _tx_semaphore_put_notify(TX_SEMAPHORE* semaphore_ptr,
-VOID (*semaphore_put_notify)(TX_SEMAPHORE* notify_semaphore_ptr));
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_semaphore_ceiling_put(TX_SEMAPHORE* semaphore_ptr, ULONG ceiling);
-UINT _txe_semaphore_create(TX_SEMAPHORE* semaphore_ptr, CHAR* name_ptr, ULONG initial_count,
-UINT semaphore_control_block_size);
-UINT _txe_semaphore_delete(TX_SEMAPHORE* semaphore_ptr);
-UINT _txe_semaphore_get(TX_SEMAPHORE* semaphore_ptr, ULONG wait_option);
-UINT _txe_semaphore_info_get(TX_SEMAPHORE* semaphore_ptr, CHAR** name, ULONG* current_value,
-TX_THREAD** first_suspended, ULONG* suspended_count,
-TX_SEMAPHORE** next_semaphore);
-UINT _txe_semaphore_prioritize(TX_SEMAPHORE* semaphore_ptr);
-UINT _txe_semaphore_put(TX_SEMAPHORE* semaphore_ptr);
-UINT _txe_semaphore_put_notify(TX_SEMAPHORE* semaphore_ptr,
-VOID (*semaphore_put_notify)(TX_SEMAPHORE* notify_semaphore_ptr));
+/* Define semaphore management function prototypes.  */
 
+UINT        _tx_semaphore_ceiling_put(TX_SEMAPHORE *semaphore_ptr, ULONG ceiling);
+UINT        _tx_semaphore_create(TX_SEMAPHORE *semaphore_ptr, CHAR *name_ptr, ULONG initial_count);
+UINT        _tx_semaphore_delete(TX_SEMAPHORE *semaphore_ptr);
+UINT        _tx_semaphore_get(TX_SEMAPHORE *semaphore_ptr, ULONG wait_option);
+UINT        _tx_semaphore_info_get(TX_SEMAPHORE *semaphore_ptr, CHAR **name, ULONG *current_value, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_SEMAPHORE **next_semaphore);
+UINT        _tx_semaphore_performance_info_get(TX_SEMAPHORE *semaphore_ptr, ULONG *puts, ULONG *gets,
+                    ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_semaphore_performance_system_info_get(ULONG *puts, ULONG *gets, ULONG *suspensions, ULONG *timeouts);
+UINT        _tx_semaphore_prioritize(TX_SEMAPHORE *semaphore_ptr);
+UINT        _tx_semaphore_put(TX_SEMAPHORE *semaphore_ptr);
+UINT        _tx_semaphore_put_notify(TX_SEMAPHORE *semaphore_ptr, VOID (*semaphore_put_notify)(TX_SEMAPHORE *notify_semaphore_ptr));
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_semaphore_ceiling_put(TX_SEMAPHORE *semaphore_ptr, ULONG ceiling);
+UINT        _txe_semaphore_create(TX_SEMAPHORE *semaphore_ptr, CHAR *name_ptr, ULONG initial_count, UINT semaphore_control_block_size);
+UINT        _txe_semaphore_delete(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txe_semaphore_get(TX_SEMAPHORE *semaphore_ptr, ULONG wait_option);
+UINT        _txe_semaphore_info_get(TX_SEMAPHORE *semaphore_ptr, CHAR **name, ULONG *current_value, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_SEMAPHORE **next_semaphore);
+UINT        _txe_semaphore_prioritize(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txe_semaphore_put(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txe_semaphore_put_notify(TX_SEMAPHORE *semaphore_ptr, VOID (*semaphore_put_notify)(TX_SEMAPHORE *notify_semaphore_ptr));
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
-UINT _txr_semaphore_ceiling_put(TX_SEMAPHORE *semaphore_ptr, ULONG ceiling);
-UINT _txr_semaphore_create(TX_SEMAPHORE *semaphore_ptr, CHAR *name_ptr, ULONG initial_count, UINT semaphore_control_block_size);
-UINT _txr_semaphore_delete(TX_SEMAPHORE *semaphore_ptr);
-UINT _txr_semaphore_get(TX_SEMAPHORE *semaphore_ptr, ULONG wait_option);
-UINT _txr_semaphore_info_get(TX_SEMAPHORE *semaphore_ptr, CHAR **name, ULONG *current_value,
-TX_THREAD **first_suspended, ULONG *suspended_count,
-TX_SEMAPHORE **next_semaphore);
-UINT _txr_semaphore_prioritize(TX_SEMAPHORE *semaphore_ptr);
-UINT _txr_semaphore_put(TX_SEMAPHORE *semaphore_ptr);
-UINT _txr_semaphore_put_notify(TX_SEMAPHORE *semaphore_ptr, VOID (*semaphore_put_notify)(TX_SEMAPHORE *notify_semaphore_ptr));
+UINT        _txr_semaphore_ceiling_put(TX_SEMAPHORE *semaphore_ptr, ULONG ceiling);
+UINT        _txr_semaphore_create(TX_SEMAPHORE *semaphore_ptr, CHAR *name_ptr, ULONG initial_count, UINT semaphore_control_block_size);
+UINT        _txr_semaphore_delete(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txr_semaphore_get(TX_SEMAPHORE *semaphore_ptr, ULONG wait_option);
+UINT        _txr_semaphore_info_get(TX_SEMAPHORE *semaphore_ptr, CHAR **name, ULONG *current_value, 
+                    TX_THREAD **first_suspended, ULONG *suspended_count, 
+                    TX_SEMAPHORE **next_semaphore);
+UINT        _txr_semaphore_prioritize(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txr_semaphore_put(TX_SEMAPHORE *semaphore_ptr);
+UINT        _txr_semaphore_put_notify(TX_SEMAPHORE *semaphore_ptr, VOID (*semaphore_put_notify)(TX_SEMAPHORE *notify_semaphore_ptr));
 #endif
 
-/* Define thread control function prototypes. */
-VOID _tx_thread_context_save(VOID);
-VOID _tx_thread_context_restore(VOID);
-UINT _tx_thread_create(TX_THREAD* thread_ptr, CHAR* name_ptr,
-VOID (*entry_function)(ULONG entry_input), ULONG entry_input,
-VOID* stack_start, ULONG stack_size,
-UINT priority, UINT preempt_threshold,
-ULONG time_slice, UINT auto_start);
-UINT _tx_thread_delete(TX_THREAD* thread_ptr);
-UINT _tx_thread_entry_exit_notify(TX_THREAD* thread_ptr,
-VOID (*thread_entry_exit_notify)(TX_THREAD* notify_thread_ptr, UINT type));
-TX_THREAD* _tx_thread_identify(VOID);
-UINT _tx_thread_info_get(TX_THREAD* thread_ptr, CHAR** name, UINT* state, ULONG* run_count,
-UINT* priority, UINT* preemption_threshold, ULONG* time_slice,
-TX_THREAD** next_thread, TX_THREAD** next_suspended_thread);
-UINT _tx_thread_interrupt_control(UINT new_posture);
-UINT _tx_thread_performance_info_get(TX_THREAD* thread_ptr, ULONG* resumptions, ULONG* suspensions,
-ULONG* solicited_preemptions, ULONG* interrupt_preemptions, ULONG* priority_inversions,
-ULONG* time_slices, ULONG* relinquishes, ULONG* timeouts, ULONG* wait_aborts,
-TX_THREAD** last_preempted_by);
-UINT _tx_thread_performance_system_info_get(ULONG* resumptions, ULONG* suspensions,
-ULONG* solicited_preemptions, ULONG* interrupt_preemptions, ULONG* priority_inversions,
-ULONG* time_slices, ULONG* relinquishes, ULONG* timeouts, ULONG* wait_aborts,
-ULONG* non_idle_returns, ULONG* idle_returns);
-UINT _tx_thread_preemption_change(TX_THREAD* thread_ptr, UINT new_threshold,
-UINT* old_threshold);
-UINT _tx_thread_priority_change(TX_THREAD* thread_ptr, UINT new_priority,
-UINT* old_priority);
-VOID _tx_thread_relinquish(VOID);
-UINT _tx_thread_reset(TX_THREAD* thread_ptr);
-UINT _tx_thread_resume(TX_THREAD* thread_ptr);
-UINT _tx_thread_sleep(ULONG timer_ticks);
-UINT _tx_thread_stack_error_notify(VOID (*stack_error_handler)(TX_THREAD* thread_ptr));
-UINT _tx_thread_suspend(TX_THREAD* thread_ptr);
-UINT _tx_thread_terminate(TX_THREAD* thread_ptr);
-UINT _tx_thread_time_slice_change(TX_THREAD* thread_ptr, ULONG new_time_slice,
-ULONG* old_time_slice);
-UINT _tx_thread_wait_abort(TX_THREAD* thread_ptr);
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_thread_create(TX_THREAD* thread_ptr, CHAR* name_ptr,
-VOID (*entry_function)(ULONG entry_input), ULONG entry_input,
-VOID* stack_start, ULONG stack_size,
-UINT priority, UINT preempt_threshold,
-ULONG time_slice, UINT auto_start, UINT thread_control_block_size);
-UINT _txe_thread_delete(TX_THREAD* thread_ptr);
-UINT _txe_thread_entry_exit_notify(TX_THREAD* thread_ptr,
-VOID (*thread_entry_exit_notify)(TX_THREAD* notify_thread_ptr, UINT type));
-UINT _txe_thread_info_get(TX_THREAD* thread_ptr, CHAR** name, UINT* state, ULONG* run_count,
-UINT* priority, UINT* preemption_threshold, ULONG* time_slice,
-TX_THREAD** next_thread, TX_THREAD** next_suspended_thread);
-UINT _txe_thread_preemption_change(TX_THREAD* thread_ptr, UINT new_threshold,
-UINT* old_threshold);
-UINT _txe_thread_priority_change(TX_THREAD* thread_ptr, UINT new_priority,
-UINT* old_priority);
-VOID _txe_thread_relinquish(VOID);
-UINT _txe_thread_reset(TX_THREAD* thread_ptr);
-UINT _txe_thread_resume(TX_THREAD* thread_ptr);
-UINT _txe_thread_suspend(TX_THREAD* thread_ptr);
-UINT _txe_thread_terminate(TX_THREAD* thread_ptr);
-UINT _txe_thread_time_slice_change(TX_THREAD* thread_ptr, ULONG new_time_slice,
-ULONG* old_time_slice);
-UINT _txe_thread_wait_abort(TX_THREAD* thread_ptr);
+/* Define thread control function prototypes.  */
 
-#ifdef TX_ENABLE_MULTI_ERROR_CHECKING
-UINT        _txr_thread_create(TX_THREAD *thread_ptr, CHAR *name_ptr,
+VOID        _tx_thread_context_save(VOID);
+VOID        _tx_thread_context_restore(VOID);
+UINT        _tx_thread_create(TX_THREAD *thread_ptr, CHAR *name_ptr, 
                 VOID (*entry_function)(ULONG entry_input), ULONG entry_input,
-                VOID *stack_start, ULONG stack_size,
-                UINT priority, UINT preempt_threshold,
+                VOID *stack_start, ULONG stack_size, 
+                UINT priority, UINT preempt_threshold, 
+                ULONG time_slice, UINT auto_start);
+UINT        _tx_thread_delete(TX_THREAD *thread_ptr);
+UINT        _tx_thread_entry_exit_notify(TX_THREAD *thread_ptr, VOID (*thread_entry_exit_notify)(TX_THREAD *notify_thread_ptr, UINT type));
+TX_THREAD  *_tx_thread_identify(VOID);
+UINT        _tx_thread_info_get(TX_THREAD *thread_ptr, CHAR **name, UINT *state, ULONG *run_count, 
+                UINT *priority, UINT *preemption_threshold, ULONG *time_slice, 
+                TX_THREAD **next_thread, TX_THREAD **next_suspended_thread);
+UINT        _tx_thread_interrupt_control(UINT new_posture);
+UINT        _tx_thread_performance_info_get(TX_THREAD *thread_ptr, ULONG *resumptions, ULONG *suspensions, 
+                ULONG *solicited_preemptions, ULONG *interrupt_preemptions, ULONG *priority_inversions,
+                ULONG *time_slices, ULONG *relinquishes, ULONG *timeouts, ULONG *wait_aborts, TX_THREAD **last_preempted_by);
+UINT        _tx_thread_performance_system_info_get(ULONG *resumptions, ULONG *suspensions,
+                ULONG *solicited_preemptions, ULONG *interrupt_preemptions, ULONG *priority_inversions,
+                ULONG *time_slices, ULONG *relinquishes, ULONG *timeouts, ULONG *wait_aborts,
+                ULONG *non_idle_returns, ULONG *idle_returns);
+UINT        _tx_thread_preemption_change(TX_THREAD *thread_ptr, UINT new_threshold,
+                        UINT *old_threshold);
+UINT        _tx_thread_priority_change(TX_THREAD *thread_ptr, UINT new_priority,
+                        UINT *old_priority);
+VOID        _tx_thread_relinquish(VOID);
+UINT        _tx_thread_reset(TX_THREAD *thread_ptr);
+UINT        _tx_thread_resume(TX_THREAD *thread_ptr);
+UINT        _tx_thread_sleep(ULONG timer_ticks);
+UINT        _tx_thread_stack_error_notify(VOID (*stack_error_handler)(TX_THREAD *thread_ptr));
+UINT        _tx_thread_suspend(TX_THREAD *thread_ptr);
+UINT        _tx_thread_terminate(TX_THREAD *thread_ptr);
+UINT        _tx_thread_time_slice_change(TX_THREAD *thread_ptr, ULONG new_time_slice, ULONG *old_time_slice);
+UINT        _tx_thread_wait_abort(TX_THREAD *thread_ptr);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_thread_create(TX_THREAD *thread_ptr, CHAR *name_ptr, 
+                VOID (*entry_function)(ULONG entry_input), ULONG entry_input,
+                VOID *stack_start, ULONG stack_size, 
+                UINT priority, UINT preempt_threshold, 
+                ULONG time_slice, UINT auto_start, UINT thread_control_block_size);
+UINT        _txe_thread_delete(TX_THREAD *thread_ptr);
+UINT        _txe_thread_entry_exit_notify(TX_THREAD *thread_ptr, VOID (*thread_entry_exit_notify)(TX_THREAD *notify_thread_ptr, UINT type));
+UINT        _txe_thread_info_get(TX_THREAD *thread_ptr, CHAR **name, UINT *state, ULONG *run_count, 
+                UINT *priority, UINT *preemption_threshold, ULONG *time_slice, 
+                TX_THREAD **next_thread, TX_THREAD **next_suspended_thread);
+UINT        _txe_thread_preemption_change(TX_THREAD *thread_ptr, UINT new_threshold,
+                        UINT *old_threshold);
+UINT        _txe_thread_priority_change(TX_THREAD *thread_ptr, UINT new_priority,
+                        UINT *old_priority);
+VOID        _txe_thread_relinquish(VOID);
+UINT        _txe_thread_reset(TX_THREAD *thread_ptr);
+UINT        _txe_thread_resume(TX_THREAD *thread_ptr);
+UINT        _txe_thread_suspend(TX_THREAD *thread_ptr);
+UINT        _txe_thread_terminate(TX_THREAD *thread_ptr);
+UINT        _txe_thread_time_slice_change(TX_THREAD *thread_ptr, ULONG new_time_slice, ULONG *old_time_slice);
+UINT        _txe_thread_wait_abort(TX_THREAD *thread_ptr);
+#ifdef TX_ENABLE_MULTI_ERROR_CHECKING
+UINT        _txr_thread_create(TX_THREAD *thread_ptr, CHAR *name_ptr, 
+                VOID (*entry_function)(ULONG entry_input), ULONG entry_input,
+                VOID *stack_start, ULONG stack_size, 
+                UINT priority, UINT preempt_threshold, 
                 ULONG time_slice, UINT auto_start, UINT thread_control_block_size);
 UINT        _txr_thread_delete(TX_THREAD *thread_ptr);
 UINT        _txr_thread_entry_exit_notify(TX_THREAD *thread_ptr, VOID (*thread_entry_exit_notify)(TX_THREAD *notify_thread_ptr, UINT type));
-UINT        _txr_thread_info_get(TX_THREAD *thread_ptr, CHAR **name, UINT *state, ULONG *run_count,
-                UINT *priority, UINT *preemption_threshold, ULONG *time_slice,
+UINT        _txr_thread_info_get(TX_THREAD *thread_ptr, CHAR **name, UINT *state, ULONG *run_count, 
+                UINT *priority, UINT *preemption_threshold, ULONG *time_slice, 
                 TX_THREAD **next_thread, TX_THREAD **next_suspended_thread);
 UINT        _txr_thread_preemption_change(TX_THREAD *thread_ptr, UINT new_threshold,
                         UINT *old_threshold);
@@ -1486,81 +1667,97 @@ UINT        _txr_thread_time_slice_change(TX_THREAD *thread_ptr, ULONG new_time_
 UINT        _txr_thread_wait_abort(TX_THREAD *thread_ptr);
 #endif
 
-/* Define timer management function prototypes. */
-UINT _tx_timer_activate(TX_TIMER* timer_ptr);
-UINT _tx_timer_change(TX_TIMER* timer_ptr, ULONG initial_ticks, ULONG reschedule_ticks);
-UINT _tx_timer_create(TX_TIMER* timer_ptr, CHAR* name_ptr,
-VOID (*expiration_function)(ULONG input), ULONG expiration_input,
-ULONG initial_ticks, ULONG reschedule_ticks, UINT auto_activate);
-UINT _tx_timer_deactivate(TX_TIMER* timer_ptr);
-UINT _tx_timer_delete(TX_TIMER* timer_ptr);
-UINT _tx_timer_info_get(TX_TIMER* timer_ptr, CHAR** name, UINT* active, ULONG* remaining_ticks,
-ULONG* reschedule_ticks, TX_TIMER** next_timer);
-UINT _tx_timer_performance_info_get(TX_TIMER* timer_ptr, ULONG* activates, ULONG* reactivates,
-ULONG* deactivates, ULONG* expirations, ULONG* expiration_adjusts);
-UINT _tx_timer_performance_system_info_get(ULONG* activates, ULONG* reactivates,
-ULONG* deactivates, ULONG* expirations, ULONG* expiration_adjusts);
 
-ULONG _tx_time_get(VOID);
-VOID _tx_time_set(ULONG new_time);
+/* Define timer management function prototypes.  */
 
-/* Define error checking shells for API services.  These are only referenced by the application. */
-UINT _txe_timer_activate(TX_TIMER* timer_ptr);
-UINT _txe_timer_change(TX_TIMER* timer_ptr, ULONG initial_ticks, ULONG reschedule_ticks);
-UINT _txe_timer_create(TX_TIMER* timer_ptr, CHAR* name_ptr,
-VOID (*expiration_function)(ULONG input), ULONG expiration_input,
-ULONG initial_ticks, ULONG reschedule_ticks, UINT auto_activate, UINT timer_control_block_size);
-UINT _txe_timer_deactivate(TX_TIMER* timer_ptr);
-UINT _txe_timer_delete(TX_TIMER* timer_ptr);
-UINT _txe_timer_info_get(TX_TIMER* timer_ptr, CHAR** name, UINT* active, ULONG* remaining_ticks,
-ULONG* reschedule_ticks, TX_TIMER** next_timer);
+UINT        _tx_timer_activate(TX_TIMER *timer_ptr);
+UINT        _tx_timer_change(TX_TIMER *timer_ptr, ULONG initial_ticks, ULONG reschedule_ticks);
+UINT        _tx_timer_create(TX_TIMER *timer_ptr, CHAR *name_ptr, 
+                VOID (*expiration_function)(ULONG input), ULONG expiration_input,
+                ULONG initial_ticks, ULONG reschedule_ticks, UINT auto_activate);
+UINT        _tx_timer_deactivate(TX_TIMER *timer_ptr);
+UINT        _tx_timer_delete(TX_TIMER *timer_ptr);
+UINT        _tx_timer_info_get(TX_TIMER *timer_ptr, CHAR **name, UINT *active, ULONG *remaining_ticks, 
+                ULONG *reschedule_ticks, TX_TIMER **next_timer);
+UINT        _tx_timer_performance_info_get(TX_TIMER *timer_ptr, ULONG *activates, ULONG *reactivates,
+                ULONG *deactivates, ULONG *expirations, ULONG *expiration_adjusts);
+UINT        _tx_timer_performance_system_info_get(ULONG *activates, ULONG *reactivates,
+                ULONG *deactivates, ULONG *expirations, ULONG *expiration_adjusts);
 
+ULONG       _tx_time_get(VOID);
+VOID        _tx_time_set(ULONG new_time);
+
+
+/* Define error checking shells for API services.  These are only referenced by the 
+   application.  */
+
+UINT        _txe_timer_activate(TX_TIMER *timer_ptr);
+UINT        _txe_timer_change(TX_TIMER *timer_ptr, ULONG initial_ticks, ULONG reschedule_ticks);
+UINT        _txe_timer_create(TX_TIMER *timer_ptr, CHAR *name_ptr, 
+                VOID (*expiration_function)(ULONG input), ULONG expiration_input,
+                ULONG initial_ticks, ULONG reschedule_ticks, UINT auto_activate, UINT timer_control_block_size);
+UINT        _txe_timer_deactivate(TX_TIMER *timer_ptr);
+UINT        _txe_timer_delete(TX_TIMER *timer_ptr);
+UINT        _txe_timer_info_get(TX_TIMER *timer_ptr, CHAR **name, UINT *active, ULONG *remaining_ticks, 
+                ULONG *reschedule_ticks, TX_TIMER **next_timer);
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
 UINT        _txr_timer_activate(TX_TIMER *timer_ptr);
 UINT        _txr_timer_change(TX_TIMER *timer_ptr, ULONG initial_ticks, ULONG reschedule_ticks);
-UINT        _txr_timer_create(TX_TIMER *timer_ptr, CHAR *name_ptr,
+UINT        _txr_timer_create(TX_TIMER *timer_ptr, CHAR *name_ptr, 
                 VOID (*expiration_function)(ULONG input), ULONG expiration_input,
                 ULONG initial_ticks, ULONG reschedule_ticks, UINT auto_activate, UINT timer_control_block_size);
 UINT        _txr_timer_deactivate(TX_TIMER *timer_ptr);
 UINT        _txr_timer_delete(TX_TIMER *timer_ptr);
-UINT        _txr_timer_info_get(TX_TIMER *timer_ptr, CHAR **name, UINT *active, ULONG *remaining_ticks,
+UINT        _txr_timer_info_get(TX_TIMER *timer_ptr, CHAR **name, UINT *active, ULONG *remaining_ticks, 
                 ULONG *reschedule_ticks, TX_TIMER **next_timer);
 #endif
 
-/* Define trace API function prototypes. */
-UINT _tx_trace_enable(VOID* trace_buffer_start, ULONG trace_buffer_size, ULONG registry_entries);
-UINT _tx_trace_event_filter(ULONG event_filter_bits);
-UINT _tx_trace_event_unfilter(ULONG event_unfilter_bits);
-UINT _tx_trace_disable(VOID);
-VOID _tx_trace_isr_enter_insert(ULONG isr_id);
-VOID _tx_trace_isr_exit_insert(ULONG isr_id);
-UINT _tx_trace_buffer_full_notify(VOID (*full_buffer_callback)(VOID* buffer));
-UINT _tx_trace_user_event_insert(ULONG event_id, ULONG info_field_1, ULONG info_field_2,
-ULONG info_field_3, ULONG info_field_4);
-UINT _tx_trace_interrupt_control(UINT new_posture);
 
-/* Add a default macro that can be re-defined in tx_port.h to add default processing when a thread
- * starts. Common usage would be for enabling floating point for a thread by default, however,
- * the additional processing could be anything defined in tx_port.h. */
+/* Define trace API function prototypes.  */
+
+UINT        _tx_trace_enable(VOID *trace_buffer_start, ULONG trace_buffer_size, ULONG registry_entries);
+UINT        _tx_trace_event_filter(ULONG event_filter_bits);
+UINT        _tx_trace_event_unfilter(ULONG event_unfilter_bits);
+UINT        _tx_trace_disable(VOID);
+VOID        _tx_trace_isr_enter_insert(ULONG isr_id);
+VOID        _tx_trace_isr_exit_insert(ULONG isr_id);
+UINT        _tx_trace_buffer_full_notify(VOID (*full_buffer_callback)(VOID *buffer));
+UINT        _tx_trace_user_event_insert(ULONG event_id, ULONG info_field_1, ULONG info_field_2, ULONG info_field_3, ULONG info_field_4);
+UINT        _tx_trace_interrupt_control(UINT new_posture);
+
+
+/* Add a default macro that can be re-defined in tx_port.h to add default processing when a thread starts. Common usage
+   would be for enabling floating point for a thread by default, however, the additional processing could be anything
+   defined in tx_port.h.  */
+   
 #ifndef TX_THREAD_STARTED_EXTENSION
 #define TX_THREAD_STARTED_EXTENSION(thread_ptr)
 #endif
 
-/* Add a default macro that can be re-defined in tx_port.h to add processing to the thread stack
- * analyze function. By default, this is simply defined as whitespace. */
+
+/* Add a default macro that can be re-defined in tx_port.h to add processing to the thread stack analyze function.  
+   By default, this is simply defined as whitespace.  */
+
 #ifndef TX_THREAD_STACK_ANALYZE_EXTENSION
 #define TX_THREAD_STACK_ANALYZE_EXTENSION
 #endif
 
-/* Add a default macro that can be re-defined in tx_port.h to add processing to the initialize
- * kernel enter function. By default, this is simply defined as whitespace. */
+
+/* Add a default macro that can be re-defined in tx_port.h to add processing to the initialize kernel enter function.  
+   By default, this is simply defined as whitespace.  */
+
 #ifndef TX_INITIALIZE_KERNEL_ENTER_EXTENSION
 #define TX_INITIALIZE_KERNEL_ENTER_EXTENSION
 #endif
 
-/* Check for MISRA compliance requirements. */
+
+/* Check for MISRA compliance requirements.  */
+
 #ifdef TX_MISRA_ENABLE
-/* Define MISRA-specific routines. */
+
+
+/* Define MISRA-specific routines.  */
+
 VOID                    _tx_misra_memset(VOID *ptr, UINT value, UINT size);
 UCHAR                   *_tx_misra_uchar_pointer_add(UCHAR *ptr, ULONG amount);
 UCHAR                   *_tx_misra_uchar_pointer_sub(UCHAR *ptr, ULONG amount);
@@ -1666,8 +1863,11 @@ VOID                    _tx_misra_thread_entry_exit_notify_not_used(VOID (*threa
 #define TX_THREAD_NOT_USED(a)                           _tx_misra_thread_not_used((a))
 #define TX_THREAD_ENTRY_EXIT_NOTIFY_NOT_USED(a)         _tx_misra_thread_entry_exit_notify_not_used((a))
 
+
 #else
-/* Define the TX_MEMSET macro to the standard library function, if not already defined. */
+
+/* Define the TX_MEMSET macro to the standard library function, if not already defined.  */
+
 #ifndef TX_MEMSET
 #define TX_MEMSET(a,b,c)                                memset((a),(b),(c))
 #endif
@@ -1690,6 +1890,7 @@ VOID                    _tx_misra_thread_entry_exit_notify_not_used(VOID (*threa
                                                             (b) =  (TX_TIMER *) working_ptr; \
                                                         }
 #define TX_LOOP_FOREVER                                 ((UINT) 1)
+
 
 #define TX_INDIRECT_VOID_TO_UCHAR_POINTER_CONVERT(a)    ((UCHAR **) ((VOID *) (a)))
 #define TX_UCHAR_TO_INDIRECT_UCHAR_POINTER_CONVERT(a)   ((UCHAR **) ((VOID *) (a)))
@@ -1747,97 +1948,102 @@ VOID                    _tx_misra_thread_entry_exit_notify_not_used(VOID (*threa
 
 #endif
 
-/* Determine if there is an tx_api.h extension file to include. */
+
+/* Determine if there is an tx_api.h extension file to include.  */
+
 #ifdef TX_THREAD_API_EXTENSION
 
-/* Yes, bring in the tx_api.h extension file. */
+/* Yes, bring in the tx_api.h extension file.  */
 #include "tx_api_extension.h"
 
 #endif
 
-/* Define safety critical configuration and exception handling. */
+
+/* Define safety critical configuration and exception handling.  */
+
 #ifdef TX_SAFETY_CRITICAL
-/* Ensure the maximum number of priorities is defined in safety critical mode. */
+
+/* Ensure the maximum number of priorities is defined in safety critical mode.  */
 #ifndef TX_MAX_PRIORITIES
 #error "tx_port.h: TX_MAX_PRIORITIES not defined."
 #endif
 
-/* Ensure the maximum number of priorities is a multiple of 32. */
+/* Ensure the maximum number of priorities is a multiple of 32.  */
 #if (TX_MAX_PRIORITIES  %32) != 0
 #error "tx_port.h: TX_MAX_PRIORITIES must be a multiple of 32."
 #endif
 
-/* Ensure error checking is enabled. */
+/* Ensure error checking is enabled.  */
 #ifdef TX_DISABLE_ERROR_CHECKING
 #error "TX_DISABLE_ERROR_CHECKING must not be defined."
 #endif
 
-/* Ensure timer ISR processing is not defined. */
+/* Ensure timer ISR processing is not defined.  */
 #ifdef TX_TIMER_PROCESS_IN_ISR
 #error "TX_TIMER_PROCESS_IN_ISR must not be defined."
 #endif
 
-/* Ensure timer reactivation in-line is not defined. */
+/* Ensure timer reactivation in-line is not defined.  */
 #ifdef TX_REACTIVATE_INLINE
 #error "TX_REACTIVATE_INLINE must not be defined."
 #endif
 
-/* Ensure disable stack filling is not defined. */
+/* Ensure disable stack filling is not defined.  */
 #ifdef TX_DISABLE_STACK_FILLING
 #error "TX_DISABLE_STACK_FILLING must not be defined."
 #endif
 
-/* Ensure enable stack checking is not defined. */
+/* Ensure enable stack checking is not defined.  */
 #ifdef TX_ENABLE_STACK_CHECKING
 #error "TX_ENABLE_STACK_CHECKING must not be defined."
 #endif
 
-/* Ensure disable preemption-threshold is not defined. */
+/* Ensure disable preemption-threshold is not defined.  */
 #ifdef TX_DISABLE_PREEMPTION_THRESHOLD
 #error "TX_DISABLE_PREEMPTION_THRESHOLD must not be defined."
 #endif
 
-/* Ensure disable redundant clearing is not defined. */
+/* Ensure disable redundant clearing is not defined.  */
 #ifdef TX_DISABLE_REDUNDANT_CLEARING
 #error "TX_DISABLE_REDUNDANT_CLEARING must not be defined."
 #endif
 
-/* Ensure no timer is not defined. */
+/* Ensure no timer is not defined.  */
 #ifdef TX_NO_TIMER
 #error "TX_NO_TIMER must not be defined."
 #endif
 
-/* Ensure disable notify callbacks is not defined. */
+/* Ensure disable notify callbacks is not defined.  */
 #ifdef TX_DISABLE_NOTIFY_CALLBACKS
 #error "TX_DISABLE_NOTIFY_CALLBACKS must not be defined."
 #endif
 
-/* Ensure in-line thread suspend/resume is not defined. */
+/* Ensure in-line thread suspend/resume is not defined.  */
 #ifdef TX_INLINE_THREAD_RESUME_SUSPEND
 #error "TX_INLINE_THREAD_RESUME_SUSPEND must not be defined."
 #endif
 
-/* Ensure not interruptable is not defined. */
+/* Ensure not interruptable is not defined.  */
 #ifdef TX_NOT_INTERRUPTABLE
 #error "TX_NOT_INTERRUPTABLE must not be defined."
 #endif
 
-/* Ensure event trace enable is not defined. */
+/* Ensure event trace enable is not defined.  */
 #ifdef TX_ENABLE_EVENT_TRACE
 #error "TX_ENABLE_EVENT_TRACE must not be defined."
 #endif
 
-/* Ensure block pool performance info enable is not defined. */
+/* Ensure block pool performance info enable is not defined.  */
 #ifdef TX_BLOCK_POOL_ENABLE_PERFORMANCE_INFO
 #error "TX_BLOCK_POOL_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure byte pool performance info enable is not defined. */
+/* Ensure byte pool performance info enable is not defined.  */
 #ifdef TX_BYTE_POOL_ENABLE_PERFORMANCE_INFO
 #error "TX_BYTE_POOL_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure event flag performance info enable is not defined. */
+/* Ensure event flag performance info enable is not defined.  */
 #ifdef TX_EVENT_FLAGS_ENABLE_PERFORMANCE_INFO
 #error "TX_EVENT_FLAGS_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
@@ -1847,29 +2053,31 @@ VOID                    _tx_misra_thread_entry_exit_notify_not_used(VOID (*threa
 #error "TX_MUTEX_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure queue performance info enable is not defined. */
+/* Ensure queue performance info enable is not defined.  */
 #ifdef TX_QUEUE_ENABLE_PERFORMANCE_INFO
 #error "TX_QUEUE_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure semaphore performance info enable is not defined. */
+/* Ensure semaphore performance info enable is not defined.  */
 #ifdef TX_SEMAPHORE_ENABLE_PERFORMANCE_INFO
 #error "TX_SEMAPHORE_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure thread performance info enable is not defined. */
+/* Ensure thread performance info enable is not defined.  */
 #ifdef TX_THREAD_ENABLE_PERFORMANCE_INFO
 #error "TX_THREAD_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
-/* Ensure timer performance info enable is not defined. */
+/* Ensure timer performance info enable is not defined.  */
 #ifdef TX_TIMER_ENABLE_PERFORMANCE_INFO
 #error "TX_TIMER_ENABLE_PERFORMANCE_INFO must not be defined."
 #endif
 
 
-/* Now define the safety critical exception handler. */
+/* Now define the safety critical exception handler.  */
+
 VOID    _tx_safety_critical_exception_handler(CHAR *file_name, INT line_number, UINT status);
+
 
 #ifndef TX_SAFETY_CRITICAL_EXCEPTION
 #define TX_SAFETY_CRITICAL_EXCEPTION(a, b, c)   _tx_safety_critical_exception_handler(a, b, c);
@@ -1885,14 +2093,18 @@ VOID    _tx_safety_critical_exception_handler(CHAR *file_name, INT line_number, 
 #endif
 #endif
 
+
 #ifdef TX_ENABLE_MULTI_ERROR_CHECKING
-	/* Define ThreadX API MULTI run-time error checking function. */
-	void __ghs_rnerr(char *errMsg, int stackLevels, int stackTraceDisplay, void *hexVal);
+
+/* Define ThreadX API MULTI run-time error checking function.  */
+void __ghs_rnerr(char *errMsg, int stackLevels, int stackTraceDisplay, void *hexVal);
+
 #endif
 
 /* Bring in the event logging constants and prototypes.  Note that
- TX_ENABLE_EVENT_LOGGING must be defined when building the ThreadX
- library components in order to enable event logging. */
+   TX_ENABLE_EVENT_LOGGING must be defined when building the ThreadX
+   library components in order to enable event logging.  */
+
 #ifdef TX_ENABLE_EVENT_LOGGING
 #include "tx_el.h"
 #else
@@ -1990,9 +2202,13 @@ VOID    _tx_safety_critical_exception_handler(CHAR *file_name, INT line_number, 
 
 #endif
 
-/* Determine if a C++ compiler is being used. If so, complete the standard C conditional started above. */
+
+
+/* Determine if a C++ compiler is being used.  If so, complete the standard
+   C conditional started above.  */
 #ifdef __cplusplus
         }
 #endif
 
 #endif
+

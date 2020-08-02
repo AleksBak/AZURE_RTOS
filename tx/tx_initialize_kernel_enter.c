@@ -9,6 +9,7 @@
 /*                                                                        */
 /**************************************************************************/
 
+
 /**************************************************************************/
 /**************************************************************************/
 /**                                                                       */
@@ -21,6 +22,7 @@
 
 #define TX_SOURCE_CODE
 
+
 /* Include necessary system files.  */
 
 #include "tx_api.h"
@@ -28,13 +30,16 @@
 #include "tx_thread.h"
 #include "tx_timer.h"
 
+
 /* Define any port-specific scheduling data structures.  */
 
 TX_PORT_SPECIFIC_DATA
 
+
 #ifdef TX_SAFETY_CRITICAL
-	TX_SAFETY_CRITICAL_EXCEPTION_HANDLER
+TX_SAFETY_CRITICAL_EXCEPTION_HANDLER
 #endif
+
 
 /**************************************************************************/
 /*                                                                        */
@@ -82,57 +87,61 @@ TX_PORT_SPECIFIC_DATA
 /*  05-19-2020     William E. Lamie         Initial Version 6.0           */
 /*                                                                        */
 /**************************************************************************/
-VOID _tx_initialize_kernel_enter(VOID)
+VOID  _tx_initialize_kernel_enter(VOID)
 {
-	/* Determine if the compiler has pre-initialized ThreadX.  */
-	if (_tx_thread_system_state != TX_INITIALIZE_ALMOST_DONE)
-	{
-		/* No, the initialization still needs to take place.  */
 
-		/* Ensure that the system state variable is set to indicate
-		 initialization is in progress.  Note that this variable is
-		 later used to represent interrupt nesting.  */
-		_tx_thread_system_state = TX_INITIALIZE_IN_PROGRESS;
+    /* Determine if the compiler has pre-initialized ThreadX.  */
+    if (_tx_thread_system_state != TX_INITIALIZE_ALMOST_DONE)
+    {
 
-		/* Call any port specific preprocessing.  */
-		TX_PORT_SPECIFIC_PRE_INITIALIZATION
+        /* No, the initialization still needs to take place.  */
 
-		/* Invoke the low-level initialization to handle all processor specific
-		 initialization issues.  */
-		_tx_initialize_low_level();
+        /* Ensure that the system state variable is set to indicate 
+           initialization is in progress.  Note that this variable is 
+           later used to represent interrupt nesting.  */
+        _tx_thread_system_state =  TX_INITIALIZE_IN_PROGRESS;
 
-		/* Invoke the high-level initialization to exercise all of the
-		 ThreadX components and the application's initialization
-		 function.  */
-		_tx_initialize_high_level();
+        /* Call any port specific preprocessing.  */
+        TX_PORT_SPECIFIC_PRE_INITIALIZATION
 
-		/* Call any port specific post-processing.  */
-		TX_PORT_SPECIFIC_POST_INITIALIZATION
-	}
+        /* Invoke the low-level initialization to handle all processor specific
+           initialization issues.  */
+        _tx_initialize_low_level();
+    
+        /* Invoke the high-level initialization to exercise all of the 
+           ThreadX components and the application's initialization 
+           function.  */
+        _tx_initialize_high_level();
 
-	/* Optional processing extension.  */
-	TX_INITIALIZE_KERNEL_ENTER_EXTENSION
+        /* Call any port specific post-processing.  */
+        TX_PORT_SPECIFIC_POST_INITIALIZATION
+    }
 
-	/* Ensure that the system state variable is set to indicate
-	 initialization is in progress.  Note that this variable is
-	 later used to represent interrupt nesting.  */
-	_tx_thread_system_state = TX_INITIALIZE_IN_PROGRESS;
+    /* Optional processing extension.  */
+    TX_INITIALIZE_KERNEL_ENTER_EXTENSION
 
-	/* Call the application provided initialization function. Pass the
-	 * first available memory address to it.  */
-	tx_application_define(_tx_initialize_unused_memory);
+    /* Ensure that the system state variable is set to indicate 
+       initialization is in progress.  Note that this variable is 
+       later used to represent interrupt nesting.  */
+    _tx_thread_system_state =  TX_INITIALIZE_IN_PROGRESS;
 
-	/* Set the system state in preparation for entering the thread scheduler. */
-	_tx_thread_system_state = TX_INITIALIZE_IS_FINISHED;
+    /* Call the application provided initialization function.  Pass the
+       first available memory address to it.  */
+    tx_application_define(_tx_initialize_unused_memory);
 
-	/* Call any port specific pre-scheduler processing. */
-	TX_PORT_SPECIFIC_PRE_SCHEDULER_INITIALIZATION
+    /* Set the system state in preparation for entering the thread 
+       scheduler.  */
+    _tx_thread_system_state =  TX_INITIALIZE_IS_FINISHED;
 
-	/* Enter the scheduling loop to start executing threads! */
-	_tx_thread_schedule();
+    /* Call any port specific pre-scheduler processing.  */
+    TX_PORT_SPECIFIC_PRE_SCHEDULER_INITIALIZATION
+
+    /* Enter the scheduling loop to start executing threads!  */
+    _tx_thread_schedule();
 
 #ifdef TX_SAFETY_CRITICAL
-    /* If we ever get here, raise safety critical exception. */
+
+    /* If we ever get here, raise safety critical exception.  */
     TX_SAFETY_CRITICAL_EXCEPTION(__FILE__, __LINE__, 0);
 #endif
 }

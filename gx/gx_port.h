@@ -23,7 +23,7 @@
 /*                                                                        */
 /*  APPLICATION INTERFACE DEFINITION                       RELEASE        */
 /*                                                                        */
-/*    gx_api.h                                          STM32F7xx/GNU     */
+/*    gx_api.h                                          Cortex-M7/GNU     */
 /*                                                           6.0          */
 /*  AUTHOR                                                                */
 /*                                                                        */
@@ -45,13 +45,15 @@
 #ifndef GX_PORT_H
 #define GX_PORT_H
 
+/* Determine if the optional GUIX user define file should be used.  */
 
+#ifdef GX_INCLUDE_USER_DEFINE_FILE
 
 /* Include the user defines in gx_user.h. The defines in this file may
    alternately be defined on the command line.  */
 
 #include "gx_user.h"
-
+#endif
 
 typedef INT    GX_BOOL;
 
@@ -139,12 +141,10 @@ typedef SHORT  GX_VALUE;
 
 #ifdef GX_SYSTEM_INIT
 CHAR _gx_version_id[] =
-    "Copyright (c) Microsoft Corporation. All rights reserved.  *  GUIX STM32F7xx/GNU Version G6.0 *";
+    "Copyright (c) Microsoft Corporation. All rights reserved.  *  GUIX Cortex-M7/GNU Version 6.0 *";
 #else
 extern  CHAR _gx_version_id[];
 #endif
 
 #endif
-
-
 
